@@ -1,2 +1,11 @@
-# AMS-Attedance-Management-System-Using-C-
-Attendance Management System is very useful and fast using C++ it will Give you Attendance Data of students as well as employee and will manage your work related to attendance.
+# AMS-Attedance-Management-System-Using-C++
+
+Development Branch is for GUI developers only :
+
+they can write their work here or share their files with each other here and
+
+at the end of GUI development all module branch code will be merged over here
+
+do not remove this comment.
+
+#------------------------------------------------------------------------------------------
