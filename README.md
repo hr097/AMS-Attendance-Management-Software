@@ -10,5 +10,5 @@ finish date : ...
 5)Team Schedule & work Management : Sanajal desai
 6)Documentation & Business Analysis support : Isha dadawala
 7)GUI development : Nupur kukadiya
-8)Technical and Testing section : Shikhaa Tikiwala
+8)Technical and Testing section : Shikhaa Tikiwala :: OKAY
 9)coding Assist & Helper : Fenil Munzani
