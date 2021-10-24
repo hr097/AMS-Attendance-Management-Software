@@ -1,3 +1,5 @@
+// YOU CAN CHANGE CODE OK NO PROBLEM IT IS JUST A REFERENCE //
+
 Write-entity(user &u, ofstream &fout)
     fout << u.id << endl
          << u.username << endl
