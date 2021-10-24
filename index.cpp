@@ -210,7 +210,7 @@ int askChoice()
   else if(line==5)
   buildHorizontalWall(43,"3) CUSTOMIZED ATTENDANCE REPORT ");
   else if(line==7)
-  buildHorizontalWall(43,"4) SEARCH STUDENT DETAILS ");
+  buildHorizontalWall(43,"4) SEARCH & UPDATE DETAILS ");
   else if(line==9)
   buildHorizontalWall(43,"5) EXIT ");
   else 
