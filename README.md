@@ -11,4 +11,4 @@ finish date : ...
 6)Documentation & Business Analysis support : Isha dadawala
 7)GUI development : Nupur kukadiya:: OKAY
 8)Technical and Testing section : Shikhaa Tikiwala :: OKAY
-9)coding Assist & Helper : Fenil Munzani
+9)coding Assist & Helper : Fenil Munzani :: OKAY
