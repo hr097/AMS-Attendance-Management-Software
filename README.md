@@ -3,7 +3,7 @@ Attendance Management System is very useful and fast using C++ it will Give you 
 
 start date : 22/10/2021
 finish date : ...
-1)Leader & Problem solving : HARSHIL RAMANI 
+1)Leader & Problem solving : HARSHIL RAMANI :: OKAY
 2)co-leader & Technical section : Shubham Khunt
 3)Product Design : Viraj Tlaviya 
 4)Product development Head( R&D ): Drashti dhola
