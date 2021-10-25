@@ -372,6 +372,10 @@ class MODULE
    MODULE4();
 
   }
+    ~MODULE()
+  {
+     //TODO: HIDING OF DATABASE//at the end of program database should be hidden for protecting it from user's dirct access
+  }
   
   //******---------FILE HANDLING------------********/
 
@@ -412,11 +416,6 @@ class MODULE
   }
 
   //******---------FILE HANDLING-END------------********/
-
-  ~MODULE()
-  {
-     //TODO: HIDING OF DATABASE//at the end of program database should be hidden for protecting it from user's dirct access
-  }
 
 };
 
