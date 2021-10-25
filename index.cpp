@@ -320,7 +320,16 @@ class MODULE_1 //TODO : just like that you have to develop your own class named 
 
 };
 
-class MODULE 
+class MODULE_2 //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
+{
+
+  private:
+
+  public:
+
+};
+
+class MODULE
 { 
   /*---------DATA-MEMBERS-----------*/
   
@@ -339,7 +348,7 @@ class MODULE
   }
   void MODULE2()
   {
-     cout<<"MODULE 2 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
+     MODULE_2 MD2;
   }
   void MODULE3()
   {
