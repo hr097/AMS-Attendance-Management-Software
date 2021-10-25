@@ -7,7 +7,7 @@ finish date : ...
 2)co-leader & Technical section : Shubham Khunt::OKAY
 3)Product Design : Viraj Tlaviya  :: OKAY
 4)Product development Head( R&D ): Drashti dhola :: OKAY
-5)Team Schedule & work Management : Sanajal desai :: OKAY
+5)Team Schedule & work Management : Sanjal desai :: OKAY
 6)Documentation & Business Analysis support : Isha dadawala::OKAY
 7)GUI development : Nupur kukadiya:: OKAY
 8)Technical and Testing section : Shikhaa Tikiwala :: OKAY
