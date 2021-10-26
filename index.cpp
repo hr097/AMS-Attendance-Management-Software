@@ -15,7 +15,7 @@
   #include<wincon.h>
   #include<string>
 
-  #endif  // user 1 
+ // #endif  // user 1 
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -36,7 +36,7 @@ lpConsoleCurrentFontEx);
 }
 #endif
 
-//#endif // user 2
+#endif // user 2
 
 #ifndef UNICODE  
   typedef std::string String; 
@@ -210,7 +210,7 @@ int askChoice()
   else if(line==5)
   buildHorizontalWall(43,"3) CUSTOMIZED ATTENDANCE REPORT ");
   else if(line==7)
-  buildHorizontalWall(43,"4) SEARCH STUDENT DETAILS ");
+  buildHorizontalWall(43,"4) SEARCH & UPDATE DETAILS ");
   else if(line==9)
   buildHorizontalWall(43,"5) EXIT ");
   else 
@@ -308,77 +308,167 @@ void mainTitleOFapplication()
 //-------------------------------------//
 
 /****************************GENERAL-FUNCTION-CLASS-END***************************/
-/****************************ATTENDANCE_MODULE************************************/
 
-class MODULE 
+/****************************MODULE-START*****************************************/
+class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FUNCTIONS HERE AND INHERIT THIS CLASS TO YOURS
 {
-  
-  public:
-  MODULE(int Selectmodule)
-  {
 
-   if(Selectmodule==1)
-   MODULE1();
-   else if(Selectmodule==2)
-   MODULE2();
-   else if(Selectmodule==3)
-   MODULE3();
-   else if(Selectmodule==4)
-   MODULE4();
-  }
-  MODULE()
-  {
+  // ? this are general function class which can be used by all 4 module developers
+  // *email functionalities also be included here since all 2 modules are using it
+  // ? you have to make functions very generalized so other MD developers can use it
+  // ?use can you OOP concepts here function overloading and other...concepts like template
 
-  }
-  ~MODULE()
-  {
-
-  }
   private:
 
-  void MODULE1()
+  public:
+
+  protected:
+  int checkNumberInput(int *input,int Bnd)
   {
-  cout<<"MODULE 1 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
-  }
-  void MODULE2()
-  {
-     cout<<"MODULE 2 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
-  }
-  void MODULE3()
-  {
-     cout<<"MODULE 3 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
-  }
-  void MODULE4()
-  {
-     cout<<"MODULE 4 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
+      if(!cin)
+      {
+        cin.clear();
+        cin.ignore(80,'\n');
+      }
+      if(*(input)<1||*(input)>Bnd)
+      {        
+      scrClr();
+      setCursorPos(2,24);
+      cout<<"INVALID CHOICE ENTERTED !"<<endl;
+      setCursorPos(2,20);
+      cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
+      scrClr(1);
+        return 1;
+      }
+      return 0;
   }
 
 };
 
-/****************************ATTENDANCE_MODULE************************************/
+class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
+{
+  
+  //!=============================DATA-MEMBERS================================//
+
+  /********************************* MODULE_1 *********************************/
+  
+  private:
+
+  string course_name;
+  int sem;
+
+  public:
+
+  protected:
+
+  /*****************************************************************************/
+
+  /********************************* MODULE_2 *********************************/
+   private:
+   public:
+   protected:
+  /*****************************************************************************/
+  
+  //!=============================DATA-MEMBERS-END================================// 
+  
+
+  //?=============================MEMBERS-FUNCTIONS===================================//
+  
+  public:
+  SET_WRITE_DB() //TODO:CONSTRUCTOR
+  {
+    
+  }
+  /********************************* MODULE_1 *********************************/
+
+  private:
+
+  public:
+
+  void askDeatails()
+  { 
+    
+    cout<<"ENTER COURSE NAME : ";
+    cin>>course_name;
+    
+    reinputOfsem:
+    fflush(stdin);
+
+    cout<<"ENTER SEMESTER : ";
+    cin>>sem;
+
+    if(checkNumberInput(&sem,10))
+    {goto reinputOfsem;}
+
+     fflush(stdin);
+
+  }
+
+  protected:
+
+  /****************************************************************************/
+
+  /********************************* MODULE_2 *********************************/
+   private:
+   public:
+   protected:
+  /****************************************************************************/
+  public:
+
+  ~SET_WRITE_DB() //TODO:DESTRUCTOR
+  {
+
+  }
+  //?=============================MEMBERS-FUNCTIONS===================================//
+};
+
+
+ 
+ 
+ 
+ 
+
+
+
+/****************************MODULE-END************************************/
 
 int main()
 {
     //jay swaminrayan
     //jay ganeshay namh
     bool loop=true;
+    GENERAL_INIT APP;
 
     while(loop)
     {
-
-    GENERAL_INIT APP;
-    APP.startApp();
-    
-    if(GENERAL_INIT::MODULE_CHOICE!=5)
-    {
-      APP.scrClr();
-      APP.setCursorPos(2,10);
-      MODULE SELECT(GENERAL_INIT::MODULE_CHOICE);
-      APP.scrClr(2);
-    }
-    else
-    loop=false;
-
+          APP.startApp();
+      
+          if(GENERAL_INIT::MODULE_CHOICE!=5)
+          {
+            APP.scrClr();
+      
+            APP.setCursorPos(2,10);
+      
+            switch(GENERAL_INIT::MODULE_CHOICE)
+            {
+              case 1:{
+                
+                     SET_WRITE_DB SW;
+                     SW.askDeatails();
+                     break;
+                     }
+              case 2:{}
+              case 3:{}
+              case 4:{}
+              default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);}
+            }
+      
+            APP.scrClr(2);
+          }
+          else
+          {
+            loop=false;
+          }
     
 
     }
