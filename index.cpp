@@ -438,6 +438,7 @@ int main()
     //jay ganeshay namh
     bool loop=true;
     GENERAL_INIT APP;
+    SET_WRITE_DB SW;
 
     while(loop)
     {
@@ -452,12 +453,12 @@ int main()
             switch(GENERAL_INIT::MODULE_CHOICE)
             {
               case 1:{
-                
-                     SET_WRITE_DB SW;
                      SW.askDeatails();
                      break;
                      }
-              case 2:{}
+              case 2:{
+                       break;
+                      }
               case 3:{}
               case 4:{}
               default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);}
