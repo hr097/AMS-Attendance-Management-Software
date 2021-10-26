@@ -310,114 +310,125 @@ void mainTitleOFapplication()
 /****************************GENERAL-FUNCTION-CLASS-END***************************/
 
 /****************************MODULE-START*****************************************/
-
-class MODULE_1 //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
+class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FUNCTIONS HERE AND INHERIT THIS CLASS TO YOURS
 {
 
+  // ? this are general function class which can be used by all 4 module developers
+  // *email functionalities also be included here since all 2 modules are using it
+  // ? you have to make functions very generalized so other MD developers can use it
+  // ?use can you OOP concepts here function overloading and other...concepts like template
+
   private:
 
   public:
 
+  protected:
+  int checkNumberInput(int *input,int Bnd)
+  {
+      if(!cin)
+      {
+        cin.clear();
+        cin.ignore(80,'\n');
+      }
+      if(*(input)<1||*(input)>Bnd)
+      {        
+      scrClr();
+      setCursorPos(2,24);
+      cout<<"INVALID CHOICE ENTERTED !"<<endl;
+      setCursorPos(2,20);
+      cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
+      scrClr(1);
+        return 1;
+      }
+      return 0;
+  }
+
 };
 
-class MODULE 
-{ 
-  /*---------DATA-MEMBERS-----------*/
+class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
+{
   
+  //!=============================DATA-MEMBERS================================//
+
+  /********************************* MODULE_1 *********************************/
   
-
-
-
-/*---------DATA-MEMBERS-end-----------*/
-
-/*---------MEMBERS-FUNCTION-----------*/
   private:
 
-  void MODULE1()
-  {
-    MODULE_1 MD1; //? JUST LIKE THAT YOU WILL CREATE AN OBJECT OF YOUR MODULE AND WORK WITH THAT HERE IN LOCAL SCOPE
-  }
-  void MODULE2()
-  {
-     cout<<"MODULE 2 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
-  }
-  void MODULE3()
-  {
-     cout<<"MODULE 3 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
-  }
-  void MODULE4()
-  {
-     cout<<"MODULE 4 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
-  }
-
-/*---------MEMBERS-FUNCTION-end-----------*/
+  string course_name;
+  int sem;
 
   public:
 
-  MODULE()
-  {
-    //TODO: CREATION OF DATABASE // check also if already exist then "NO creation should be done"
-  }
+  protected:
 
-  void selectModule(int Selectmodule)
-  {
+  /*****************************************************************************/
 
-   if(Selectmodule==1)
-   MODULE1();
-   else if(Selectmodule==2)
-   MODULE2();
-   else if(Selectmodule==3)
-   MODULE3();
-   else if(Selectmodule==4)
-   MODULE4();
-
-  }
-    ~MODULE()
-  {
-     //TODO: HIDING OF DATABASE//at the end of program database should be hidden for protecting it from user's dirct access
-  }
+  /********************************* MODULE_2 *********************************/
+   private:
+   public:
+   protected:
+  /*****************************************************************************/
   
-  //******---------FILE HANDLING------------********/
-
-  //? this are general function which can be used by all 4 module
-  //*email functionalities also be included here since all 2 modules are using it
-  //? you have to make functions very generalized so other MD developers can use it
-  //?use can you OOP concepts here function overloading and other...
+  //!=============================DATA-MEMBERS-END================================// 
   
+
+  //?=============================MEMBERS-FUNCTIONS===================================//
+  
+  public:
+  SET_WRITE_DB() //TODO:CONSTRUCTOR
+  {
+    
+  }
+  /********************************* MODULE_1 *********************************/
+
   private:
-  
-  void checkDBExist()
-  {
 
-  }
-  void createDir()
-  {
+  public:
 
-  }
-  void createFile()
-  {
+  void askDeatails()
+  { 
+    
+    cout<<"ENTER COURSE NAME : ";
+    cin>>course_name;
+    
+    reinputOfsem:
+    fflush(stdin);
 
-  }
-  void deleteFile()
-  {
+    cout<<"ENTER SEMESTER : ";
+    cin>>sem;
 
-  }
-  void deleteDir()
-  {
+    if(checkNumberInput(&sem,10))
+    {goto reinputOfsem;}
 
-  }
-  void writeDataToExtfile()
-  {
-
-  }
-  void readDataFromExtfile()
-  {
+     fflush(stdin);
 
   }
 
-  //******---------FILE HANDLING-END------------********/
+  protected:
 
+  /****************************************************************************/
+
+  /********************************* MODULE_2 *********************************/
+   private:
+   public:
+   protected:
+  /****************************************************************************/
+  public:
+
+  ~SET_WRITE_DB() //TODO:DESTRUCTOR
+  {
+
+  }
+  //?=============================MEMBERS-FUNCTIONS===================================//
 };
+
+
+ 
+ 
+ 
+ 
+
+
 
 /****************************MODULE-END************************************/
 
@@ -426,12 +437,10 @@ int main()
     //jay swaminrayan
     //jay ganeshay namh
     bool loop=true;
+    GENERAL_INIT APP;
 
     while(loop)
     {
-
-          GENERAL_INIT APP;
-          MODULE SELECT;
           APP.startApp();
       
           if(GENERAL_INIT::MODULE_CHOICE!=5)
@@ -440,7 +449,19 @@ int main()
       
             APP.setCursorPos(2,10);
       
-            SELECT.selectModule(GENERAL_INIT::MODULE_CHOICE);
+            switch(GENERAL_INIT::MODULE_CHOICE)
+            {
+              case 1:{
+                
+                     SET_WRITE_DB SW;
+                     SW.askDeatails();
+                     break;
+                     }
+              case 2:{}
+              case 3:{}
+              case 4:{}
+              default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);}
+            }
       
             APP.scrClr(2);
           }
