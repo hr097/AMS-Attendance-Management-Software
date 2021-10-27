@@ -383,9 +383,6 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   string course_name,sem,subject_name;
 
   
-  
-
-
   public:
 
   protected:
@@ -444,7 +441,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     getline(cin,subject_name);
     scrClr(0.5);
 
-     fflush(stdin);
+    fflush(stdin);
 
   }
 
