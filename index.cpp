@@ -10,7 +10,7 @@
 #include<stdbool.h> // * boolean operation
 #include<math.h> //* math operations
 
-#ifndef _WIN32_WINNT  //*if that file not exist then condtional compila6ion would be done and those files will be included
+#ifndef _WIN32_WINNT  //*if that macro not exist then condtional compila6ion would be done and those files will be included
   #define _WIN32_WINNT 0x0601
   #include<wincon.h>
   #include<string>
@@ -40,19 +40,20 @@ lpConsoleCurrentFontEx);
 
 //*code removed here which was for desktop path
 
-using namespace std; // namespace for  resolving name coflicts
+using namespace std; // namespace for  resolving naming coflicts
 
 /*******************GENERAL FUNCTION CLASS THAT ARE USED BY GLOBAL SCOPE FUNCTIONS********************************/
-class GENERAL_INIT
+
+class GENERAL_INIT //*GRAND PARENT CLASS
 {
 
 public:
 
-int ConvertChoiceToINT;
-static int MODULE_CHOICE;
+int ConvertChoiceToINT; //*variable for converting string input to integer
+static int MODULE_CHOICE; //*module selector static variable
 
 
-void SetColor(int ForgC)
+void SetColor(int ForgC) //*for setting individual text color
 {
   WORD wColor;
   HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -67,7 +68,7 @@ void SetColor(int ForgC)
 }
 
 
-void setCursorPos(int x, int y=0) //IMPORTANT : *relative position is set
+void setCursorPos(int x, int y=0) //IMPORTANT : ->relative position is set
 {
   
   //*vertical lines space 
@@ -105,13 +106,7 @@ void scrClr(float i=0.0) //*for clearing screen afer some time
   system("cls"); // * clear screen
 }
 
-void exitApp(int status=0) // exit program with status 0=success, 1=failure
-{
-  cout<<"PRESS ANY KEY TO EXIT...";
-  ShowConsoleCursor(false);
-  getch();
-  exit(status);
-}
+//*exit app code removed as we have exit option in input choice 
 
 
 void buildVerticalWall(int briks)
