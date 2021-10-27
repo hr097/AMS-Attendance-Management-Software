@@ -6,9 +6,22 @@
 #include<unistd.h> // * for sleep function
 #include<iomanip> // * for manipulator
 #include<cwchar>  //*for console font purpose 
-#include<string.h> //* for fonts purpose making is big-small and bold
+#include<string.h> //*  string related functions access
 #include<stdbool.h> // * boolean operation
 #include<math.h> //* math operations
+
+
+//--------FOR-DOCUMENT PATH GETTING------/
+
+#include <shlobj.h> 
+#include <sys/types.h>
+
+#include <sys/stat.h>
+#include <direct.h>
+
+#pragma comment(lib, "shell32.lib")  //? for document path finding 
+
+//--------FOR-DOCUMENT PATH GETTING------/
 
 #ifndef _WIN32_WINNT  //*if that macro not exist then condtional compila6ion would be done and those files will be included
   #define _WIN32_WINNT 0x0601
@@ -193,9 +206,9 @@ int validateString(string input,int Bnd) //* string input validate as integer
   }
 
 
-~ConvertChoiceToINT()
+~GENERAL_INIT()
 {
-  
+
 }
   
 private:
@@ -364,10 +377,57 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
   private:
 
   public:
-
+  MODULE_GENERAL_FUNCTION()
+  {
+  }
+  ~MODULE_GENERAL_FUNCTION()
+  {
+  }
+  
   protected:
   
+  void convertStringtoArray(string arg,char* argcopy) //meaning itself defining
+  {
+  int i;
+  for(i=0;i<arg.length();i++)
+  {
+   *(argcopy+i) = arg[i];
+  }
+  *(argcopy+i)='\0';
+  }
 
+  string convertIntToString(int &in)
+  {
+  string str = to_string(in);
+  return str;
+  }
+
+  string convertArrayTostring(char* arg) //meaning itself defining
+  {
+  string re(arg);
+  return re;
+  }
+
+  int dirExists(const char *path) //checking function if directory exists or not 1=EXIST 0=NOT EXIST
+  {
+    struct stat info;
+
+    if(stat( path, &info ) != 0)
+        return 0;
+    else if(info.st_mode & S_IFDIR)
+        return 1;
+    else
+        return 0;
+  }
+  
+ void debug(int do=0) //for debugging purposes at last we will delete it 0=pause 1=pause & print
+ {
+   #include<conio.h> // * console input output library
+   if(!do)
+   getch();
+   else
+   cout<<endl<<"DEBUG"<<endl;
+ } 
 };
 
 class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
@@ -380,8 +440,8 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   private:
 
 
-  string course_name,sem,subject_name;
-
+  string course_name,sem,subject_name,AMS_Path,command,SemCreatePath;
+  
   
   public:
 
@@ -403,17 +463,72 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   public:
   SET_WRITE_DB() //TODO:CONSTRUCTOR
   {
+    CHAR pathDocument[MAX_PATH]; //string to store path
+    HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument);  //getting documents path
+   
+    if (result == S_OK)  //check if  documents path is successfully stored in pathdocuments
+    { 
+    AMS_Path = pathDocument; // take original documents path into string
+    AMS_Path =  AMS_Path + "\\AMS"; //making AMS folder path
+    }
+    else
+    {
+        cout << "Error Path Not found: " << result << "\n";
+    }
     
   }
   /********************************* MODULE_1 *********************************/
 
   private:
+  
+  void createSemester()
+  {
+    SemCreatePath = AMS_Path + "\\" + course_name + "_SEM_" + sem; //backup for getting ROOT-OF-AMS  path
+    if(!dirExists(SemCreatePath.c_str())) //if directory not exists then create it
+        {  
+            command = "mkdir " +  SemCreatePath;                //making commad which will pass in cmd
+            ////cout<<"commad 1 for creating directory "<<command<<endl;
+            system(command.c_str());      // creating  directory by CMD
+             
+            /*********************  FOLDERS *******************/
+            
+             command = "mkdir " + SemCreatePath + "\\DAILY_RECORD" ; // making COMMAND FOR DAILY_RECORD folder
+             ////cout<<"commad 1 for creating directory "<<command<<endl;
+             system(command.c_str()); // creating DAILY_RECORD directory by CMD
+             
+             command = "mkdir " + SemCreatePath + "\\FAC-STUD_DETAILS" ; // making COMMAND FOR FAC&STUD_DETAILS folder
+             ////cout<<"commad 1 for creating directory "<<command<<endl;
+             system(command.c_str()); // creating FAC&STUD_DETAILS directory by CMD
+             
+             command = "mkdir " + SemCreatePath + "\\MONTHLY_RECORDS" ; // making COMMAND FOR MONTHLY_RECORDS folder
+             ////  cout<<"commad 1 for creating directory "<<command<<endl;
+             system(command.c_str()); // creating MONTHLY_RECORDS directory by CMD
+
+             /**************************************************/
+             
+             /*******************  FILES *********************/
+             
+              command = "cd. > " + SemCreatePath + "\\DAILY_RECORD\\records.txt"; // RECORDS.TXT file
+              system(command.c_str()); 
+               
+              command = "cd. > " + SemCreatePath + "\\FAC-STUD_DETAILS\\faculty"+"_sem_"+ sem +".txt"; // faculty_details.TXT file
+              system(command.c_str());  
+               
+              command = "cd. > " + SemCreatePath + "\\FAC-STUD_DETAILS\\student"+"_sem_"+ sem +".txt"; // student_details.TXT file
+              system(command.c_str()); 
+
+              /***********************************************/
+        }
+        else 
+        {
+          ////cout<<endl<<"\nDirectory Already Exist\n";
+        }
+  }
 
   public:
 
   void askDetails()
   { 
-
 
     scrClr(0.5);
     setCursorPos(9,26);
@@ -440,11 +555,13 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     cout<<"ENTER SUBJECT  : ";
     getline(cin,subject_name);
     scrClr(0.5);
-
+    
     fflush(stdin);
 
+    createSemester();
+    
   }
-
+ 
   protected:
 
   /****************************************************************************/
