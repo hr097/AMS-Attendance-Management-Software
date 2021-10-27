@@ -527,7 +527,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     setCursorPos(1,15);
     if(line==1)
     {
-      buildHorizontalWall(43,"Confirm these details (yes/no) :");     
+      buildHorizontalWall(43,"Confirm these details (yes/no) ");     
   
     }
     else 
@@ -564,12 +564,6 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
 
   }
 
-  /**************     confirmation       ****************/
-
-
-
-
-  /******************************************************/
 
   protected:
 
