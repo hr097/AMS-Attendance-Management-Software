@@ -420,10 +420,10 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
         return 0;
   }
   
- void debug(int do=0) //for debugging purposes at last we will delete it 0=pause 1=pause & print
+ void debug(int do_what=0) //for debugging purposes at last we will delete it 0=pause 1=pause & print
  {
    #include<conio.h> // * console input output library
-   if(!do)
+   if(!do_what)
    getch();
    else
    cout<<endl<<"DEBUG"<<endl;
@@ -556,10 +556,11 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     getline(cin,subject_name);
     scrClr(0.5);
     
-    fflush(stdin);
+
 
     createSemester();
-    
+
+    fflush(stdin);
   }
  
   protected:
