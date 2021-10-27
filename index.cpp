@@ -411,7 +411,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
 
   public:
 
-  void askDeatails()
+  void askDetails()
   { 
 
 
@@ -463,14 +463,6 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   //?=============================MEMBERS-FUNCTIONS===================================//
 };
 
-
- 
- 
- 
- 
-
-
-
 /****************************MODULE-END************************************/
 
 int main()
@@ -494,7 +486,7 @@ int main()
             switch(GENERAL_INIT::MODULE_CHOICE)
             {
               case 1:{
-                     SW.askDeatails();
+                     SW.askDetails();
                      break;
                      }
               case 2:{
