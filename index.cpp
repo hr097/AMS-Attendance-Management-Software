@@ -198,6 +198,23 @@ int validateString(string input,int Bnd)
   }
 
 
+  int validateString(string input)
+  {
+    if(input == "YES" || input == "yes")
+    {
+      return 1;
+    }
+    else if(input == "NO" || input == "no")
+    {
+      return 0;
+    }
+    else
+    {
+      return -1;
+    }
+  }
+
+
 
 private:
 
@@ -410,7 +427,11 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   private:
 
 
-  string course_name,sem,subject_name;
+  string course_name,sem,subject_name,ans;
+  int ret_ans;
+
+  /******    temp area    ********/
+  string faculty_name = "Harshil Ramani",faculty_email= "harshilramani.mscit20@vnsgu.ac.in";
 
   
   
@@ -472,11 +493,83 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     setCursorPos(9,26);
     cout<<"ENTER SUBJECT  : ";
     getline(cin,subject_name);
+
     scrClr(0.5);
 
      fflush(stdin);
 
   }
+
+  void confirmation()
+  {
+
+    setCursorPos(4,15);
+    cout<<"FACULTY NAME "<< right << setw(5) <<":" <<faculty_name;
+    setCursorPos(1,15);
+    cout<<"FACULTY E-MAIL "<< right << setw(3) <<":" <<faculty_email;
+    setCursorPos(1,15);
+    cout<<"COURSE NAME "<< right << setw(6) <<":" <<course_name;
+    setCursorPos(1,15);
+    cout<<"SEMESTER "<< right << setw(9) <<":" <<sem;
+    setCursorPos(1,15);
+    cout<<"SUBJECT "<< right << setw(10) <<":" <<subject_name;
+    
+
+
+
+
+  setCursorPos(2,15);
+
+  buildVerticalWall(43);
+  int line=0;
+  while(line<3)
+  {
+    setCursorPos(1,15);
+    if(line==1)
+    {
+      buildHorizontalWall(43,"Confirm these details (yes/no) :");     
+  
+    }
+    else 
+    {
+      buildHorizontalWall(43," ");
+  
+    }
+  
+    line++;
+  }
+  setCursorPos(1,15);
+  buildVerticalWall(43);
+
+  setCursorPos(1,35);
+
+  cin>>ans;
+  ret_ans = validateString(ans);
+
+  if(ret_ans == 1)
+  {
+    setCursorPos(2,10);
+    cout<< "This message is for confirmation for now after we will remove it"<<endl;
+  }
+  else if(ret_ans == 0)
+  {
+    setCursorPos(2,10);
+    cout<< "This message is for confirmation for now after we will remove it"<<endl;
+  }
+  else
+  {
+    setCursorPos(2,10);
+    cout<< "This msg is for any other input except yes and no!!" << endl;
+  }
+
+  }
+
+  /**************     confirmation       ****************/
+
+
+
+
+  /******************************************************/
 
   protected:
 
@@ -528,6 +621,7 @@ int main()
             {
               case 1:{
                      SW.askDeatails();
+                     SW.confirmation();
                      break;
                      }
               case 2:{
