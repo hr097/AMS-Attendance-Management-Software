@@ -9,6 +9,10 @@
 #include<string.h> //*  string related functions access
 #include<stdbool.h> // * boolean operation
 #include<math.h> //* math operations
+#include<fstream> //* file handling functions access
+
+
+
 
 
 //--------FOR-DOCUMENT PATH GETTING------/
@@ -379,13 +383,52 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
   public:
   MODULE_GENERAL_FUNCTION()
   {
+
   }
   ~MODULE_GENERAL_FUNCTION()
   {
+
   }
   
   protected:
-  
+
+  string AMS_Path,FacultyName,FacultyEmail;
+
+  void AppPath(string &path)
+  {
+    CHAR pathDocument[MAX_PATH]; //string to store path
+    HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument);  //getting documents path
+   
+    if (result == S_OK)  //check if  documents path is successfully stored in pathdocuments
+    { 
+    path = pathDocument; // take original documents path into string
+    path =  path + "\\AMS"; //making AMS folder path
+    }
+    else
+    {
+        cout << "ERROR PATH NOT FOUND : " << result << "\n";
+    }
+  }  
+  void getDataFromFile(string path,string &FcName,int lineNo)
+  {
+   ifstream read(path.c_str(),ios::in);
+
+   if(!read.is_open())
+   {
+     cout<<endl<<"UNABLE TO OPEN THE FILE AT GIVEN PATH : "<<path<<endl; 
+   }
+   else
+   {
+     int line=1;
+     while(line<=lineNo)
+     {
+       getline(read,FcName);
+       line++;
+     }
+   }
+   read.close();
+  }
+
   void convertStringtoArray(string arg,char* argcopy) //meaning itself defining
   {
   int i;
@@ -440,7 +483,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   private:
 
 
-  string course_name,sem,subject_name,AMS_Path,command,SemCreatePath;
+  string course_name,sem,subject_name,command,SemCreatePath;
   
   
   public:
@@ -463,19 +506,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   public:
   SET_WRITE_DB() //TODO:CONSTRUCTOR
   {
-    CHAR pathDocument[MAX_PATH]; //string to store path
-    HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument);  //getting documents path
-   
-    if (result == S_OK)  //check if  documents path is successfully stored in pathdocuments
-    { 
-    AMS_Path = pathDocument; // take original documents path into string
-    AMS_Path =  AMS_Path + "\\AMS"; //making AMS folder path
-    }
-    else
-    {
-        cout << "Error Path Not found: " << result << "\n";
-    }
-    
+    AppPath(AMS_Path);
   }
   /********************************* MODULE_1 *********************************/
 
@@ -556,7 +587,12 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     getline(cin,subject_name);
     scrClr(0.5);
     
-
+    command = AMS_Path + "\\USER_INFO\\userdetails.txt";
+   
+    getDataFromFile(command,FacultyName,1);
+    getDataFromFile(command,FacultyEmail,2);
+    
+    //cout<<FacultyEmail<<"\t"<<FacultyName<<endl;
 
     createSemester();
 
