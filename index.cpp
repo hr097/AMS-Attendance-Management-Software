@@ -10,6 +10,8 @@
 #include<stdbool.h> // * boolean operation
 #include<math.h> //* math operations
 
+#include<sstream>//* string operations comprae
+
 #ifndef _WIN32_WINNT 
   #define _WIN32_WINNT 0x0601
   #include<wincon.h>
@@ -53,6 +55,23 @@ class GENERAL_INIT
 public:
 
 static int MODULE_CHOICE;
+
+void SetColor(int ForgC=0)
+{
+ WORD wColor;
+
+  HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+                       //We use csbi for the wAttributes word.
+ if(GetConsoleScreenBufferInfo(hStdOut, &csbi))
+ {
+      //Mask out all but the background attribute, and add in the forgournd color
+      wColor = (csbi.wAttributes & 0xF0) + (ForgC & 0x0F);
+      SetConsoleTextAttribute(hStdOut, wColor);
+ }
+ return;
+}
 
 void setCursorPos(int x, int y=0) //IMPORTANT : *relative position is set
 {
@@ -238,10 +257,12 @@ int askChoice()
   if(operationChoice<1||operationChoice>5)
   {        
      scrClr();
-     setCursorPos(2,24);
+     setCursorPos(8,26);
+     SetColor(4);
      cout<<"INVALID CHOICE ENTERTED !"<<endl;
      setCursorPos(2,20);
      cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
+     SetColor(0);
      scrClr(1);
      goto re_ask;
   }
@@ -342,7 +363,6 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
       }
       return 0;
   }
-
 };
 
 class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
@@ -354,7 +374,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   
   private:
 
-  string course_name;
+  string course_name,subject_name;
   int sem;
 
   public:
@@ -385,22 +405,35 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
 
   public:
 
-  void askDeatails()
+  void askDetails()
   { 
     
+    setCursorPos(7,26);
     cout<<"ENTER COURSE NAME : ";
-    cin>>course_name;
+    fflush(stdin);
+    getline(cin,course_name);
     
     reinputOfsem:
     fflush(stdin);
 
+    scrClr(0.5);
+    setCursorPos(9,26);
     cout<<"ENTER SEMESTER : ";
+    fflush(stdin);
     cin>>sem;
 
     if(checkNumberInput(&sem,10))
-    {goto reinputOfsem;}
-
-     fflush(stdin);
+    {
+      goto reinputOfsem;
+    }
+  
+    
+    scrClr(0.5);
+    setCursorPos(9,26);
+    cout<<"ENTER SUBJECT NAME : ";
+    fflush(stdin);
+    getline(cin,subject_name);
+    
 
   }
 
@@ -453,7 +486,7 @@ int main()
             switch(GENERAL_INIT::MODULE_CHOICE)
             {
               case 1:{
-                     SW.askDeatails();
+                     SW.askDetails();
                      break;
                      }
               case 2:{
