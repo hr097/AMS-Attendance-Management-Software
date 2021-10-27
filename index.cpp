@@ -10,8 +10,6 @@
 #include<stdbool.h> // * boolean operation
 #include<math.h> //* math operations
 
-#include<sstream>//* string operations comprae
-
 #ifndef _WIN32_WINNT 
   #define _WIN32_WINNT 0x0601
   #include<wincon.h>
@@ -54,24 +52,24 @@ class GENERAL_INIT
 
 public:
 
+int ConvertChoiceToINT;
 static int MODULE_CHOICE;
 
-void SetColor(int ForgC=0)
+
+void SetColor(int ForgC)
 {
- WORD wColor;
-
+  WORD wColor;
   HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-  CONSOLE_SCREEN_BUFFER_INFO csbi;
-
-                       //We use csbi for the wAttributes word.
- if(GetConsoleScreenBufferInfo(hStdOut, &csbi))
- {
-      //Mask out all but the background attribute, and add in the forgournd color
-      wColor = (csbi.wAttributes & 0xF0) + (ForgC & 0x0F);
-      SetConsoleTextAttribute(hStdOut, wColor);
- }
- return;
+  CONSOLE_SCREEN_BUFFER_INFO csbi;//We use csbi for the wAttributes word.
+  if(GetConsoleScreenBufferInfo(hStdOut, &csbi))
+  {
+    //Mask out all but the background attribute, and add in the forgournd color
+    wColor = (csbi.wAttributes & 0xF0) + (ForgC & 0x0F);
+    SetConsoleTextAttribute(hStdOut, wColor);
+  }
+  return;
 }
+
 
 void setCursorPos(int x, int y=0) //IMPORTANT : *relative position is set
 {
@@ -82,11 +80,8 @@ void setCursorPos(int x, int y=0) //IMPORTANT : *relative position is set
   
   while(x>0)
   {
-  
     cout<<endl;  
-  
     x--;
-  
   }
 
   while(y!=0) //*horizontal cursor space by 1 charecter
@@ -167,6 +162,43 @@ void startApp()
   
 }
 
+int validateString(string input,int Bnd)
+  {
+
+      int flag=0,tem=1;
+      string i;
+      for(tem=1;tem<=Bnd;tem++)
+      {
+          i = to_string(tem);
+          if(i == input)
+          {
+            flag = 1;
+            break;
+          }
+      }
+      if(flag==0)
+      {
+        scrClr();
+        setCursorPos(8,26);
+        SetColor(4);
+        cout<<"INVALID CHOICE ENTERTED !"<<endl;
+        setCursorPos(1,20);
+        cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
+        scrClr(1);
+        SetColor(0);
+        
+        return 0;
+      }
+      else
+      {
+        return tem;
+      }
+
+
+  }
+
+
+
 private:
 
 void initApp()
@@ -207,9 +239,13 @@ int askChoice()
 { 
   
   re_ask:
+
+  
   mainTitleOFapplication();
   bool match = false;
-  float operationChoice;
+  string operationChoice;
+
+
   //setCursorPos(2,25);
   // HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
   // SetConsoleTextAttribute(hConsole,10);
@@ -238,8 +274,11 @@ int askChoice()
   }
   setCursorPos(1,15);
   buildVerticalWall(43);
-  do
-  {
+
+ 
+
+  
+
 
    setCursorPos(2,30);
    cout<<"CHOICE : ";
@@ -250,28 +289,15 @@ int askChoice()
        cin.clear();
        cin.ignore(80,'\n');
    }
-  else if(operationChoice>=101&&operationChoice<=110)
-  {
-      match=true;
-  }
-  if(operationChoice<1||operationChoice>5)
-  {        
-     scrClr();
-     setCursorPos(8,26);
-     SetColor(4);
-     cout<<"INVALID CHOICE ENTERTED !"<<endl;
-     setCursorPos(2,20);
-     cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
-     SetColor(0);
-     scrClr(1);
-     goto re_ask;
-  }
-  operationChoice =(int)floor(operationChoice);  // * for stop looping error float
-  if(operationChoice==1||operationChoice==2||operationChoice==3||operationChoice==4||operationChoice==5)
-  {break;}
-}while(match!=true);
 
-return(operationChoice);
+   ConvertChoiceToINT = validateString(operationChoice,10);
+  if(!ConvertChoiceToINT)
+  {
+       
+      goto re_ask;
+  }
+  return(ConvertChoiceToINT);
+
 }
 
 int GetDesktopResolution() //? for getting particular device size screen 
@@ -354,15 +380,24 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
       if(*(input)<1||*(input)>Bnd)
       {        
       scrClr();
+
+      setCursorPos(8,26);
+      cout<<"INVALID CHOICE ENTERTED !"<<endl;
+      setCursorPos(10,26);
+
       setCursorPos(2,24);
       cout<<"INVALID CHOICE ENTERTED !"<<endl;
       setCursorPos(2,20);
+
       cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
       scrClr(1);
         return 1;
       }
       return 0;
   }
+
+
+
 };
 
 class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
@@ -374,8 +409,12 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   
   private:
 
-  string course_name,subject_name;
-  int sem;
+
+  string course_name,sem,subject_name;
+
+  
+  
+
 
   public:
 
@@ -405,35 +444,37 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
 
   public:
 
-  void askDetails()
+  void askDeatails()
   { 
+
+
+    scrClr(0.5);
+    setCursorPos(9,26);
     
-    setCursorPos(7,26);
     cout<<"ENTER COURSE NAME : ";
     fflush(stdin);
     getline(cin,course_name);
+    scrClr(0.5);
+    
     
     reinputOfsem:
     fflush(stdin);
-
-    scrClr(0.5);
     setCursorPos(9,26);
     cout<<"ENTER SEMESTER : ";
-    fflush(stdin);
     cin>>sem;
-
-    if(checkNumberInput(&sem,10))
-    {
-      goto reinputOfsem;
-    }
-  
-    
     scrClr(0.5);
-    setCursorPos(9,26);
-    cout<<"ENTER SUBJECT NAME : ";
-    fflush(stdin);
-    getline(cin,subject_name);
     
+    if(!validateString(sem,10))
+    {goto reinputOfsem;}
+
+    fflush(stdin);
+    
+    setCursorPos(9,26);
+    cout<<"ENTER SUBJECT  : ";
+    getline(cin,subject_name);
+    scrClr(0.5);
+
+     fflush(stdin);
 
   }
 
@@ -486,7 +527,7 @@ int main()
             switch(GENERAL_INIT::MODULE_CHOICE)
             {
               case 1:{
-                     SW.askDetails();
+                     SW.askDeatails();
                      break;
                      }
               case 2:{
