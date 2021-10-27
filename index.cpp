@@ -51,8 +51,27 @@ class GENERAL_INIT
 {
 
 public:
-
+int ConvertChoiceToINT;
 static int MODULE_CHOICE;
+
+
+void SetColor(int ForgC)
+{
+ WORD wColor;
+
+  HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+                       //We use csbi for the wAttributes word.
+ if(GetConsoleScreenBufferInfo(hStdOut, &csbi))
+ {
+      //Mask out all but the background attribute, and add in the forgournd color
+      wColor = (csbi.wAttributes & 0xF0) + (ForgC & 0x0F);
+      SetConsoleTextAttribute(hStdOut, wColor);
+ }
+ return;
+}
+
 
 void setCursorPos(int x, int y=0) //IMPORTANT : *relative position is set
 {
@@ -147,7 +166,41 @@ void startApp()
   }
   
 }
+int validateString(string input,int Bnd)
+  {
 
+      int flag=0,tem=1;
+      string i;
+
+      for(tem=1;tem<=Bnd;tem++)
+      {
+          i = to_string(tem);
+          if(i == input)
+          {
+            flag = 1;
+            break;
+          }
+      }
+      if(flag==0)
+      {
+        scrClr();
+        setCursorPos(8,26);
+        SetColor(4);
+        cout<<"INVALID CHOICE ENTERTED !"<<endl;
+        setCursorPos(1,20);
+        cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
+        scrClr(1);
+        SetColor(0);
+        
+        return 0;
+      }
+      else
+      {
+        return tem;
+      }
+
+
+  }
 private:
 
 void initApp()
@@ -188,9 +241,10 @@ int askChoice()
 { 
   
   re_ask:
+  
   mainTitleOFapplication();
   bool match = false;
-  float operationChoice;
+  string operationChoice;
   //setCursorPos(2,25);
   // HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
   // SetConsoleTextAttribute(hConsole,10);
@@ -219,8 +273,7 @@ int askChoice()
   }
   setCursorPos(1,15);
   buildVerticalWall(43);
-  do
-  {
+ 
 
    setCursorPos(2,30);
    cout<<"CHOICE : ";
@@ -231,26 +284,13 @@ int askChoice()
        cin.clear();
        cin.ignore(80,'\n');
    }
-  else if(operationChoice>=101&&operationChoice<=110)
+   ConvertChoiceToINT = validateString(operationChoice,10);
+  if(!ConvertChoiceToINT)
   {
-      match=true;
+       
+      goto re_ask;
   }
-  if(operationChoice<1||operationChoice>5)
-  {        
-     scrClr();
-     setCursorPos(2,24);
-     cout<<"INVALID CHOICE ENTERTED !"<<endl;
-     setCursorPos(2,20);
-     cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
-     scrClr(1);
-     goto re_ask;
-  }
-  operationChoice =(int)floor(operationChoice);  // * for stop looping error float
-  if(operationChoice==1||operationChoice==2||operationChoice==3||operationChoice==4||operationChoice==5)
-  {break;}
-}while(match!=true);
-
-return(operationChoice);
+  return(ConvertChoiceToINT);
 }
 
 int GetDesktopResolution() //? for getting particular device size screen 
@@ -310,114 +350,139 @@ void mainTitleOFapplication()
 /****************************GENERAL-FUNCTION-CLASS-END***************************/
 
 /****************************MODULE-START*****************************************/
-
-class MODULE_1 //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
+class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FUNCTIONS HERE AND INHERIT THIS CLASS TO YOURS
 {
 
+  // ? this are general function class which can be used by all 4 module developers
+  // *email functionalities also be included here since all 2 modules are using it
+  // ? you have to make functions very generalized so other MD developers can use it
+  // ?use can you OOP concepts here function overloading and other...concepts like template
+
   private:
 
   public:
 
+  protected:
+  int checkNumberInput(int *input,int Bnd)
+  {
+      if(!cin)
+      {
+        cin.clear();
+        cin.ignore(80,'\n');
+      }
+      if(*(input)<1||*(input)>Bnd)
+      {        
+      scrClr();
+      setCursorPos(8,26);
+      cout<<"INVALID CHOICE ENTERTED !"<<endl;
+      setCursorPos(10,26);
+      cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
+      scrClr(1);
+        return 1;
+      }
+      return 0;
+  }
+  
+
 };
 
-class MODULE 
-{ 
-  /*---------DATA-MEMBERS-----------*/
+class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
+{
   
+  //!=============================DATA-MEMBERS================================//
+
+  /********************************* MODULE_1 *********************************/
   
-
-
-
-/*---------DATA-MEMBERS-end-----------*/
-
-/*---------MEMBERS-FUNCTION-----------*/
   private:
 
-  void MODULE1()
-  {
-    MODULE_1 MD1; //? JUST LIKE THAT YOU WILL CREATE AN OBJECT OF YOUR MODULE AND WORK WITH THAT HERE IN LOCAL SCOPE
-  }
-  void MODULE2()
-  {
-     cout<<"MODULE 2 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
-  }
-  void MODULE3()
-  {
-     cout<<"MODULE 3 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
-  }
-  void MODULE4()
-  {
-     cout<<"MODULE 4 WILL WORK HERE REMOVE THIS COMMENT "<<endl<<"\n\tAFTER YOU START WORK BUT I WILL EXPLAIN YOU TOMO HOW YOU SHOULD WORK"<<endl;
-  }
-
-/*---------MEMBERS-FUNCTION-end-----------*/
+  string course_name,sem,subject_name;
 
   public:
 
-  MODULE()
-  {
-    //TODO: CREATION OF DATABASE // check also if already exist then "NO creation should be done"
-  }
+  protected:
 
-  void selectModule(int Selectmodule)
-  {
+  /*****************************************************************************/
 
-   if(Selectmodule==1)
-   MODULE1();
-   else if(Selectmodule==2)
-   MODULE2();
-   else if(Selectmodule==3)
-   MODULE3();
-   else if(Selectmodule==4)
-   MODULE4();
-
-  }
-    ~MODULE()
-  {
-     //TODO: HIDING OF DATABASE//at the end of program database should be hidden for protecting it from user's dirct access
-  }
+  /********************************* MODULE_2 *********************************/
+   private:
+   public:
+   protected:
+  /*****************************************************************************/
   
-  //******---------FILE HANDLING------------********/
-
-  //? this are general function which can be used by all 4 module
-  //*email functionalities also be included here since all 2 modules are using it
-  //? you have to make functions very generalized so other MD developers can use it
-  //?use can you OOP concepts here function overloading and other...
+  //!=============================DATA-MEMBERS-END================================// 
   
+
+  //?=============================MEMBERS-FUNCTIONS===================================//
+  
+  public:
+  SET_WRITE_DB() //TODO:CONSTRUCTOR
+  {
+    
+  }
+  /********************************* MODULE_1 *********************************/
+
   private:
-  
-  void checkDBExist()
+
+  public:
+
+  void askDeatails()
+  { 
+
+    scrClr(0.5);
+    setCursorPos(9,26);
+    
+    cout<<"ENTER COURSE NAME : ";
+    fflush(stdin);
+    getline(cin,course_name);
+    scrClr(0.5);
+    
+    
+    reinputOfsem:
+    fflush(stdin);
+    setCursorPos(9,26);
+    cout<<"ENTER SEMESTER : ";
+    cin>>sem;
+    scrClr(0.5);
+    
+    if(!validateString(sem,10))
+    {goto reinputOfsem;}
+
+    fflush(stdin);
+    
+    setCursorPos(9,26);
+    cout<<"ENTER SUBJECT  : ";
+    getline(cin,subject_name);
+    scrClr(0.5);
+
+     fflush(stdin);
+
+  }
+
+  protected:
+
+  /****************************************************************************/
+
+  /********************************* MODULE_2 *********************************/
+   private:
+   public:
+   protected:
+  /****************************************************************************/
+  public:
+
+  ~SET_WRITE_DB() //TODO:DESTRUCTOR
   {
 
   }
-  void createDir()
-  {
-
-  }
-  void createFile()
-  {
-
-  }
-  void deleteFile()
-  {
-
-  }
-  void deleteDir()
-  {
-
-  }
-  void writeDataToExtfile()
-  {
-
-  }
-  void readDataFromExtfile()
-  {
-
-  }
-
-  //******---------FILE HANDLING-END------------********/
-
+  //?=============================MEMBERS-FUNCTIONS===================================//
 };
+
+
+ 
+ 
+ 
+ 
+
+
 
 /****************************MODULE-END************************************/
 
@@ -426,12 +491,11 @@ int main()
     //jay swaminrayan
     //jay ganeshay namh
     bool loop=true;
+    GENERAL_INIT APP;
+    SET_WRITE_DB SW;
 
     while(loop)
     {
-
-          GENERAL_INIT APP;
-          MODULE SELECT;
           APP.startApp();
       
           if(GENERAL_INIT::MODULE_CHOICE!=5)
@@ -440,7 +504,19 @@ int main()
       
             APP.setCursorPos(2,10);
       
-            SELECT.selectModule(GENERAL_INIT::MODULE_CHOICE);
+            switch(GENERAL_INIT::MODULE_CHOICE)
+            {
+              case 1:{
+                     SW.askDeatails();
+                     break;
+                     }
+              case 2:{
+                       break;
+                      }
+              case 3:{}
+              case 4:{}
+              default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);}
+            }
       
             APP.scrClr(2);
           }
