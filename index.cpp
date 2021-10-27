@@ -52,7 +52,10 @@ public:
 int ConvertChoiceToINT; //*variable for converting string input to integer
 static int MODULE_CHOICE; //*module selector static variable
 
-
+GENERAL_INIT()
+{
+  ConvertChoiceToINT=0;
+}
 void SetColor(int ForgC) //*for setting individual text color
 {
   WORD wColor;
@@ -66,8 +69,7 @@ void SetColor(int ForgC) //*for setting individual text color
   }
   return;
 }
-
-
+  
 void setCursorPos(int x, int y=0) //IMPORTANT : ->relative position is set
 {
   
@@ -88,6 +90,7 @@ void setCursorPos(int x, int y=0) //IMPORTANT : ->relative position is set
   }
   
 }
+  
 void ShowConsoleCursor(bool showFlag) //* for hiding the cursor just  set showFlag = false(bool value)
 {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -108,13 +111,13 @@ void scrClr(float i=0.0) //*for clearing screen afer some time
 
 //*exit app code removed as we have exit option in input choice 
 
-
-void buildVerticalWall(int briks)
+void buildVerticalWall(int briks) //* for making rectangle shape
 { cout<<"*";
   while(briks>0){cout<<"-";briks--;}
   cout<<"*";
 }
-void buildHorizontalWall(int endBrick,string data)
+  
+void buildHorizontalWall(int endBrick,string data) //* for making rectangle shape
 { 
   cout<<"|";
   int run=1;
@@ -139,9 +142,9 @@ void buildHorizontalWall(int endBrick,string data)
   cout<<"|";
 }
 
-void startApp()
+void startApp() //* for startup of home screen
 {
-  if(MODULE_CHOICE==0)
+  if(MODULE_CHOICE==0) // only 1 time initiaization function need to be called after 1 time just we need ro refresh home screen so is/else here
   {
     initApp();
     MODULE_CHOICE = askChoice();
@@ -152,8 +155,8 @@ void startApp()
   }
   
 }
-
-int validateString(string input,int Bnd)
+ 
+int validateString(string input,int Bnd) //* string input validate as integer
   {
 
       int flag=0,tem=1;
@@ -163,10 +166,11 @@ int validateString(string input,int Bnd)
           i = to_string(tem);
           if(i == input)
           {
-            flag = 1;
+            flag = 1; //*flag set means we have to give error message otherwise just return control with status original input after string->int conversion int will be returned
             break;
           }
       }
+  
       if(flag==0)
       {
         scrClr();
@@ -189,10 +193,14 @@ int validateString(string input,int Bnd)
   }
 
 
-
+~ConvertChoiceToINT()
+{
+  
+}
+  
 private:
 
-void initApp()
+void initApp() //setting up first time APP screen by making  console full screen
 {
       
         // get handle to the console window
@@ -222,17 +230,17 @@ void initApp()
 
         setConsoleSize();
 
-        system("color F0"); //set while background
+        system("color F0"); //set white background and text black
  
 }
 
-int askChoice()
+int askChoice() //*ask choice at home screen of APP
 { 
   
   re_ask:
 
   
-  mainTitleOFapplication();
+  mainTitleOFapplication(); //TITLE OF APP
   bool match = false;
   string operationChoice;
 
@@ -266,11 +274,6 @@ int askChoice()
   setCursorPos(1,15);
   buildVerticalWall(43);
 
- 
-
-  
-
-
    setCursorPos(2,30);
    cout<<"CHOICE : ";
    cin>>operationChoice;
@@ -281,7 +284,7 @@ int askChoice()
        cin.ignore(80,'\n');
    }
 
-   ConvertChoiceToINT = validateString(operationChoice,10);
+  ConvertChoiceToINT = validateString(operationChoice,10);
   if(!ConvertChoiceToINT)
   {
        
@@ -338,7 +341,9 @@ void mainTitleOFapplication()
    setCursorPos(1);
    cout<<setw(55)<<" || ATTENDANCE MANAGEMENT SYSTEM ||"<<endl;
 }
-
+ 
+  protected:
+  
 };
 
 //---------STATIC DEFINATIONS-----------//
@@ -361,33 +366,7 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
   public:
 
   protected:
-  int checkNumberInput(int *input,int Bnd)
-  {
-      if(!cin)
-      {
-        cin.clear();
-        cin.ignore(80,'\n');
-      }
-      if(*(input)<1||*(input)>Bnd)
-      {        
-      scrClr();
-
-      setCursorPos(8,26);
-      cout<<"INVALID CHOICE ENTERTED !"<<endl;
-      setCursorPos(10,26);
-
-      setCursorPos(2,24);
-      cout<<"INVALID CHOICE ENTERTED !"<<endl;
-      setCursorPos(2,20);
-
-      cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
-      scrClr(1);
-        return 1;
-      }
-      return 0;
-  }
-
-
+  
 
 };
 
