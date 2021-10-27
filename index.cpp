@@ -10,7 +10,7 @@
 #include<stdbool.h> // * boolean operation
 #include<math.h> //* math operations
 
-#ifndef _WIN32_WINNT 
+#ifndef _WIN32_WINNT  //*if that file not exist then condtional compila6ion would be done and those files will be included
   #define _WIN32_WINNT 0x0601
   #include<wincon.h>
   #include<string>
@@ -38,11 +38,7 @@ lpConsoleCurrentFontEx);
 
 #endif // user 2
 
-#ifndef UNICODE  
-  typedef std::string String; 
-#else
-  typedef std::wstring String; 
-#endif
+//*code removed here which was for desktop path
 
 using namespace std; // namespace for  resolving name coflicts
 
