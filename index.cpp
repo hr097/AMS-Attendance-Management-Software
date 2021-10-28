@@ -625,7 +625,7 @@ int confirmation()
   {
 
     reInConfirm:
-    scrClr(0.5);
+    scrClr(2);
 
     
     setCursorPos(5,15);
