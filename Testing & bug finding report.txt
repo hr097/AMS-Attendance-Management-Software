@@ -1,0 +1,66 @@
+                             Memory management,Testing and Bug finding report
+
+Date:25/10/2021
+index.cpp(basic code) file has been checked and it's perfectlly run 
+Bugs : no bugs
+Memory used : based on requirement(no extra variable are declared)
+
+
+Date:27/10/2021
+file : index.cpp
+Bugs : bugs have found and it is fixed(conflict of input of choice like 1.45,1.abc,etc)
+Memory used :  based on requirement(no extra variable are declared)
+
+
+Date:28/10/2021
+file :index.cpp
+Bugs :no bugs
+Memory used : 1 same variable that is "int line" is declared in two functions so we can declare globally one time
+
+
+
+
+
+
+
+
+
+
+variables :
+
+
+***class GENERAL_INIT   		:   int ConvertChoiceToINT;
+                            	            static int MODULE_CHOICE;
+
+   void buildHorizontalWall()  		:int run,int line_start
+   int validateString()        		:int flag=0,tem=1;
+                               		 string i;
+
+   void initApp()       		: short winWidth,short winHeight,short scrBufferWidth,short scrBufferHeight 
+
+   int askChoice()      		: bool match,string operationChoice,int line
+
+   int GetDesktopResolution() 		: int size,int horizontal,int vertical
+
+
+
+
+***class MODULE_GENERAL_FUNCTION 	: public GENERAL_INIT:  string AMS_Path,FacultyName,FacultyEmail ,CHAR pathDocument[MAX_PATH]
+
+   void getDataFromFile(string path,string &FcName,int lineNo): int line=1;
+
+   void convertStringtoArray(string arg,char* argcopy)  : int i , string str
+
+
+
+
+***class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION :  string course_name,sem,subject_name,command,SemCreatePath;
+
+
+   
+   
+                          
+
+
+
+
