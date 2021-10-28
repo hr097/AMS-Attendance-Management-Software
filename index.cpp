@@ -64,6 +64,8 @@ using namespace std; // namespace for  resolving naming coflicts
 class GENERAL_INIT //*GRAND PARENT CLASS
 {
 
+protected:
+  virtual void SetNoObj()=0;
 public:
 
 int ConvertChoiceToINT; //*variable for converting string input to integer
@@ -408,6 +410,7 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
   }
   
   protected:
+      virtual void SetNoObj()=0;
 
   string AMS_Path,FacultyName,FacultyEmail;
 
@@ -507,6 +510,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   public:
 
   protected:
+    void SetNoObj(){}
 
   /*****************************************************************************/
 
@@ -666,7 +670,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   
     fflush(stdin);
   
-    cin>>ans;
+    getline(cin,ans);
     ret_ans = validateString(ans);
     if(ret_ans == -1)
     {
@@ -717,18 +721,18 @@ int main()
     //jay swaminrayan
     //jay ganeshay namh
     bool loop=true;
-    GENERAL_INIT APP;
+    // GENERAL_INIT APP;
     SET_WRITE_DB SW;
 
     while(loop)
     {
-          APP.startApp();
+          SW.startApp();
       
           if(GENERAL_INIT::MODULE_CHOICE!=5)
           {
-            APP.scrClr();
+            SW.scrClr();
       
-            APP.setCursorPos(2,10);
+            SW.setCursorPos(2,10);
       
             switch(GENERAL_INIT::MODULE_CHOICE)
             {
@@ -745,7 +749,7 @@ int main()
               default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);}
             }
       
-            APP.scrClr(2);
+            SW.scrClr(2);
           }
           else
           {
