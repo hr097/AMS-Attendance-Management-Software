@@ -354,7 +354,7 @@ void setConsoleSize() //? for setting console size
   cfi.dwFontSize.Y = GetDesktopResolution();                  // Height getting
   cfi.FontFamily = FF_DONTCARE; // font family doesn't matter
   cfi.FontWeight = FW_NORMAL;   //font normally bold
-  std::wcscpy(cfi.FaceName, L"JetBrains Mono ExtraBold"); // Choose your font BY SETTING FONT FACE
+  std::wcscpy(cfi.FaceName, L"JetBrains Mono Bold"); // Choose your font BY SETTING FONT FACE
   SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi); //pass reference of that structure to OUTPUT HANDLE 
 
 }
@@ -503,16 +503,40 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   void confirmation()
   {
 
-    setCursorPos(4,15);
-    cout<<"FACULTY NAME "<< right << setw(5) <<":" <<faculty_name;
+  //   setCursorPos(2,15);
+
+  // buildVerticalWall(30);
+  // int line=0;
+  // while(line<5)
+  // {
+  // setCursorPos(1,15);
+  // if(line==1)
+  // buildHorizontalWall(30,faculty_name);
+  // // else if(line==3)
+  // // buildHorizontalWall(43,"2) TAKE ATTENDANCE ");
+  // // else if(line==5)
+  // // buildHorizontalWall(43,"3) CUSTOMIZED ATTENDANCE REPORT ");
+  // // else if(line==7)
+  // // buildHorizontalWall(43,"4) SEARCH & UPDATE DETAILS ");
+  // // else if(line==9)
+  // // buildHorizontalWall(43,"5) EXIT ");
+  // else 
+  // buildHorizontalWall(30," ");
+  // line++;
+  // }
+  // setCursorPos(1,15);
+  // buildVerticalWall(30);
+     
+    setCursorPos(5,15);
+    cout<<"FACULTY NAME "<< right << setw(5) <<": " <<faculty_name;
     setCursorPos(1,15);
-    cout<<"FACULTY E-MAIL "<< right << setw(3) <<":" <<faculty_email;
+    cout<<"FACULTY E-MAIL "<< right << setw(3) <<": " <<faculty_email;
     setCursorPos(1,15);
-    cout<<"COURSE NAME "<< right << setw(6) <<":" <<course_name;
+    cout<<"COURSE NAME "<< right << setw(6) <<": " <<course_name;
     setCursorPos(1,15);
-    cout<<"SEMESTER "<< right << setw(9) <<":" <<sem;
+    cout<<"SEMESTER "<< right << setw(9) <<": " <<sem;
     setCursorPos(1,15);
-    cout<<"SUBJECT "<< right << setw(10) <<":" <<subject_name;
+    cout<<"SUBJECT "<< right << setw(10) <<": " <<subject_name;
     
 
 
