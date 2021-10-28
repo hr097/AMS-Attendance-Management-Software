@@ -99,7 +99,6 @@ void setCursorPos(int x, int y=0) //IMPORTANT : ->relative position is set
     cout<<endl;  
     x--;
   }
-
   while(y!=0) //*horizontal cursor space by 1 charecter
   {
     printf(" ");
@@ -374,7 +373,7 @@ void setConsoleSize() //? for setting console size
 void mainTitleOFapplication()
 {  
    setCursorPos(1);
-   cout<<setw(55)<<" || ATTENDANCE MANAGEMENT SYSTEM ||"<<endl;
+   cout<< setw(55) <<" || ATTENDANCE MANAGEMENT SYSTEM ||"<<endl;
 }
  
   protected:
@@ -615,84 +614,82 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     fflush(stdin);
     
 
-    //confirmation();
+    confirmation();
     createSemester();
 
     
   }
 
-int confirmation()
+  int confirmation()
   {
-
-    reInConfirm:
-    scrClr(0.5);
-
-    
-    setCursorPos(5,15);
-    cout<<"FACULTY NAME "<< right << setw(5) <<": " <<FacultyName;
-    setCursorPos(1,15);
-    cout<<"FACULTY E-MAIL "<< right << setw(3) <<": " <<FacultyEmail;
-    setCursorPos(1,15);
-    cout<<"COURSE NAME "<< right << setw(6) <<": " <<course_name;
-    setCursorPos(1,15);
-    cout<<"SEMESTER "<< right << setw(9) <<": " <<sem;
-    setCursorPos(1,15);
-    cout<<"SUBJECT "<< right << setw(10) <<": " <<subject_name;
-    
-
-  setCursorPos(2,15);
-
-  buildVerticalWall(43);
-  int line=0;
-  while(line<3)
-  {
-    setCursorPos(1,15);
-    if(line==1)
+  
+      reInConfirm:
+      
+  
+      
+      setCursorPos(5,15);
+      cout<<"FACULTY NAME "<< right << setw(5) <<": " <<FacultyName;
+      setCursorPos(1,15);
+      cout<<"FACULTY E-MAIL "<< right << setw(3) <<": " <<FacultyEmail;
+      setCursorPos(1,15);
+      cout<<"COURSE NAME "<< right << setw(6) <<": " <<course_name;
+      setCursorPos(1,15);
+      cout<<"SEMESTER "<< right << setw(9) <<": " <<sem;
+      setCursorPos(1,15);
+      cout<<"SUBJECT "<< right << setw(10) <<": " <<subject_name;
+      
+  
+    setCursorPos(2,15);
+  
+    buildVerticalWall(43);
+    int line=0;
+    while(line<3)
     {
-      buildHorizontalWall(43,"Confirm these details (yes/no) ");     
-  
+      setCursorPos(1,15);
+      if(line==1)
+      {
+        buildHorizontalWall(43,"Confirm these details (yes/no) ");     
+    
+      }
+      else 
+      {
+        buildHorizontalWall(43," ");
+    
+      }
+    
+      line++;
     }
-    else 
+    setCursorPos(1,15);
+    buildVerticalWall(43);
+  
+    setCursorPos(1,35);
+  
+    fflush(stdin);
+  
+    cin>>ans;
+    ret_ans = validateString(ans);
+    if(ret_ans == -1)
     {
-      buildHorizontalWall(43," ");
-  
+      setCursorPos(2,10);
+      cout<< "Invalid Input!!"<<endl;
+      scrClr(2);
+      goto reInConfirm;
     }
-  
-    line++;
-  }
-  setCursorPos(1,15);
-  buildVerticalWall(43);
-
-  setCursorPos(1,35);
-
-  fflush(stdin);
-
-  cin>>ans;
-  ret_ans = validateString(ans);
-
-  if(ret_ans == 1)
-  {
-    
-     setCursorPos(2,10);
-     cout<< "This message is for yes confirmation for now after we will remove it"<<endl;
-     return(ret_ans);
-  }
-  else if(ret_ans == 0)
-  {
-    
-     setCursorPos(2,10);
-     cout<< "This message is for no confirmation for now after we will remove it"<<endl;
-    return(ret_ans);
-  }
-   if(ret_ans == -1)
-   {
-     setCursorPos(2,10);
-     cout<< "Invalid Input!!"<<endl;
-     goto reInConfirm;
-
-   }
-
-
+    if(ret_ans == 1)
+    {
+      
+       setCursorPos(2,10);
+       cout<< "This message is for yes confirmation for now after we will remove it"<<endl;
+       //return(ret_ans);
+    }
+    else if(ret_ans == 0)
+    {
+      
+       setCursorPos(2,10);
+       cout<< "This message is for no confirmation for now after we will remove it"<<endl;
+      //return(ret_ans);
+    }
+   return(ret_ans);
   }
  
   protected:
@@ -737,7 +734,7 @@ int main()
             {
               case 1:{
                      SW.askDetails();
-                     SW.confirmation();
+                     //SW.confirmation();
                      break;
                      }
               case 2:{
