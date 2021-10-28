@@ -1,0 +1,15 @@
+NOTE:->INHERITED PROPERTIES OF APP CLASS +  MODULE_GENERAL
+
+ 
+	 PUBLIC OF MODULE_GENERAL->PUBLIC OF  SET_WRITE_DB
+	   PROTECTED OF MODULE_GENERAL-> PROTECTED OF  SET_WRITE_DB
+
+---------------------------------------------------------------------
+
+private:
+  int createSemester()
+  int  confirmation() 
+public:
+void askFacDetails()
+
+protected:
