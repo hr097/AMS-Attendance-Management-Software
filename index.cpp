@@ -60,6 +60,7 @@ lpConsoleCurrentFontEx);
 using namespace std; // namespace for  resolving naming coflicts
 
 /*******************GENERAL FUNCTION CLASS THAT ARE USED BY GLOBAL SCOPE FUNCTIONS********************************/
+int line;
 
 class GENERAL_INIT //*GRAND PARENT CLASS
 {
@@ -289,7 +290,7 @@ int askChoice() //*ask choice at home screen of APP
   setCursorPos(2,15);
 
   buildVerticalWall(43);
-  int line=0;
+  line=0;
   while(line<11)
   {
   setCursorPos(1,15);
@@ -312,7 +313,7 @@ int askChoice() //*ask choice at home screen of APP
 
    setCursorPos(2,30);
    cout<<"CHOICE : ";
-   cin>>operationChoice;
+   getline(cin,operationChoice);
 
    if (!cin)
    {
@@ -320,7 +321,7 @@ int askChoice() //*ask choice at home screen of APP
        cin.ignore(80,'\n');
    }
 
-  ConvertChoiceToINT = validateString(operationChoice,10);
+  ConvertChoiceToINT = validateString(operationChoice,5);
   if(!ConvertChoiceToINT)
   {
        
@@ -439,7 +440,7 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
    }
    else
    {
-     int line=1;
+     line=1;
      while(line<=lineNo)
      {
        getline(read,FcName);
@@ -635,7 +636,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
       cout<<"FACULTY NAME "<< right << setw(5) <<": " <<FacultyName;
       setCursorPos(1,15);
       cout<<"FACULTY E-MAIL "<< right << setw(3) <<": " <<FacultyEmail;
-      setCursorPos(1,15);
+      setCursorPos(2,15);
       cout<<"COURSE NAME "<< right << setw(6) <<": " <<course_name;
       setCursorPos(1,15);
       cout<<"SEMESTER "<< right << setw(9) <<": " <<sem;
@@ -646,7 +647,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     setCursorPos(2,15);
   
     buildVerticalWall(43);
-    int line=0;
+    line=0;
     while(line<3)
     {
       setCursorPos(1,15);
@@ -666,10 +667,10 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     setCursorPos(1,15);
     buildVerticalWall(43);
   
-    setCursorPos(1,35);
+    setCursorPos(2,30);
   
     fflush(stdin);
-  
+    cout << "Type : ";
     getline(cin,ans);
     ret_ans = validateString(ans);
     if(ret_ans == -1)
