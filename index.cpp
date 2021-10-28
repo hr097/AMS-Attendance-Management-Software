@@ -6,11 +6,28 @@
 #include<unistd.h> // * for sleep function
 #include<iomanip> // * for manipulator
 #include<cwchar>  //*for console font purpose 
-#include<string.h> //* for fonts purpose making is big-small and bold
+#include<string.h> //*  string related functions access
 #include<stdbool.h> // * boolean operation
 #include<math.h> //* math operations
+#include<fstream> //* file handling functions access
 
-#ifndef _WIN32_WINNT 
+
+
+
+
+//--------FOR-DOCUMENT PATH GETTING------/
+
+#include <shlobj.h> 
+#include <sys/types.h>
+
+#include <sys/stat.h>
+#include <direct.h>
+
+#pragma comment(lib, "shell32.lib")  //? for document path finding 
+
+//--------FOR-DOCUMENT PATH GETTING------/
+
+#ifndef _WIN32_WINNT  //*if that macro not exist then condtional compila6ion would be done and those files will be included
   #define _WIN32_WINNT 0x0601
   #include<wincon.h>
   #include<string>
@@ -38,25 +55,25 @@ lpConsoleCurrentFontEx);
 
 //#endif // user 2
 
-#ifndef UNICODE  
-  typedef std::string String; 
-#else
-  typedef std::wstring String; 
-#endif
+//*code removed here which was for desktop path
 
-using namespace std; // namespace for  resolving name coflicts
+using namespace std; // namespace for  resolving naming coflicts
 
 /*******************GENERAL FUNCTION CLASS THAT ARE USED BY GLOBAL SCOPE FUNCTIONS********************************/
-class GENERAL_INIT
+
+class GENERAL_INIT //*GRAND PARENT CLASS
 {
 
 public:
 
-int ConvertChoiceToINT;
-static int MODULE_CHOICE;
+int ConvertChoiceToINT; //*variable for converting string input to integer
+static int MODULE_CHOICE; //*module selector static variable
 
-
-void SetColor(int ForgC)
+GENERAL_INIT()
+{
+  ConvertChoiceToINT=0;
+}
+void SetColor(int ForgC) //*for setting individual text color
 {
   WORD wColor;
   HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -69,9 +86,8 @@ void SetColor(int ForgC)
   }
   return;
 }
-
-
-void setCursorPos(int x, int y=0) //IMPORTANT : *relative position is set
+  
+void setCursorPos(int x, int y=0) //IMPORTANT : ->relative position is set
 {
   
   //*vertical lines space 
@@ -91,6 +107,7 @@ void setCursorPos(int x, int y=0) //IMPORTANT : *relative position is set
   }
   
 }
+  
 void ShowConsoleCursor(bool showFlag) //* for hiding the cursor just  set showFlag = false(bool value)
 {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -109,21 +126,15 @@ void scrClr(float i=0.0) //*for clearing screen afer some time
   system("cls"); // * clear screen
 }
 
-void exitApp(int status=0) // exit program with status 0=success, 1=failure
-{
-  cout<<"PRESS ANY KEY TO EXIT...";
-  ShowConsoleCursor(false);
-  getch();
-  exit(status);
-}
+//*exit app code removed as we have exit option in input choice 
 
-
-void buildVerticalWall(int briks)
+void buildVerticalWall(int briks) //* for making rectangle shape
 { cout<<"*";
   while(briks>0){cout<<"-";briks--;}
   cout<<"*";
 }
-void buildHorizontalWall(int endBrick,string data)
+  
+void buildHorizontalWall(int endBrick,string data) //* for making rectangle shape
 { 
   cout<<"|";
   int run=1;
@@ -148,9 +159,9 @@ void buildHorizontalWall(int endBrick,string data)
   cout<<"|";
 }
 
-void startApp()
+void startApp() //* for startup of home screen
 {
-  if(MODULE_CHOICE==0)
+  if(MODULE_CHOICE==0) // only 1 time initiaization function need to be called after 1 time just we need ro refresh home screen so is/else here
   {
     initApp();
     MODULE_CHOICE = askChoice();
@@ -161,8 +172,8 @@ void startApp()
   }
   
 }
-
-int validateString(string input,int Bnd)
+ 
+int validateString(string input,int Bnd) //* string input validate as integer
   {
 
       int flag=0,tem=1;
@@ -172,10 +183,11 @@ int validateString(string input,int Bnd)
           i = to_string(tem);
           if(i == input)
           {
-            flag = 1;
+            flag = 1; //*flag set means we have to give error message otherwise just return control with status original input after string->int conversion int will be returned
             break;
           }
       }
+  
       if(flag==0)
       {
         scrClr();
@@ -197,6 +209,7 @@ int validateString(string input,int Bnd)
 
   }
 
+  /*************  overloaded version of validateString function   *********************/
 
   int validateString(string input)
   {
@@ -215,10 +228,14 @@ int validateString(string input,int Bnd)
   }
 
 
+~GENERAL_INIT()
+{
 
+}
+  
 private:
 
-void initApp()
+void initApp() //setting up first time APP screen by making  console full screen
 {
       
         // get handle to the console window
@@ -248,17 +265,17 @@ void initApp()
 
         setConsoleSize();
 
-        system("color F0"); //set while background
+        system("color F0"); //set white background and text black
  
 }
 
-int askChoice()
+int askChoice() //*ask choice at home screen of APP
 { 
   
   re_ask:
 
   
-  mainTitleOFapplication();
+  mainTitleOFapplication(); //TITLE OF APP
   bool match = false;
   string operationChoice;
 
@@ -292,11 +309,6 @@ int askChoice()
   setCursorPos(1,15);
   buildVerticalWall(43);
 
- 
-
-  
-
-
    setCursorPos(2,30);
    cout<<"CHOICE : ";
    cin>>operationChoice;
@@ -307,7 +319,7 @@ int askChoice()
        cin.ignore(80,'\n');
    }
 
-   ConvertChoiceToINT = validateString(operationChoice,10);
+  ConvertChoiceToINT = validateString(operationChoice,10);
   if(!ConvertChoiceToINT)
   {
        
@@ -364,7 +376,9 @@ void mainTitleOFapplication()
    setCursorPos(1);
    cout<<setw(55)<<" || ATTENDANCE MANAGEMENT SYSTEM ||"<<endl;
 }
-
+ 
+  protected:
+  
 };
 
 //---------STATIC DEFINATIONS-----------//
@@ -385,36 +399,96 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
   private:
 
   public:
-
-  protected:
-  int checkNumberInput(int *input,int Bnd)
+  MODULE_GENERAL_FUNCTION()
   {
-      if(!cin)
-      {
-        cin.clear();
-        cin.ignore(80,'\n');
-      }
-      if(*(input)<1||*(input)>Bnd)
-      {        
-      scrClr();
 
-      setCursorPos(8,26);
-      cout<<"INVALID CHOICE ENTERTED !"<<endl;
-      setCursorPos(10,26);
+  }
+  ~MODULE_GENERAL_FUNCTION()
+  {
 
-      setCursorPos(2,24);
-      cout<<"INVALID CHOICE ENTERTED !"<<endl;
-      setCursorPos(2,20);
+  }
+  
+  protected:
 
-      cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
-      scrClr(1);
-        return 1;
-      }
-      return 0;
+  string AMS_Path,FacultyName,FacultyEmail;
+
+  void AppPath(string &path)
+  {
+    CHAR pathDocument[MAX_PATH]; //string to store path
+    HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument);  //getting documents path
+   
+    if (result == S_OK)  //check if  documents path is successfully stored in pathdocuments
+    { 
+    path = pathDocument; // take original documents path into string
+    path =  path + "\\AMS"; //making AMS folder path
+    }
+    else
+    {
+        cout << "ERROR PATH NOT FOUND : " << result << "\n";
+    }
+  }  
+  void getDataFromFile(string path,string &FcName,int lineNo)
+  {
+   ifstream read(path.c_str(),ios::in);
+
+   if(!read.is_open())
+   {
+     cout<<endl<<"UNABLE TO OPEN THE FILE AT GIVEN PATH : "<<path<<endl; 
+   }
+   else
+   {
+     int line=1;
+     while(line<=lineNo)
+     {
+       getline(read,FcName);
+       line++;
+     }
+   }
+   read.close();
   }
 
+  void convertStringtoArray(string arg,char* argcopy) //meaning itself defining
+  {
+  int i;
+  for(i=0;i<arg.length();i++)
+  {
+   *(argcopy+i) = arg[i];
+  }
+  *(argcopy+i)='\0';
+  }
 
+  string convertIntToString(int &in)
+  {
+  string str = to_string(in);
+  return str;
+  }
 
+  string convertArrayTostring(char* arg) //meaning itself defining
+  {
+  string re(arg);
+  return re;
+  }
+
+  int dirExists(const char *path) //checking function if directory exists or not 1=EXIST 0=NOT EXIST
+  {
+    struct stat info;
+
+    if(stat( path, &info ) != 0)
+        return 0;
+    else if(info.st_mode & S_IFDIR)
+        return 1;
+    else
+        return 0;
+  }
+  
+ void debug(int do_what=0) //for debugging purposes at last we will delete it 0=pause 1=pause & print
+ {
+   #include<conio.h> // * console input output library
+   if(!do_what)
+   getch();
+   else
+   cout<<endl<<"DEBUG"<<endl;
+ } 
 };
 
 class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
@@ -427,16 +501,10 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   private:
 
 
-  string course_name,sem,subject_name,ans;
+  string course_name,sem,subject_name,command,SemCreatePath,ans;
   int ret_ans;
-
-  /******    temp area    ********/
-  string faculty_name = "Harshil Ramani",faculty_email= "harshilramani.mscit20@vnsgu.ac.in";
-
   
   
-
-
   public:
 
   protected:
@@ -457,17 +525,60 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   public:
   SET_WRITE_DB() //TODO:CONSTRUCTOR
   {
-    
+    AppPath(AMS_Path);
   }
   /********************************* MODULE_1 *********************************/
 
   private:
+  
+  void createSemester()
+  {
+    SemCreatePath = AMS_Path + "\\" + course_name + "_SEM_" + sem; //backup for getting ROOT-OF-AMS  path
+    if(!dirExists(SemCreatePath.c_str())) //if directory not exists then create it
+        {  
+            command = "mkdir " +  SemCreatePath;                //making commad which will pass in cmd
+            ////cout<<"commad 1 for creating directory "<<command<<endl;
+            system(command.c_str());      // creating  directory by CMD
+             
+            /*********************  FOLDERS *******************/
+            
+             command = "mkdir " + SemCreatePath + "\\DAILY_RECORD" ; // making COMMAND FOR DAILY_RECORD folder
+             ////cout<<"commad 1 for creating directory "<<command<<endl;
+             system(command.c_str()); // creating DAILY_RECORD directory by CMD
+             
+             command = "mkdir " + SemCreatePath + "\\FAC-STUD_DETAILS" ; // making COMMAND FOR FAC&STUD_DETAILS folder
+             ////cout<<"commad 1 for creating directory "<<command<<endl;
+             system(command.c_str()); // creating FAC&STUD_DETAILS directory by CMD
+             
+             command = "mkdir " + SemCreatePath + "\\MONTHLY_RECORDS" ; // making COMMAND FOR MONTHLY_RECORDS folder
+             ////  cout<<"commad 1 for creating directory "<<command<<endl;
+             system(command.c_str()); // creating MONTHLY_RECORDS directory by CMD
+
+             /**************************************************/
+             
+             /*******************  FILES *********************/
+             
+              command = "cd. > " + SemCreatePath + "\\DAILY_RECORD\\records.txt"; // RECORDS.TXT file
+              system(command.c_str()); 
+               
+              command = "cd. > " + SemCreatePath + "\\FAC-STUD_DETAILS\\faculty"+"_sem_"+ sem +".txt"; // faculty_details.TXT file
+              system(command.c_str());  
+               
+              command = "cd. > " + SemCreatePath + "\\FAC-STUD_DETAILS\\student"+"_sem_"+ sem +".txt"; // student_details.TXT file
+              system(command.c_str()); 
+
+              /***********************************************/
+        }
+        else 
+        {
+          ////cout<<endl<<"\nDirectory Already Exist\n";
+        }
+  }
 
   public:
 
-  void askDeatails()
+  void askDetails()
   { 
-
 
     scrClr(0.5);
     setCursorPos(9,26);
@@ -493,44 +604,34 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     setCursorPos(9,26);
     cout<<"ENTER SUBJECT  : ";
     getline(cin,subject_name);
-
     scrClr(0.5);
+    
+    command = AMS_Path + "\\USER_INFO\\userdetails.txt";
+   
+    getDataFromFile(command,FacultyName,1);
+    getDataFromFile(command,FacultyEmail,2);
+    
+    //cout<<FacultyEmail<<"\n"<<FacultyName<<endl;
+    fflush(stdin);
+    
 
-     fflush(stdin);
+    //confirmation();
+    createSemester();
 
+    
   }
 
-  void confirmation()
+int confirmation()
   {
 
-  //   setCursorPos(2,15);
+    reInConfirm:
+    scrClr(0.5);
 
-  // buildVerticalWall(30);
-  // int line=0;
-  // while(line<5)
-  // {
-  // setCursorPos(1,15);
-  // if(line==1)
-  // buildHorizontalWall(30,faculty_name);
-  // // else if(line==3)
-  // // buildHorizontalWall(43,"2) TAKE ATTENDANCE ");
-  // // else if(line==5)
-  // // buildHorizontalWall(43,"3) CUSTOMIZED ATTENDANCE REPORT ");
-  // // else if(line==7)
-  // // buildHorizontalWall(43,"4) SEARCH & UPDATE DETAILS ");
-  // // else if(line==9)
-  // // buildHorizontalWall(43,"5) EXIT ");
-  // else 
-  // buildHorizontalWall(30," ");
-  // line++;
-  // }
-  // setCursorPos(1,15);
-  // buildVerticalWall(30);
-     
+    
     setCursorPos(5,15);
-    cout<<"FACULTY NAME "<< right << setw(5) <<": " <<faculty_name;
+    cout<<"FACULTY NAME "<< right << setw(5) <<": " <<FacultyName;
     setCursorPos(1,15);
-    cout<<"FACULTY E-MAIL "<< right << setw(3) <<": " <<faculty_email;
+    cout<<"FACULTY E-MAIL "<< right << setw(3) <<": " <<FacultyEmail;
     setCursorPos(1,15);
     cout<<"COURSE NAME "<< right << setw(6) <<": " <<course_name;
     setCursorPos(1,15);
@@ -538,9 +639,6 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     setCursorPos(1,15);
     cout<<"SUBJECT "<< right << setw(10) <<": " <<subject_name;
     
-
-
-
 
   setCursorPos(2,15);
 
@@ -567,28 +665,36 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
 
   setCursorPos(1,35);
 
+  fflush(stdin);
+
   cin>>ans;
   ret_ans = validateString(ans);
 
   if(ret_ans == 1)
   {
-    setCursorPos(2,10);
-    cout<< "This message is for confirmation for now after we will remove it"<<endl;
+    
+     setCursorPos(2,10);
+     cout<< "This message is for yes confirmation for now after we will remove it"<<endl;
+     return(ret_ans);
   }
   else if(ret_ans == 0)
   {
-    setCursorPos(2,10);
-    cout<< "This message is for confirmation for now after we will remove it"<<endl;
+    
+     setCursorPos(2,10);
+     cout<< "This message is for no confirmation for now after we will remove it"<<endl;
+    return(ret_ans);
   }
-  else
-  {
-    setCursorPos(2,10);
-    cout<< "This msg is for any other input except yes and no!!" << endl;
-  }
+   if(ret_ans == -1)
+   {
+     setCursorPos(2,10);
+     cout<< "Invalid Input!!"<<endl;
+     goto reInConfirm;
+
+   }
+
 
   }
-
-
+ 
   protected:
 
   /****************************************************************************/
@@ -606,14 +712,6 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   }
   //?=============================MEMBERS-FUNCTIONS===================================//
 };
-
-
- 
- 
- 
- 
-
-
 
 /****************************MODULE-END************************************/
 
@@ -638,7 +736,7 @@ int main()
             switch(GENERAL_INIT::MODULE_CHOICE)
             {
               case 1:{
-                     SW.askDeatails();
+                     SW.askDetails();
                      SW.confirmation();
                      break;
                      }
