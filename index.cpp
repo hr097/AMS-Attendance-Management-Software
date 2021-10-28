@@ -683,14 +683,14 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     if(ret_ans == 1)
     {
       
-       setCursorPos(2,10);
+       setCursorPos(1,10);
        cout<< "This message is for yes confirmation for now after we will remove it"<<endl;
        //return(ret_ans);
     }
     else if(ret_ans == 0)
     {
       
-       setCursorPos(2,10);
+       setCursorPos(1,10);
        cout<< "This message is for no confirmation for now after we will remove it"<<endl;
       //return(ret_ans);
     }
