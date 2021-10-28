@@ -212,11 +212,11 @@ int validateString(string input,int Bnd) //* string input validate as integer
 
   int validateString(string input)
   {
-    if(input == "YES" || input == "yes")
+    if(input == "YES" || input == "yes" || input == "Yes")
     {
       return 1;
     }
-    else if(input == "NO" || input == "no")
+    else if(input == "NO" || input == "no" || input == "No")
     {
       return 0;
     }
