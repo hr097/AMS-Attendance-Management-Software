@@ -429,7 +429,8 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
     {
         cout << "ERROR PATH NOT FOUND : " << result << "\n";
     }
-  }  
+  } 
+
   void getDataFromFile(string path,string &FcName,int lineNo)
   {
    ifstream read(path.c_str(),ios::in);
@@ -448,6 +449,26 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
      }
    }
    read.close();
+  }
+
+  void writeDataToFile(string path,string &FcName,int lineNo)
+  {
+    ofstream write(path.c_str(),ios::app);
+
+    if(!write.is_open())
+    {
+      cout<<endl<<"UNABLE TO OPEN THE FILE AT GIVEN PATH : "<<path<<endl;
+    }
+    else
+    {
+      line=1;
+      while(line<=lineNo)
+      {
+        write<<FcName;
+        line++;
+      }
+    }
+    write.close();
   }
 
   void convertStringtoArray(string arg,char* argcopy) //meaning itself defining
@@ -682,9 +703,16 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
     }
     if(ret_ans == 1)
     {
-      
-       setCursorPos(1,10);
-       cout<< "This message is for yes confirmation for now after we will remove it"<<endl;
+      SemCreatePath = AMS_Path + "\\" + course_name + "_SEM_" + sem;
+      command = SemCreatePath + "\\FAC-STUD_DETAILS\\faculty"+"_sem_"+ sem +".txt";
+      //cout << command;
+      writeDataToFile(command,FacultyName,1);
+      writeDataToFile(command,FacultyEmail,2);
+      writeDataToFile(command,course_name,3);
+      writeDataToFile(command,sem,4);
+      writeDataToFile(command,subject_name,5);
+       //setCursorPos(1,10);
+       //cout<< "This message is for yes confirmation for now after we will remove it"<<endl;
        //return(ret_ans);
     }
     else if(ret_ans == 0)
