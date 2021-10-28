@@ -301,7 +301,7 @@ int askChoice() //*ask choice at home screen of APP
        cin.ignore(80,'\n');
    }
 
-  ConvertChoiceToINT = validateString(operationChoice,10);
+  ConvertChoiceToINT = validateString(operationChoice,5);
   if(!ConvertChoiceToINT)
   {
        
@@ -360,6 +360,7 @@ void mainTitleOFapplication()
 }
  
   protected:
+      virtual void SetNoObj()=0;
   
 };
 
@@ -391,6 +392,7 @@ class MODULE_GENERAL_FUNCTION : public GENERAL_INIT  //TODO: ALL MD TEAM PLEASE 
   }
   
   protected:
+      virtual void SetNoObj()=0;
 
   string AMS_Path,FacultyName,FacultyEmail;
 
@@ -489,6 +491,7 @@ class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION //TODO : just like that you h
   public:
 
   protected:
+      void SetNoObj(){}
 
   /*****************************************************************************/
 
@@ -624,18 +627,18 @@ int main()
     //jay swaminrayan
     //jay ganeshay namh
     bool loop=true;
-    GENERAL_INIT APP;
+    // GENERAL_INIT APP;
     SET_WRITE_DB SW;
 
     while(loop)
     {
-          APP.startApp();
+          SW.startApp();
       
           if(GENERAL_INIT::MODULE_CHOICE!=5)
           {
-            APP.scrClr();
+            SW.scrClr();
       
-            APP.setCursorPos(2,10);
+            SW.setCursorPos(2,10);
       
             switch(GENERAL_INIT::MODULE_CHOICE)
             {
@@ -651,7 +654,7 @@ int main()
               default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);}
             }
       
-            APP.scrClr(2);
+            SW.scrClr(2);
           }
           else
           {
