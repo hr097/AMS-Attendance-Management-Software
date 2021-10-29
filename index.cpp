@@ -12,9 +12,6 @@
 #include<fstream> //* file handling functions access
 #include<string> //* string library function access
 
-
-
-
 //--------FOR-DOCUMENT PATH GETTING------/
 
 #include <shlobj.h> 
@@ -255,8 +252,10 @@ private:
        buildVerticalWall(43);
     
        setCursorPos(2,30);
+       ShowConsoleCursor(true);
        cout<<"CHOICE : ";
        getline(cin,operationChoice);
+       ShowConsoleCursor(false);
     
        if(!cin)
        {
@@ -322,12 +321,15 @@ private:
   
   void InvalidInputErr()
   {
-    scrClr();
+    
+    scrClr(0.5);
+    ShowConsoleCursor(false);
     setCursorPos(8,26);
     SetColor(4);
     cout<<"INVALID CHOICE ENTERTED !"<<endl;
     setCursorPos(1,20);
     cout<<"PLEASE RE-ENTER YOUR CHOICE CORRECTLY !"<<endl;
+    ShowConsoleCursor(false);
     scrClr(1);
     SetColor(0);
   }
@@ -497,6 +499,18 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
           i++;
       }
   }
+  bool EmptyInput(string &input)
+  {
+   if(input.empty())
+   {
+     return true;
+   }
+   else
+   {
+     return false;
+   }
+  }
+
   int dirExists(const char *path) //checking function if directory exists or not 1=EXIST 0=NOT EXIST
   {
     struct stat info;
@@ -547,7 +561,7 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
 
   private:
   
-  int createSemester()
+  int createSemester() //* return 1=craetd successfully return 0=not created
   { 
     temp_path=course_name;
     replaceWith_(temp_path);
@@ -600,6 +614,7 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
           scrClr();
           setCursorPos(9,26);
           SetColor(2);
+          ShowConsoleCursor(false);
           cout<<"SEMSTER ALREADY EXIST !"<<endl;
           scrClr(1);
           SetColor(0);
@@ -609,20 +624,20 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
 
   int confirmation()
   {
-      int line; 
-   
-      reInConfirm:
-      
-      setCursorPos(5,15);
-      cout<<"FACULTY NAME "<< right << setw(5) <<": " <<FacultyName;
-      setCursorPos(1,15);
-      cout<<"FACULTY E-MAIL "<< right << setw(3) <<": " <<FacultyEmail;
-      setCursorPos(2,15);
-      cout<<"COURSE NAME "<< right << setw(6) <<": " <<course_name;
-      setCursorPos(1,15);
-      cout<<"SEMESTER "<< right << setw(9) <<": " <<sem;
-      setCursorPos(1,15);
-      cout<<"SUBJECT "<< right << setw(10) <<": " <<subject_name;
+    int line; 
+
+    reInput:
+
+    setCursorPos(5,15);
+    cout<<"FACULTY NAME "<< right << setw(5) <<": " <<FacultyName;
+    setCursorPos(1,15);
+    cout<<"FACULTY E-MAIL "<< right << setw(3) <<": " <<FacultyEmail;
+    setCursorPos(2,15);
+    cout<<"COURSE NAME "<< right << setw(6) <<": " <<course_name;
+    setCursorPos(1,15);
+    cout<<"SEMESTER "<< right << setw(9) <<": " <<sem;
+    setCursorPos(1,15);
+    cout<<"SUBJECT "<< right << setw(10) <<": " <<subject_name;
       
   
     setCursorPos(2,15);
@@ -651,81 +666,249 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
     setCursorPos(2,30);
   
     fflush(stdin);
+    ShowConsoleCursor(true);
     cout << "Type : ";
     getline(cin,ans);
+    ShowConsoleCursor(false);
+
     ConvertChoiceToINT = validateString(ans);
+    
     if(ConvertChoiceToINT == -1)
     {
       InvalidInputErr();
-      goto reInConfirm;
+      goto reInput;
     }
-    if(ConvertChoiceToINT == 1)
+
+    if(ConvertChoiceToINT)
     {
-      if(!createSemester())
-      goto reInConfirm;
-
-      command = SemCreatePath + "\\FAC-STUD_DETAILS\\faculty"+"_sem_"+ sem +".txt";
-      
-      writeDataToFile(command,FacultyName);
-      writeDataToFile(command,FacultyEmail);
-      writeDataToFile(command,course_name);
-      writeDataToFile(command,sem);
-      writeDataToFile(command,subject_name);
-
+      return ConvertChoiceToINT;
     }
-    else if(ConvertChoiceToINT == 0)
+    else 
     {
       
-       setCursorPos(1,10);
-       cout<< "This message is for no confirmation for now after we will remove it"<<endl;
-
+     // InfoModification();
+      //  setCursorPos(1,10);
+      //  cout<< "This message is for no confirmation for now after we will remove it"<<endl;
+      
     }
    return(ConvertChoiceToINT);
   }
- 
 
+  int InfoModification() //* MODIFICATIONS OF FACULTY DETAILS
+  { 
+       int line=0;
+
+       reInput:
+    
+       setCursorPos(1);
+       cout<< setw(62) <<" => WHICH INFORMATION DO YOU WANT TO MODIFY ? "<<endl; 
+
+       bool match = false;
+       string operationChoice;
+    
+       setCursorPos(2,25);
+    
+       buildVerticalWall(23);
+    
+       while(line<11)
+        {
+            setCursorPos(1,25);
+            if(line==0)
+            buildHorizontalWall(23,"1) FACULTY NAME ");
+            else if(line==2)
+            buildHorizontalWall(23,"2) FACULTY E-MAIL ");
+            else if(line==4)
+            buildHorizontalWall(23,"3) COURSE NAME ");
+            else if(line==6)
+            buildHorizontalWall(23,"4) SEMESTER ");
+            else if(line==8)
+            buildHorizontalWall(23,"5) SUBJECT ");
+            else if(line==10)
+            buildHorizontalWall(23,"6) NO CHANGE ");
+            else 
+            buildHorizontalWall(23," ");
+            line++;
+        }
+    
+       setCursorPos(1,25);
+       buildVerticalWall(23);
+    
+       setCursorPos(2,30);
+       ShowConsoleCursor(true);
+       cout<<"CHOICE : ";
+       getline(cin,operationChoice);
+       ShowConsoleCursor(false);
+    
+       if(!cin)
+       {
+           cin.clear();
+           cin.ignore(80,'\n');
+       }
+
+       ConvertChoiceToINT = validateString(operationChoice,6);
+
+       if(ConvertChoiceToINT==-1)
+       { 
+           InvalidInputErr();
+           goto reInput;
+       }
+       else 
+       {
+       return(ConvertChoiceToINT);
+       }
+  }
+
+   void UpdateFacName()
+   { 
+      reinput:
+      scrClr(0.5);
+      setCursorPos(9,26);
+      cout<<"ENTER FACULTY NAME : ";
+      fflush(stdin);
+      ShowConsoleCursor(true);
+      getline(cin,FacultyName);
+      ShowConsoleCursor(false);
+      if(EmptyInput(FacultyName))
+      {
+        InvalidInputErr();
+        goto reinput;
+      }
+      
+      scrClr(0.5);
+  }
+  void UpdateEmail()
+  {   reinput:
+      scrClr(0.5);
+      setCursorPos(9,26);
+      cout<<"ENTER FACULTY EMAIL : ";
+      fflush(stdin);
+      ShowConsoleCursor(true);
+      getline(cin,FacultyEmail);
+      ShowConsoleCursor(false);
+      if(EmptyInput(FacultyEmail))
+      {
+        InvalidInputErr();
+        goto reinput;
+      }
+      scrClr(0.5);
+  
+      
+  }
+  void EnterCourseName()
+  {   
+      reinput:
+      scrClr(0.5);
+      setCursorPos(9,26);
+      cout<<"ENTER COURSE NAME  : ";
+      fflush(stdin);
+      ShowConsoleCursor(true);
+      getline(cin,course_name);
+      ShowConsoleCursor(false);
+      if(EmptyInput(course_name))
+      {
+        InvalidInputErr();
+        goto reinput;
+      }
+      scrClr(0.5);
+  
+  }
+  void EnterSem()
+  {   
+      scrClr(0.5);
+      reinputOfsem:
+      fflush(stdin);
+      setCursorPos(9,26);
+      cout<<"ENTER SEMESTER : ";
+      fflush(stdin);
+      ShowConsoleCursor(true);
+      getline(cin,sem);
+      ShowConsoleCursor(false);
+      scrClr(0.5);
+  
+      if(!validateString(sem,10))
+      {goto reinputOfsem;}
+  
+      
+  }
+  void EnterSubject()
+  {
+      reinput:
+      scrClr(0.5);
+      setCursorPos(9,26);
+      cout<<"ENTER SUBJECT : ";
+      ShowConsoleCursor(true);
+      getline(cin,subject_name);
+      ShowConsoleCursor(false);
+      if(EmptyInput(subject_name))
+      {
+        InvalidInputErr();
+        goto reinput;
+      }
+      scrClr(0.5); 
+  
+      
+  }
+  
   public:
-
+   
   void askFacDetails()
   { 
 
-    scrClr(0.5);
-    setCursorPos(9,26);
-    
-    cout<<"ENTER COURSE NAME : ";
-    fflush(stdin);
-    getline(cin,course_name);
-    scrClr(0.5);
-    
-    
-    reinputOfsem:
-    fflush(stdin);
-    setCursorPos(9,26);
-    cout<<"ENTER SEMESTER : ";
-    getline(cin,sem);
-    scrClr(0.5);
-    
-    if(!validateString(sem,10))
-    {goto reinputOfsem;}
+    reAskFacDet:
 
-    fflush(stdin);
+    EnterCourseName();
     
-    setCursorPos(9,26);
-    cout<<"ENTER SUBJECT  : ";
-    getline(cin,subject_name);
-    scrClr(0.5);
     
+    EnterSem();
+    
+  
+    EnterSubject();
+
     command = AMS_Path + "\\USER_INFO\\userdetails.txt";
    
     getDataFromFile(command,FacultyName,1);
     getDataFromFile(command,FacultyEmail,2);
     
-    //cout<<FacultyEmail<<"\n"<<FacultyName<<endl;
-    fflush(stdin);
     
-    confirmation();
-  }
+    fflush(stdin);
 
+    confirmAgain:
+
+    if(confirmation())
+    {  
+        if(createSemester())
+        {
+
+        command = SemCreatePath + "\\FAC-STUD_DETAILS\\faculty"+"_sem_"+ sem +".txt";
+        
+        writeDataToFile(command,FacultyName);
+        writeDataToFile(command,FacultyEmail);
+        writeDataToFile(command,course_name);
+        writeDataToFile(command,sem);
+        writeDataToFile(command,subject_name);
+        
+        }
+        else
+        {
+          goto reAskFacDet;
+        }
+    }
+    else
+    { 
+      scrClr(0.5);
+
+      switch(InfoModification())
+      {
+        case 1:{UpdateFacName(); break;}
+        case 2:{UpdateEmail();break;}
+        case 3:{EnterCourseName();break;}
+        case 4:{EnterSem();break;}
+        case 5:{EnterSubject();break;}
+        case 6:{scrClr(0.5);break;}
+      }
+      goto confirmAgain;
+    }
+  }
 
   protected:
 
@@ -749,12 +932,12 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
 
 int main()
 {
-    //jay swaminrayan
+   //jay swaminrayan
     //jay ganeshay namh
     bool loop=true;
     
     SET_WRITE_DB SW;
-
+ 
     while(loop)
     {
           SW.startApp();
@@ -791,6 +974,7 @@ int main()
           }
 
     }
-    
+
     return 0;
 }
+
