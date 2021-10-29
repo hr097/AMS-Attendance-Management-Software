@@ -32,7 +32,7 @@
   #include<wincon.h>
   #include<string>
 
-  //#endif  // user 1 
+  #endif  // user 1 
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -53,7 +53,7 @@ lpConsoleCurrentFontEx);
 }
 #endif
 
-#endif // user 2
+//#endif // user 2
 
 
 using namespace std; // namespace for  resolving naming coflicts
