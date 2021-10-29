@@ -589,7 +589,7 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
 
   private:
   
-  int createSemester() //* return 1=craetd successfully return 0=not created
+  int createSemester() //* return 1=created successfully return 0= not created
   { 
     
     temp_path=course_name;
@@ -634,24 +634,37 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
                
               command = "cd. > " + SemCreatePath + "\\FAC-STUD-DETAILS\\student"+"-sem-"+ sem +".txt"; // student_details.TXT file
               system(command.c_str()); 
+              
+              temp_path=course_name; //re used temp_path
+              replaceWith_(temp_path);
+
+              command = course_name +"|"+sem+"|"+ subject_name +"|"+ temp_path ;
              
+              temp_path=subject_name; //re used temp_path
+              replaceWith_(temp_path);
+               
+              command = command + temp_path ; 
+               
+              temp_path = AMS_Path + "\\OTHER\\semesterRecord.txt";  
+              writeDataToFile(temp_path,command);
               return 1;
               /***********************************************/
         }
-        else 
+        else  //if that semester already exist
         {
           scrClr();
-          setCursorPos(9,26);
+          setCursorPos(9,20);
           SetColor(2);
           ShowConsoleCursor(false);
-          cout<<"SEMSTER ALREADY EXIST !"<<endl;
+          cout<<"SEMSTER WITH THAT SUBJECT ALREADY EXIST !"<<endl;
           scrClr(1);
           SetColor(0);
           return 0;
         }
+
   }
 
-  int confirmation()
+  int confirmation() //basic confirmation message for user
   {
     int line; 
 
@@ -702,21 +715,22 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
 
     ConvertChoiceToINT = validateString(ans);
     
-    if(ConvertChoiceToINT == -1)
+    if(ConvertChoiceToINT == -1) //validate input
     {
-      InvalidInputErr();
+      InvalidInputErr(); //error message
       goto reInput;
     }
 
-   return(ConvertChoiceToINT);
+   return(ConvertChoiceToINT); //returns basic confirmation value yes=1 / no=0 
   }
 
   int InfoModification() //* MODIFICATIONS OF FACULTY DETAILS
   { 
-       int line=0;
-
-       reInput:
-    
+       
+       int line;
+       reInputOfmod:
+        
+       line=0;
        setCursorPos(1);
        cout<< setw(62) <<" => WHICH INFORMATION DO YOU WANT TO MODIFY ? "<<endl; 
 
@@ -761,20 +775,19 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
            cin.clear();
            cin.ignore(80,'\n');
        }
-       ConvertChoiceToINT = validateString(operationChoice,6);
+       ConvertChoiceToINT = validateString(operationChoice,6); //validate input
 
-       if(ConvertChoiceToINT==-1)
+       if(ConvertChoiceToINT==0) //if wrong input
        { 
-           InvalidInputErr();
-           goto reInput;
+           goto reInputOfmod; //re take choice of modification
        }
        else 
        {
-       return(ConvertChoiceToINT);
+       return(ConvertChoiceToINT); //returns number option of modification
        }
   }
 
-   void UpdateFacName()
+   void UpdateFacName() //Faculty update
    { 
       reinput:
       scrClr(0.5);
@@ -792,10 +805,10 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
       
       scrClr(0.5);
   }
-  void UpdateEmail()
+  void UpdateEmail()  //email address update
   {   reinput:
       scrClr(0.5);
-      setCursorPos(9,26);
+      setCursorPos(9,20);
       cout<<"ENTER FACULTY EMAIL : ";
       fflush(stdin);
       ShowConsoleCursor(true);
@@ -810,96 +823,92 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
   
       
   }
-  void EnterCourseName()
+  void EnterCourseName() //course name input
   {   
       reinput:
       scrClr(0.5);
-      setCursorPos(9,26);
+      setCursorPos(9,26); //set Cursor Position
       cout<<"ENTER COURSE NAME  : ";
       fflush(stdin);
-      ShowConsoleCursor(true);
-      getline(cin,course_name);
-      ShowConsoleCursor(false);
-      if(EmptyInput(course_name))
+      ShowConsoleCursor(true); // show cursor for taking input
+      getline(cin,course_name);   //input
+      ShowConsoleCursor(false);   // hide cursor for flickring cursor
+      if(EmptyInput(course_name))  // if empty input like enter key so we have set error for that
       {
-        InvalidInputErr();
+        InvalidInputErr(); //error on wrong input
         goto reinput;
       }
       scrClr(0.5);
-  
   }
-  void EnterSem()
+  void EnterSem()  //input of semester
   {   
-      scrClr(0.5);
       reinputOfsem:
+      scrClr(0.5); //clear screen
       fflush(stdin);
       setCursorPos(9,26);
       cout<<"ENTER SEMESTER : ";
       fflush(stdin);
-      ShowConsoleCursor(true);
-      getline(cin,sem);
-      ShowConsoleCursor(false);
+      ShowConsoleCursor(true);   // show cursor for taking input
+      getline(cin,sem);       //input
+      ShowConsoleCursor(false); // hide cursor for flickring cursor
       scrClr(0.5);
   
-      if(!validateString(sem,10))
+      if(!validateString(sem,10)) //validate sem input
       {goto reinputOfsem;}
-  
-      
+
   }
-  void EnterSubject()
+  void EnterSubject() //input subject 
   {
       reinput:
       scrClr(0.5);
       setCursorPos(9,26);
       cout<<"ENTER SUBJECT : ";
-      ShowConsoleCursor(true);
+      ShowConsoleCursor(true);  // show cursor for taking input
       fflush(stdin);
-      getline(cin,subject_name);
-      ShowConsoleCursor(false);
-      if(EmptyInput(subject_name))
+      getline(cin,subject_name);    //input
+      ShowConsoleCursor(false);    // hide cursor for flickring cursor
+      if(EmptyInput(subject_name)) // if empty input like enter key so we have set error for that
       {
-        InvalidInputErr();
+        InvalidInputErr();  //error on wrong input
         goto reinput;
       }
       fflush(stdin);
       scrClr(0.5); 
-  
-      
   }
   
   public:
    
-  void askFacDetails()
+  void askFacDetails() //asking faculty details
   { 
 
-    reAskFacDet:
+    reAskFacDet: //re ask for details of faculty
 
-    EnterCourseName();
+    EnterCourseName(); //course name input 
     
     
-    EnterSem();
+    EnterSem(); //sem input 
     
   
-    EnterSubject();
+    EnterSubject();  //subject input 
 
-    command = AMS_Path + "\\USER-INFO\\userdetails.txt";
+    command = AMS_Path + "\\USER-INFO\\userdetails.txt"; // making path for getting data from file
    
-    getDataFromFile(command,FacultyName,1);
-    getDataFromFile(command,FacultyEmail,2);
+    getDataFromFile(command,FacultyName,1); //taking data of GUI form
+    getDataFromFile(command,FacultyEmail,2);//taking data of GUI form
     
     
     fflush(stdin);
 
-    confirmAgain:
+    confirmAgain: //final confirmation 
 
-    if(confirmation())
+    if(confirmation()) // basic confirmation dialog if yes then semester folder create
     {  
-        if(createSemester())
+        if(createSemester()) //semester confirmation
         {
 
-        command = SemCreatePath + "\\FAC-STUD-DETAILS\\faculty"+"-sem-"+ sem +".txt";
+        command = SemCreatePath + "\\FAC-STUD-DETAILS\\faculty"+"-sem-"+ sem +".txt"; //path making for writting into file
         
-        writeDataToFile(command,FacultyName);
+        writeDataToFile(command,FacultyName); //writting data to files
         writeDataToFile(command,FacultyEmail);
         writeDataToFile(command,course_name);
         writeDataToFile(command,sem);
@@ -908,23 +917,23 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
         }
         else
         {
-          goto reAskFacDet;
+          goto reAskFacDet; //reasking faculty details as semester already exists
         }
     }
     else
     { 
-      scrClr(0.5);
+      scrClr(0.5); //clear screen so flickring won't happen 
 
-      switch(InfoModification())
+      switch(InfoModification()) //which details do you want to update that function returns
       {
-        case 1:{UpdateFacName(); break;}
-        case 2:{UpdateEmail();break;}
+        case 1:{UpdateFacName(); break;} // each function called according to requirement 
+        case 2:{UpdateEmail();break;}     
         case 3:{EnterCourseName();break;}
         case 4:{EnterSem();break;}
         case 5:{EnterSubject();break;}
         case 6:{scrClr(0.5);break;}
       }
-      goto confirmAgain;
+      goto confirmAgain; //ask user to final confirmation
     }
   }
 
@@ -950,7 +959,7 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
 
 int main()
 {
-   //jay swaminrayan
+    //jay swaminrayan
     //jay ganeshay namh
     bool loop=true;
     
