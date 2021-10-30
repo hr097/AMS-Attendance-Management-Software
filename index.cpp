@@ -338,7 +338,7 @@ private:
   {
 
       int flag=0,tem=1;
-      string i;
+      string i;  //!viraj talaviya look at it can we save it ?? by direct calling like that ... if(to_string(tem) == input) please check that
       for(tem=1;tem<=Bnd;tem++)
       {
           i = to_string(tem);
@@ -349,39 +349,39 @@ private:
           }
       }
   
-      if(flag==0)
+      if(flag==0)  //*IF flag=0 means input is invalid 
       {
-        InvalidInputErr(); 
+        InvalidInputErr(); //*error msg
         return 0;
       }
       else
       {
-        return tem;
+        return tem; //*returns converted string.to_int(INt)
       }
 
 
   }
   
-  int validateString(string input)
+  int validateString(string input) //overloaded version of validating string input of yes/no
   {
     if(input == "YES" || input == "yes" || input == "Yes")
     {
-      return 1;
+      return 1; //yes
     }
     else if(input == "NO" || input == "no" || input == "No")
     {
-      return 0;
+      return 0; //no
     }
     else
     {
-      return -1;
+      return -1; // error
     }
   }
 
 };
 
 //---------STATIC DEFINATIONS  OF APP-----------//
- int APP::MODULE_CHOICE=0;
+ int APP::MODULE_CHOICE=0; //? MODULE CHOICE WILL BE ACT LIKE GLOBALLY
 //---------------------------------------------//
 
 /****************************APP-CLASS-END***************************/
@@ -412,11 +412,11 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
 
   virtual void SetNoObj()=0; //*for disable object creation of APP
  
-  string AMS_Path,command,FacultyName,FacultyEmail,course_name,sem,subject_name,SemCreatePath,ans,temp_path;
+  string AMS_Path,command,FacultyName,FacultyEmail,course_name,sem,subject_name,SemCreatePath,temp_path;
  
 
 
-  void AppPath(string &path)
+  void AppPath(string &path) //Getting Project path for each module Variable used Ams_Path for storing path
   {
     CHAR pathDocument[MAX_PATH]; //string to store path
     HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument);  //getting documents path
@@ -428,11 +428,11 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
     }
     else
     {
-        cout << "ERROR PATH NOT FOUND : " << result << "\n";
+        cout << "ERROR PATH NOT FOUND : " << result << "\n"; //error
     }
   } 
 
-  void getDataFromFile(string path,string &FcName,int lineNo)
+  void getDataFromFile(string path,string &FcName,int lineNo) //getData file given path form given line as string
   {
    ifstream read(path.c_str(),ios::in);
 
@@ -452,7 +452,7 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
    read.close();
   }
 
-  void writeDataToFile(string path,string &FcName)
+  void writeDataToFile(string path,string &FcName) //write string data to particular path file
   {
     ofstream write(path.c_str(),ios::app);
 
@@ -489,25 +489,53 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
   return re;
   }
 
-  void replaceWith_(string &str)
+  void replaceWith_(string &str) //*special symbols are not allowed in file name so need to convert them into -hyphen
   {   
-      int i=0;
-      while(i<=str.length())
+      int i=0,j=0;
+      string list = "#%&{}\\/*>< $!:\'\"@+`|="; //*need to be checked as thease are restricated symbols
+      
+      for(i=0;i<=list.length();i++)
       {
-          if(str[i]==' ')
-          str.replace(i,1,"_");
-          i++;
+         for(j=0;j<=str.length();j++)
+         {
+             if(str[j]==list[i])
+             {
+                 str[j]='-';
+             }
+         }
       }
+   
+  //  i=0,j=0;// re used i as position of -
+
+   //while(i<=str.length())
+   //{
+      // for(i=0;i<=str.length();i++)
+      // {
+        // if(str[i]=='-')
+        // { 
+          // int del_pos=i;
+          // while(del_pos=='-')
+          // {
+            // del_pos++;
+          // }
+          // for(j=del_pos;j<=str.length();j++)  // h a r s h 
+          // {							   // 0 1 2 3 4
+          	// str[j-1]=str[j];
+          // }   
+        // }
+      // }
+      
   }
-  bool EmptyInput(string &input)
+
+  bool EmptyInput(string &input)  //checking if input is empty(hint : enter key)
   {
    if(input.empty())
    {
-     return true;
+     return true; //if emty then returns  true
    }
    else
    {
-     return false;
+     return false; // if not then returns false
    }
   }
 
@@ -525,7 +553,7 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
 
 };
 
-class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
+class SET_WRITE_DB: public MODULE_GENERAL 
 {
   
   //!=============================DATA-MEMBERS================================//
@@ -553,76 +581,91 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
   //?=============================MEMBERS-FUNCTIONS===================================//
   
   public:
-  SET_WRITE_DB() //TODO:CONSTRUCTOR
+  SET_WRITE_DB() 
   {
-    AppPath(AMS_Path);
+    AppPath(AMS_Path); //* for each module you will get project folder (database)path like that
   }
   /********************************* MODULE_1 *********************************/
 
   private:
   
-  int createSemester() //* return 1=craetd successfully return 0=not created
+  int createSemester() //* return 1=created successfully return 0= not created
   { 
+    
     temp_path=course_name;
-    replaceWith_(temp_path);
+    replaceWith_(temp_path); //hyphen convert
 
-    SemCreatePath = AMS_Path + "\\" + temp_path + "_SEM_" + sem ; //making semesterpath with coursename
+    SemCreatePath = AMS_Path + "\\" + temp_path + "-SEM-" + sem ; //making semesterpath with coursename
   
     temp_path=subject_name;
-    replaceWith_(temp_path);
+    replaceWith_(temp_path); //hyphen convert
 
-    SemCreatePath = SemCreatePath + "_" + temp_path  ; //proper subject folder create
+    SemCreatePath = SemCreatePath + "-" + temp_path  ; //proper subject folder create
 
     if(!dirExists(SemCreatePath.c_str())) //if directory not exists then create it
         {  
             command = "mkdir " +  SemCreatePath;                //making commad which will pass in cmd
-            ////cout<<"commad 1 for creating directory "<<command<<endl;
+            
             system(command.c_str());      // creating  directory by CMD
              
             /*********************  FOLDERS *******************/
             
-             command = "mkdir " + SemCreatePath + "\\DAILY_RECORD" ; // making COMMAND FOR DAILY_RECORD folder
-             ////cout<<"commad 1 for creating directory "<<command<<endl;
+             command = "mkdir " + SemCreatePath + "\\DAILY-RECORD" ; // making COMMAND FOR DAILY_RECORD folder
+            
              system(command.c_str()); // creating DAILY_RECORD directory by CMD
              
-             command = "mkdir " + SemCreatePath + "\\FAC-STUD_DETAILS" ; // making COMMAND FOR FAC&STUD_DETAILS folder
-             ////cout<<"commad 1 for creating directory "<<command<<endl;
+             command = "mkdir " + SemCreatePath + "\\FAC-STUD-DETAILS" ; // making COMMAND FOR FAC&STUD_DETAILS folder
+            
              system(command.c_str()); // creating FAC&STUD_DETAILS directory by CMD
              
-             command = "mkdir " + SemCreatePath + "\\MONTHLY_RECORDS" ; // making COMMAND FOR MONTHLY_RECORDS folder
-             ////  cout<<"commad 1 for creating directory "<<command<<endl;
+             command = "mkdir " + SemCreatePath + "\\MONTHLY-RECORDS" ; // making COMMAND FOR MONTHLY_RECORDS folder
+           
              system(command.c_str()); // creating MONTHLY_RECORDS directory by CMD
 
              /**************************************************/
              
              /*******************  FILES *********************/
              
-              command = "cd. > " + SemCreatePath + "\\DAILY_RECORD\\records.txt"; // RECORDS.TXT file
+              command = "cd. > " + SemCreatePath + "\\DAILY-RECORD\\records.txt"; // RECORDS.TXT file
               system(command.c_str()); 
                
-              command = "cd. > " + SemCreatePath + "\\FAC-STUD_DETAILS\\faculty"+"_sem_"+ sem +".txt"; // faculty_details.TXT file
+              command = "cd. > " + SemCreatePath + "\\FAC-STUD-DETAILS\\faculty"+"-sem-"+ sem +".txt"; // faculty_details.TXT file
               system(command.c_str());  
                
-              command = "cd. > " + SemCreatePath + "\\FAC-STUD_DETAILS\\student"+"_sem_"+ sem +".txt"; // student_details.TXT file
+              command = "cd. > " + SemCreatePath + "\\FAC-STUD-DETAILS\\student"+"-sem-"+ sem +".txt"; // student_details.TXT file
               system(command.c_str()); 
+              
+              temp_path=course_name; //re used temp_path
+              replaceWith_(temp_path);
+
+              command = course_name +"|"+sem+"|"+ subject_name +"|"+ temp_path ;
              
-              return 1;
+              temp_path=subject_name; //re used temp_path
+              replaceWith_(temp_path);
+               
+              command = command + temp_path ; 
+               
+              temp_path = AMS_Path + "\\OTHER\\semesterRecord.txt";   //* it will keep record of each semester that is created like all data of faculty | folderName
+                                                                      //! module development 2 you will need that okay for listing out folders
+              writeDataToFile(temp_path,command); //*writting data to file
+              return 1; //al above code works then returns 1 = successfully
               /***********************************************/
         }
-        else 
+        else  //if that semester already exist
         {
           scrClr();
-          setCursorPos(9,26);
+          setCursorPos(9,20);
           SetColor(2);
           ShowConsoleCursor(false);
-          cout<<"SEMSTER ALREADY EXIST !"<<endl;
-          scrClr(1);
+          cout<<"SEMSTER WITH THAT SUBJECT ALREADY EXIST !"<<endl; //error on sem semester creation
+          scrClr(2);
           SetColor(0);
-          return 0;
+          return 0;//returns 0=failed as we are trying to create that same folder again
         }
+
   }
 
-  int confirmation()
+  int confirmation() //basic confirmation message for user
   {
     int line; 
 
@@ -668,44 +711,30 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
     fflush(stdin);
     ShowConsoleCursor(true);
     cout << "Type : ";
-    getline(cin,ans);
+    getline(cin,temp_path); //*re-used temp_path for storage
     ShowConsoleCursor(false);
 
-    ConvertChoiceToINT = validateString(ans);
+    ConvertChoiceToINT = validateString(temp_path);
     
-    if(ConvertChoiceToINT == -1)
+    if(ConvertChoiceToINT == -1) //validate input
     {
-      InvalidInputErr();
+      InvalidInputErr(); //error message
       goto reInput;
     }
 
-    if(ConvertChoiceToINT)
-    {
-      return ConvertChoiceToINT;
-    }
-    else 
-    {
-      
-     // InfoModification();
-      //  setCursorPos(1,10);
-      //  cout<< "This message is for no confirmation for now after we will remove it"<<endl;
-      
-    }
-   return(ConvertChoiceToINT);
+   return(ConvertChoiceToINT); //returns basic confirmation value yes=1 / no=0 
   }
 
   int InfoModification() //* MODIFICATIONS OF FACULTY DETAILS
   { 
-       int line=0;
-
-       reInput:
-    
+       
+       int line;
+       reInputOfmod:
+        
+       line=0;
        setCursorPos(1);
        cout<< setw(62) <<" => WHICH INFORMATION DO YOU WANT TO MODIFY ? "<<endl; 
 
-       bool match = false;
-       string operationChoice;
-    
        setCursorPos(2,25);
     
        buildVerticalWall(23);
@@ -736,7 +765,7 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
        setCursorPos(2,30);
        ShowConsoleCursor(true);
        cout<<"CHOICE : ";
-       getline(cin,operationChoice);
+       getline(cin,temp_path);
        ShowConsoleCursor(false);
     
        if(!cin)
@@ -744,21 +773,19 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
            cin.clear();
            cin.ignore(80,'\n');
        }
+       ConvertChoiceToINT = validateString(temp_path,6); //validate input
 
-       ConvertChoiceToINT = validateString(operationChoice,6);
-
-       if(ConvertChoiceToINT==-1)
+       if(ConvertChoiceToINT==0) //if wrong input
        { 
-           InvalidInputErr();
-           goto reInput;
+           goto reInputOfmod; //re take choice of modification
        }
        else 
        {
-       return(ConvertChoiceToINT);
+       return(ConvertChoiceToINT); //returns number option of modification
        }
   }
 
-   void UpdateFacName()
+   void UpdateFacName() //Faculty update
    { 
       reinput:
       scrClr(0.5);
@@ -776,10 +803,10 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
       
       scrClr(0.5);
   }
-  void UpdateEmail()
+  void UpdateEmail()  //email address update
   {   reinput:
       scrClr(0.5);
-      setCursorPos(9,26);
+      setCursorPos(9,20);
       cout<<"ENTER FACULTY EMAIL : ";
       fflush(stdin);
       ShowConsoleCursor(true);
@@ -794,94 +821,92 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
   
       
   }
-  void EnterCourseName()
+  void EnterCourseName() //course name input
   {   
       reinput:
       scrClr(0.5);
-      setCursorPos(9,26);
+      setCursorPos(9,26); //set Cursor Position
       cout<<"ENTER COURSE NAME  : ";
       fflush(stdin);
-      ShowConsoleCursor(true);
-      getline(cin,course_name);
-      ShowConsoleCursor(false);
-      if(EmptyInput(course_name))
+      ShowConsoleCursor(true); // show cursor for taking input
+      getline(cin,course_name);   //input
+      ShowConsoleCursor(false);   // hide cursor for flickring cursor
+      if(EmptyInput(course_name))  // if empty input like enter key so we have set error for that
       {
-        InvalidInputErr();
+        InvalidInputErr(); //error on wrong input
         goto reinput;
       }
       scrClr(0.5);
-  
   }
-  void EnterSem()
+  void EnterSem()  //input of semester
   {   
-      scrClr(0.5);
       reinputOfsem:
+      scrClr(0.5); //clear screen
       fflush(stdin);
       setCursorPos(9,26);
       cout<<"ENTER SEMESTER : ";
       fflush(stdin);
-      ShowConsoleCursor(true);
-      getline(cin,sem);
-      ShowConsoleCursor(false);
+      ShowConsoleCursor(true);   // show cursor for taking input
+      getline(cin,sem);       //input
+      ShowConsoleCursor(false); // hide cursor for flickring cursor
       scrClr(0.5);
   
-      if(!validateString(sem,10))
+      if(!validateString(sem,10)) //validate sem input
       {goto reinputOfsem;}
-  
-      
+
   }
-  void EnterSubject()
+  void EnterSubject() //input subject 
   {
       reinput:
       scrClr(0.5);
       setCursorPos(9,26);
       cout<<"ENTER SUBJECT : ";
-      ShowConsoleCursor(true);
-      getline(cin,subject_name);
-      ShowConsoleCursor(false);
-      if(EmptyInput(subject_name))
+      ShowConsoleCursor(true);  // show cursor for taking input
+      fflush(stdin);
+      getline(cin,subject_name);    //input
+      ShowConsoleCursor(false);    // hide cursor for flickring cursor
+      if(EmptyInput(subject_name)) // if empty input like enter key so we have set error for that
       {
-        InvalidInputErr();
+        InvalidInputErr();  //error on wrong input
         goto reinput;
       }
+      fflush(stdin);
       scrClr(0.5); 
-  
-      
   }
   
   public:
    
-  void askFacDetails()
+  void askFacDetails() //asking faculty details
   { 
 
-    reAskFacDet:
+    reAskFacDet: //re ask for details of faculty
 
-    EnterCourseName();
+    EnterCourseName(); //course name input 
     
     
-    EnterSem();
+    EnterSem(); //sem input 
     
   
-    EnterSubject();
+    EnterSubject();  //subject input 
 
-    command = AMS_Path + "\\USER_INFO\\userdetails.txt";
+    command = AMS_Path + "\\USER-INFO\\userdetails.txt"; // making path for getting data from file
    
-    getDataFromFile(command,FacultyName,1);
-    getDataFromFile(command,FacultyEmail,2);
+    getDataFromFile(command,FacultyName,1); //taking data of GUI form
+    getDataFromFile(command,FacultyEmail,2);//taking data of GUI form
     
     
     fflush(stdin);
 
-    confirmAgain:
+    confirmAgain: //final confirmation 
 
-    if(confirmation())
+    if(confirmation()) // basic confirmation dialog if yes then semester folder create
     {  
-        if(createSemester())
+        if(createSemester()) //semester confirmation
         {
 
-        command = SemCreatePath + "\\FAC-STUD_DETAILS\\faculty"+"_sem_"+ sem +".txt";
+        command = SemCreatePath + "\\FAC-STUD-DETAILS\\faculty"+"-sem-"+ sem +".txt"; //path making for writting into file
         
-        writeDataToFile(command,FacultyName);
+        writeDataToFile(command,FacultyName); //writting data to files
         writeDataToFile(command,FacultyEmail);
         writeDataToFile(command,course_name);
         writeDataToFile(command,sem);
@@ -890,23 +915,23 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
         }
         else
         {
-          goto reAskFacDet;
+          goto reAskFacDet; //reasking faculty details as semester already exists
         }
     }
     else
     { 
-      scrClr(0.5);
+      scrClr(0.5); //clear screen so flickring won't happen 
 
-      switch(InfoModification())
+      switch(InfoModification()) //which details do you want to update that function returns
       {
-        case 1:{UpdateFacName(); break;}
-        case 2:{UpdateEmail();break;}
+        case 1:{UpdateFacName(); break;} // each function called according to requirement 
+        case 2:{UpdateEmail();break;}     
         case 3:{EnterCourseName();break;}
         case 4:{EnterSem();break;}
         case 5:{EnterSubject();break;}
         case 6:{scrClr(0.5);break;}
       }
-      goto confirmAgain;
+      goto confirmAgain; //ask user to final confirmation
     }
   }
 
@@ -932,7 +957,7 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
 
 int main()
 {
-   //jay swaminrayan
+    //jay swaminrayan
     //jay ganeshay namh
     bool loop=true;
     
@@ -977,4 +1002,3 @@ int main()
 
     return 0;
 }
-
