@@ -658,7 +658,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
           SetColor(2);
           ShowConsoleCursor(false);
           cout<<"SEMSTER WITH THAT SUBJECT ALREADY EXIST !"<<endl; //error on sem semester creation
-          scrClr(1);
+          scrClr(2);
           SetColor(0);
           return 0;//returns 0=failed as we are trying to create that same folder again
         }
@@ -735,8 +735,6 @@ class SET_WRITE_DB: public MODULE_GENERAL
        setCursorPos(1);
        cout<< setw(62) <<" => WHICH INFORMATION DO YOU WANT TO MODIFY ? "<<endl; 
 
-       string operationChoice;
-    
        setCursorPos(2,25);
     
        buildVerticalWall(23);
@@ -767,7 +765,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
        setCursorPos(2,30);
        ShowConsoleCursor(true);
        cout<<"CHOICE : ";
-       getline(cin,operationChoice);
+       getline(cin,temp_path);
        ShowConsoleCursor(false);
     
        if(!cin)
@@ -775,7 +773,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
            cin.clear();
            cin.ignore(80,'\n');
        }
-       ConvertChoiceToINT = validateString(operationChoice,6); //validate input
+       ConvertChoiceToINT = validateString(temp_path,6); //validate input
 
        if(ConvertChoiceToINT==0) //if wrong input
        { 
