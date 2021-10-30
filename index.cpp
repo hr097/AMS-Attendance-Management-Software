@@ -338,7 +338,7 @@ private:
   {
 
       int flag=0,tem=1;
-      string i;
+      string i;  //!viraj talaviya look at it can we save it ?? by direct calling like that ... if(to_string(tem) == input) please check that
       for(tem=1;tem<=Bnd;tem++)
       {
           i = to_string(tem);
@@ -349,39 +349,39 @@ private:
           }
       }
   
-      if(flag==0)
+      if(flag==0)  //*IF flag=0 means input is invalid 
       {
-        InvalidInputErr(); 
+        InvalidInputErr(); //*error msg
         return 0;
       }
       else
       {
-        return tem;
+        return tem; //*returns converted string.to_int(INt)
       }
 
 
   }
   
-  int validateString(string input)
+  int validateString(string input) //overloaded version of validating string input of yes/no
   {
     if(input == "YES" || input == "yes" || input == "Yes")
     {
-      return 1;
+      return 1; //yes
     }
     else if(input == "NO" || input == "no" || input == "No")
     {
-      return 0;
+      return 0; //no
     }
     else
     {
-      return -1;
+      return -1; // error
     }
   }
 
 };
 
 //---------STATIC DEFINATIONS  OF APP-----------//
- int APP::MODULE_CHOICE=0;
+ int APP::MODULE_CHOICE=0; //? MODULE CHOICE WILL BE ACT LIKE GLOBALLY
 //---------------------------------------------//
 
 /****************************APP-CLASS-END***************************/
@@ -412,11 +412,11 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
 
   virtual void SetNoObj()=0; //*for disable object creation of APP
  
-  string AMS_Path,command,FacultyName,FacultyEmail,course_name,sem,subject_name,SemCreatePath,ans,temp_path;
+  string AMS_Path,command,FacultyName,FacultyEmail,course_name,sem,subject_name,SemCreatePath,temp_path;
  
 
 
-  void AppPath(string &path)
+  void AppPath(string &path) //Getting Project path for each module Variable used Ams_Path for storing path
   {
     CHAR pathDocument[MAX_PATH]; //string to store path
     HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument);  //getting documents path
@@ -428,11 +428,11 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
     }
     else
     {
-        cout << "ERROR PATH NOT FOUND : " << result << "\n";
+        cout << "ERROR PATH NOT FOUND : " << result << "\n"; //error
     }
   } 
 
-  void getDataFromFile(string path,string &FcName,int lineNo)
+  void getDataFromFile(string path,string &FcName,int lineNo) //getData file given path form given line as string
   {
    ifstream read(path.c_str(),ios::in);
 
@@ -452,7 +452,7 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
    read.close();
   }
 
-  void writeDataToFile(string path,string &FcName)
+  void writeDataToFile(string path,string &FcName) //write string data to particular path file
   {
     ofstream write(path.c_str(),ios::app);
 
@@ -492,7 +492,7 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
   void replaceWith_(string &str) //*special symbols are not allowed in file name so need to convert them into -hyphen
   {   
       int i=0,j=0;
-      string list = "#%&{}\\/*>< $!:\'\"@+`|="; //*need to be checked
+      string list = "#%&{}\\/*>< $!:\'\"@+`|="; //*need to be checked as thease are restricated symbols
       
       for(i=0;i<=list.length();i++)
       {
@@ -527,15 +527,15 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
       
   }
 
-  bool EmptyInput(string &input)
+  bool EmptyInput(string &input)  //checking if input is empty(hint : enter key)
   {
    if(input.empty())
    {
-     return true;
+     return true; //if emty then returns  true
    }
    else
    {
-     return false;
+     return false; // if not then returns false
    }
   }
 
@@ -553,7 +553,7 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
 
 };
 
-class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to develop your own class named MODULE_1/2/3/4
+class SET_WRITE_DB: public MODULE_GENERAL 
 {
   
   //!=============================DATA-MEMBERS================================//
@@ -581,9 +581,9 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
   //?=============================MEMBERS-FUNCTIONS===================================//
   
   public:
-  SET_WRITE_DB() //TODO:CONSTRUCTOR
+  SET_WRITE_DB() 
   {
-    AppPath(AMS_Path);
+    AppPath(AMS_Path); //* for each module you will get project folder (database)path like that
   }
   /********************************* MODULE_1 *********************************/
 
@@ -593,33 +593,33 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
   { 
     
     temp_path=course_name;
-    replaceWith_(temp_path);
+    replaceWith_(temp_path); //hyphen convert
 
     SemCreatePath = AMS_Path + "\\" + temp_path + "-SEM-" + sem ; //making semesterpath with coursename
   
     temp_path=subject_name;
-    replaceWith_(temp_path);
+    replaceWith_(temp_path); //hyphen convert
 
     SemCreatePath = SemCreatePath + "-" + temp_path  ; //proper subject folder create
 
     if(!dirExists(SemCreatePath.c_str())) //if directory not exists then create it
         {  
             command = "mkdir " +  SemCreatePath;                //making commad which will pass in cmd
-            ////cout<<"commad 1 for creating directory "<<command<<endl;
+            
             system(command.c_str());      // creating  directory by CMD
              
             /*********************  FOLDERS *******************/
             
              command = "mkdir " + SemCreatePath + "\\DAILY-RECORD" ; // making COMMAND FOR DAILY_RECORD folder
-             ////cout<<"commad 1 for creating directory "<<command<<endl;
+            
              system(command.c_str()); // creating DAILY_RECORD directory by CMD
              
              command = "mkdir " + SemCreatePath + "\\FAC-STUD-DETAILS" ; // making COMMAND FOR FAC&STUD_DETAILS folder
-             ////cout<<"commad 1 for creating directory "<<command<<endl;
+            
              system(command.c_str()); // creating FAC&STUD_DETAILS directory by CMD
              
              command = "mkdir " + SemCreatePath + "\\MONTHLY-RECORDS" ; // making COMMAND FOR MONTHLY_RECORDS folder
-             ////  cout<<"commad 1 for creating directory "<<command<<endl;
+           
              system(command.c_str()); // creating MONTHLY_RECORDS directory by CMD
 
              /**************************************************/
@@ -645,9 +645,10 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
                
               command = command + temp_path ; 
                
-              temp_path = AMS_Path + "\\OTHER\\semesterRecord.txt";  
-              writeDataToFile(temp_path,command);
-              return 1;
+              temp_path = AMS_Path + "\\OTHER\\semesterRecord.txt";   //* it will keep record of each semester that is created like all data of faculty | folderName
+                                                                      //! module development 2 you will need that okay for listing out folders
+              writeDataToFile(temp_path,command); //*writting data to file
+              return 1; //al above code works then returns 1 = successfully
               /***********************************************/
         }
         else  //if that semester already exist
@@ -656,10 +657,10 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
           setCursorPos(9,20);
           SetColor(2);
           ShowConsoleCursor(false);
-          cout<<"SEMSTER WITH THAT SUBJECT ALREADY EXIST !"<<endl;
+          cout<<"SEMSTER WITH THAT SUBJECT ALREADY EXIST !"<<endl; //error on sem semester creation
           scrClr(1);
           SetColor(0);
-          return 0;
+          return 0;//returns 0=failed as we are trying to create that same folder again
         }
 
   }
@@ -710,10 +711,10 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
     fflush(stdin);
     ShowConsoleCursor(true);
     cout << "Type : ";
-    getline(cin,ans);
+    getline(cin,temp_path); //*re-used temp_path for storage
     ShowConsoleCursor(false);
 
-    ConvertChoiceToINT = validateString(ans);
+    ConvertChoiceToINT = validateString(temp_path);
     
     if(ConvertChoiceToINT == -1) //validate input
     {
@@ -734,7 +735,6 @@ class SET_WRITE_DB: public MODULE_GENERAL //TODO : just like that you have to de
        setCursorPos(1);
        cout<< setw(62) <<" => WHICH INFORMATION DO YOU WANT TO MODIFY ? "<<endl; 
 
-       bool match = false;
        string operationChoice;
     
        setCursorPos(2,25);
