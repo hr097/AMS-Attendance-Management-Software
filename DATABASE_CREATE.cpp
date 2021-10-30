@@ -78,20 +78,24 @@ int main()
             command = "mkdir " + ApplicationPath + "\\USER-INFO"; //making commad which will pass in cmd
             system(command.c_str()); // creating USER_INFO directory by CMD
 
+            command = "mkdir " + ApplicationPath + "\\OTHER"; //making commad which will pass in cmd
+            system(command.c_str()); // creating OTHER directory by CMD
+
             command = "mkdir " + ApplicationPath + "\\LOG-INFO\\APPLOG"; //making commad which will pass in cmd
             system(command.c_str()); // creating APPLOG directory by CMD
             
             command = "cd. > " + ApplicationPath + "\\LOG-INFO\\APPLOG\\logs.txt"; //making commad which will pass in cmd
-            
-            ////cout<<endl<<command<<endl;
+
 
             system(command.c_str()); // creating  file logs.txt  by CMD
 
 
             command = "cd. > " + ApplicationPath + "\\USER-INFO\\userdetails.txt"; //making commad which will pass in cmd
-            
-           //// cout<<endl<<command<<endl;
             system(command.c_str()); // creating  file userdetails.txt  by CMD
+
+            command = "cd. > " + ApplicationPath + "\\OTHER\\semesterRecord.txt"; //making commad which will pass in cmd
+           //// cout<<endl<<command<<endl;
+            system(command.c_str()); // creating  file semesterRecord.txt  by CMD
            
             command = "cd. > " + ApplicationPath + "\\LOG-INFO\\logincredentials.txt"; //making commad which will pass in cmd
             ////cout<<command<<endl;
