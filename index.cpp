@@ -378,7 +378,6 @@ private:
       return -1; // error
     }
   }
-  
 
 };
 
@@ -541,11 +540,11 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
    }
   }
 
-  bool Email_check(string email)
-{
-     const regex pattern("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+");
-    return regex_match(email,pattern);
-}
+  bool Email_check(string email) //checking for email validation (for space or any other special character which are not supported in email)
+  {
+       const regex pattern("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+");
+      return regex_match(email,pattern);
+  }
 
   int dirExists(const char *path) //checking function if directory exists or not 1=EXIST 0=NOT EXIST
   {
@@ -666,7 +665,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
           SetColor(2);
           ShowConsoleCursor(false);
           cout<<"SEMSTER WITH THAT SUBJECT ALREADY EXIST !"<<endl; //error on sem semester creation
-          scrClr(1);
+          scrClr(2);
           SetColor(0);
           return 0;//returns 0=failed as we are trying to create that same folder again
         }
@@ -745,8 +744,6 @@ class SET_WRITE_DB: public MODULE_GENERAL
        setCursorPos(1);
        cout<< setw(62) <<" => WHICH INFORMATION DO YOU WANT TO MODIFY ? "<<endl; 
 
-       string operationChoice;
-    
        setCursorPos(2,25);
     
        buildVerticalWall(23);
@@ -777,7 +774,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
        setCursorPos(2,30);
        ShowConsoleCursor(true);
        cout<<"CHOICE : ";
-       getline(cin,operationChoice);
+       getline(cin,temp_path);
        ShowConsoleCursor(false);
     
        if(!cin)
@@ -785,7 +782,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
            cin.clear();
            cin.ignore(80,'\n');
        }
-       ConvertChoiceToINT = validateString(operationChoice,6); //validate input
+       ConvertChoiceToINT = validateString(temp_path,6); //validate input
 
        if(ConvertChoiceToINT==0) //if wrong input
        { 
@@ -801,7 +798,6 @@ class SET_WRITE_DB: public MODULE_GENERAL
 
 
   /**********   STUDENT DETAILS CONFIRMATION AND MODIFICATION    **********/
-
 
   int studConfirmation() //basic confirmation message for user
   {
@@ -947,7 +943,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
       ShowConsoleCursor(true);
       getline(cin,FacultyEmail);
       ShowConsoleCursor(false);
-      if(EmptyInput(FacultyEmail) || !Email_check(student_email))
+      if(EmptyInput(FacultyEmail) || !Email_check(FacultyEmail))
       {
         InvalidInputErr();
         goto reinput;
@@ -1039,7 +1035,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
       ShowConsoleCursor(false); // hide cursor for flickring cursor
       scrClr(0.5);
   
-      if(!validateString(roll_no,5000)) //validate sem input
+      if(!validateString(roll_no,5000)) //validate roll no input
       {goto reinputOfsem;}
 
   }
@@ -1058,8 +1054,6 @@ class SET_WRITE_DB: public MODULE_GENERAL
         InvalidInputErr();  //error on wrong input
         goto reinput;
       }
-      // if(!Email_check(student_email))
-      //   InvalidInputErr();
       fflush(stdin);
       scrClr(0.5); 
   }
@@ -1088,20 +1082,20 @@ class SET_WRITE_DB: public MODULE_GENERAL
     fflush(stdin);
 
     confirmAgain: //final confirmation 
-    
+
     if(confirmation()) // basic confirmation dialog if yes then semester folder create
     {  
         if(createSemester()) //semester confirmation
         {
 
-        command = SemCreatePath + "\\FAC-STUD-DETAILS\\faculty"+"-sem-"+ sem +".txt";; //path making for writting into file
+        command = SemCreatePath + "\\FAC-STUD-DETAILS\\faculty"+"-sem-"+ sem +".txt"; //path making for writting into file
         
         writeDataToFile(command,FacultyName); //writting data to files
         writeDataToFile(command,FacultyEmail);
         writeDataToFile(command,course_name);
         writeDataToFile(command,sem);
         writeDataToFile(command,subject_name);
-        
+
         re_ask:
         scrClr(1);
         setCursorPos(5,15);
@@ -1143,11 +1137,11 @@ class SET_WRITE_DB: public MODULE_GENERAL
 
     reAskStudDetails:
     //student name,email,roll no ,email with no space
-    EnterRoll_no();
+    EnterRoll_no();  // for take input of roll no
 
-    EnterStudentName();
+    EnterStudentName(); //for take input of student name
 
-    EnterEmail();
+    EnterEmail(); //for taking input of email
 
     fflush(stdin);
 
@@ -1201,6 +1195,7 @@ int main()
     bool loop=true;
     
     SET_WRITE_DB SW;
+
     string stud_no;
     int i=0,stud_int;
  
