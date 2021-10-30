@@ -11,6 +11,7 @@
 #include<math.h> //* math operations
 #include<fstream> //* file handling functions access
 #include<string> //* string library function access
+#include<regex>  //* for email validation
 
 //--------FOR-DOCUMENT PATH GETTING------/
 
@@ -29,7 +30,7 @@
   #include<wincon.h>
   #include<string>
 
-  //#endif  // user 1 
+  #endif  // user 1 
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -50,7 +51,7 @@ lpConsoleCurrentFontEx);
 }
 #endif
 
-#endif // user 2
+//#endif // user 2
 
 
 using namespace std; // namespace for  resolving naming coflicts
@@ -412,7 +413,7 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
 
   virtual void SetNoObj()=0; //*for disable object creation of APP
  
-  string AMS_Path,command,FacultyName,FacultyEmail,course_name,sem,subject_name,SemCreatePath,temp_path;
+  string AMS_Path,command,FacultyName,FacultyEmail,course_name,sem,subject_name,SemCreatePath,temp_path,student_name,student_email,roll_no;
  
 
 
@@ -537,6 +538,12 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
    {
      return false; // if not then returns false
    }
+  }
+
+  bool Email_check(string email) //checking for email validation (for space or any other special character which are not supported in email)
+  {
+       const regex pattern("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+");
+      return regex_match(email,pattern);
   }
 
   int dirExists(const char *path) //checking function if directory exists or not 1=EXIST 0=NOT EXIST
@@ -665,6 +672,8 @@ class SET_WRITE_DB: public MODULE_GENERAL
 
   }
 
+  /************   FACULTY DETAILS CONFIRMATION AND MODIFICATION   ****************************/
+
   int confirmation() //basic confirmation message for user
   {
     int line; 
@@ -785,11 +794,133 @@ class SET_WRITE_DB: public MODULE_GENERAL
        }
   }
 
+  /*******************************************************/
+
+
+  /**********   STUDENT DETAILS CONFIRMATION AND MODIFICATION    **********/
+
+  int studConfirmation() //basic confirmation message for user
+  {
+    int line; 
+
+    reInput:
+
+    setCursorPos(5,15);
+    cout<<"STUDENT ROLL NO "<< right << setw(4) <<": " <<roll_no;
+    setCursorPos(1,15);
+    cout<<"STUDENT NAME "<< right << setw(7) <<": " <<student_name;
+    setCursorPos(1,15);
+    cout<<"STUDENT E-MAIL "<< right << setw(5) <<": " <<student_email;
+    
+      
+  
+    setCursorPos(2,15);
+  
+    buildVerticalWall(43);
+    line=0;
+    while(line<3)
+    {
+      setCursorPos(1,15);
+      if(line==1)
+      {
+        buildHorizontalWall(43,"Confirm these details (yes/no) ");     
+    
+      }
+      else 
+      {
+        buildHorizontalWall(43," ");
+    
+      }
+    
+      line++;
+    }
+    setCursorPos(1,15);
+    buildVerticalWall(43);
+  
+    setCursorPos(2,30);
+  
+    fflush(stdin);
+    ShowConsoleCursor(true);
+    cout << "Type : ";
+    getline(cin,temp_path); //*re-used temp_path for storage
+    ShowConsoleCursor(false);
+
+    ConvertChoiceToINT = validateString(temp_path);
+    
+    if(ConvertChoiceToINT == -1) //validate input
+    {
+      InvalidInputErr(); //error message
+      goto reInput;
+    }
+
+   return(ConvertChoiceToINT); //returns basic confirmation value yes=1 / no=0 
+  }
+
+  int InfoStudModification() //* MODIFICATIONS OF FACULTY DETAILS
+  { 
+       
+       int line;
+       reInputOfmod:
+        
+       line=0;
+       setCursorPos(1);
+       cout<< setw(62) <<" => WHICH INFORMATION DO YOU WANT TO MODIFY ? "<<endl; 
+
+       string operationChoice;
+    
+       setCursorPos(2,25);
+    
+       buildVerticalWall(23);
+    
+       while(line<11)
+        {
+            setCursorPos(1,25);
+            if(line==0)
+            buildHorizontalWall(23,"1) STUDENT ROLL NO ");
+            else if(line==2)
+            buildHorizontalWall(23,"2) STUDENT NAME ");
+            else if(line==4)
+            buildHorizontalWall(23,"3) STUDENT E-MAIL ");
+            else if(line==6)
+            buildHorizontalWall(23,"4) NO CHANGE ");
+            else 
+            buildHorizontalWall(23," ");
+            line++;
+        }
+    
+       setCursorPos(1,25);
+       buildVerticalWall(23);
+    
+       setCursorPos(2,30);
+       ShowConsoleCursor(true);
+       cout<<"CHOICE : ";
+       getline(cin,operationChoice);
+       ShowConsoleCursor(false);
+    
+       if(!cin)
+       {
+           cin.clear();
+           cin.ignore(80,'\n');
+       }
+       ConvertChoiceToINT = validateString(operationChoice,6); //validate input
+
+       if(ConvertChoiceToINT==0) //if wrong input
+       { 
+           goto reInputOfmod; //re take choice of modification
+       }
+       else 
+       {
+       return(ConvertChoiceToINT); //returns number option of modification
+       }
+  }
+
+  /************************************************************/
+
    void UpdateFacName() //Faculty update
    { 
       reinput:
       scrClr(0.5);
-      setCursorPos(9,26);
+      setCursorPos(9,20);
       cout<<"ENTER FACULTY NAME : ";
       fflush(stdin);
       ShowConsoleCursor(true);
@@ -806,13 +937,13 @@ class SET_WRITE_DB: public MODULE_GENERAL
   void UpdateEmail()  //email address update
   {   reinput:
       scrClr(0.5);
-      setCursorPos(9,20);
+      setCursorPos(9,16);
       cout<<"ENTER FACULTY EMAIL : ";
       fflush(stdin);
       ShowConsoleCursor(true);
       getline(cin,FacultyEmail);
       ShowConsoleCursor(false);
-      if(EmptyInput(FacultyEmail))
+      if(EmptyInput(FacultyEmail) || !Email_check(FacultyEmail))
       {
         InvalidInputErr();
         goto reinput;
@@ -873,10 +1004,63 @@ class SET_WRITE_DB: public MODULE_GENERAL
       fflush(stdin);
       scrClr(0.5); 
   }
+
+  void EnterStudentName() //course name input
+  {   
+      reinput:
+      scrClr(0.5);
+      setCursorPos(9,26); //set Cursor Position
+      cout<<"ENTER STUDENT NAME  : ";
+      fflush(stdin);
+      ShowConsoleCursor(true); // show cursor for taking input
+      getline(cin,student_name);   //input
+      ShowConsoleCursor(false);   // hide cursor for flickring cursor
+      if(EmptyInput(student_name))  // if empty input like enter key so we have set error for that
+      {
+        InvalidInputErr(); //error on wrong input
+        goto reinput;
+      }
+      scrClr(0.5);
+  }
+  void EnterRoll_no()  //input of semester
+  {   
+      reinputOfsem:
+      scrClr(0.5); //clear screen
+      fflush(stdin);
+      setCursorPos(9,26);
+      cout<<"ENTER ROLL NO. : ";
+      fflush(stdin);
+      ShowConsoleCursor(true);   // show cursor for taking input
+      getline(cin,roll_no);       //input
+      ShowConsoleCursor(false); // hide cursor for flickring cursor
+      scrClr(0.5);
+  
+      if(!validateString(roll_no,5000)) //validate roll no input
+      {goto reinputOfsem;}
+
+  }
+  void EnterEmail() //input subject 
+  {
+      reinput:
+      scrClr(0.5);
+      setCursorPos(9,26);
+      cout<<"ENTER E-MAIL : ";
+      ShowConsoleCursor(true);  // show cursor for taking input
+      fflush(stdin);
+      getline(cin,student_email);    //input
+      ShowConsoleCursor(false);    // hide cursor for flickring cursor
+      if(EmptyInput(student_email) || !Email_check(student_email)) // if empty input like enter key so we have set error for that
+      {
+        InvalidInputErr();  //error on wrong input
+        goto reinput;
+      }
+      fflush(stdin);
+      scrClr(0.5); 
+  }
   
   public:
    
-  void askFacDetails() //asking faculty details
+  string askFacDetails() //asking faculty details
   { 
 
     reAskFacDet: //re ask for details of faculty
@@ -911,6 +1095,19 @@ class SET_WRITE_DB: public MODULE_GENERAL
         writeDataToFile(command,course_name);
         writeDataToFile(command,sem);
         writeDataToFile(command,subject_name);
+
+        re_ask:
+        scrClr(1);
+        setCursorPos(5,15);
+        cout << " HOW MANY STUDENTS DO YOU HAVE ? ";
+        getline(cin,sem);  //re used for no. of student input
+        
+        ConvertChoiceToINT = validateString(sem,5000);
+        if(ConvertChoiceToINT == 0)
+        goto re_ask;
+        writeDataToFile(command,sem);
+
+        return(sem);
         
         }
         else
@@ -930,6 +1127,42 @@ class SET_WRITE_DB: public MODULE_GENERAL
         case 4:{EnterSem();break;}
         case 5:{EnterSubject();break;}
         case 6:{scrClr(0.5);break;}
+      }
+      goto confirmAgain; //ask user to final confirmation
+    }
+  }
+
+  void askStudDetails()
+  {
+
+    reAskStudDetails:
+    //student name,email,roll no ,email with no space
+    EnterRoll_no();  // for take input of roll no
+
+    EnterStudentName(); //for take input of student name
+
+    EnterEmail(); //for taking input of email
+
+    fflush(stdin);
+
+    confirmAgain: //final confirmation 
+    
+    if(studConfirmation()) // basic confirmation dialog if yes then semester folder create
+    {  
+        command = SemCreatePath + "\\FAC-STUD-DETAILS\\student"+"-sem-"+ sem +".txt";  //path making for writting into file
+        temp_path = roll_no + " | " + student_name + " | " + student_email;
+        writeDataToFile(command,temp_path); //writting data to files
+    }
+    else
+    { 
+      scrClr(0.5); //clear screen so flickring won't happen 
+
+      switch(InfoStudModification()) //which details do you want to update that function returns
+      {
+        case 1:{EnterRoll_no(); break;} // each function called according to requirement 
+        case 2:{EnterStudentName();;break;}     
+        case 3:{EnterEmail();;break;}
+        case 4:{scrClr(0.5);break;}
       }
       goto confirmAgain; //ask user to final confirmation
     }
@@ -962,6 +1195,9 @@ int main()
     bool loop=true;
     
     SET_WRITE_DB SW;
+
+    string stud_no;
+    int i=0,stud_int;
  
     while(loop)
     {
@@ -976,7 +1212,13 @@ int main()
             switch(APP::MODULE_CHOICE)
             {
               case 1:{
-                         SW.askFacDetails();
+                         stud_no = SW.askFacDetails();
+                         stud_int = stoi(stud_no);
+                         while(i<stud_int)
+                         {
+                           SW.askStudDetails();
+                           i++;
+                         }
                          break;
                      }
               case 2:{
