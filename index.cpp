@@ -121,7 +121,7 @@ class APP //*GRAND PARENT CLASS
 
   void buildVerticalWall(int briks) //? for making vertical side
   { cout<<"*";
-    while(briks>0){cout<<"-";briks--;}
+    while(briks>0){cout<<"-";briks--;} 
     cout<<"*";
   }
   
