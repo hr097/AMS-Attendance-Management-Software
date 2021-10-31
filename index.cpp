@@ -6,13 +6,13 @@
 #include<unistd.h> // * for sleep function
 #include<iomanip> // * for manipulator
 #include<cwchar>  //*for console font purpose 
-#include<string.h> //*  string related functions access
+#include<string.h> //* C style string related functions access
 #include<stdbool.h> // * boolean operation
 #include<math.h> //* math operations
 #include<fstream> //* file handling functions access
-#include<string> //* string library function access
+#include<string> //* C++ STL( string library) function access
 #include<regex>  //* for email validation
-
+#include<algorithm> //* for transform function access
 //--------FOR-DOCUMENT PATH GETTING------/
 
 #include <shlobj.h> 
@@ -353,11 +353,11 @@ private:
   {
 
       int flag=0,tem=1;
-      string i;  //!viraj talaviya look at it can we save it ?? by direct calling like that ... if(to_string(tem) == input) please check that
+      
       for(tem=1;tem<=Bnd;tem++)
       {
-          i = to_string(tem);
-          if(i == input)
+          
+          if(to_string(tem) == input)
           {
             flag = 1; 
             break;
