@@ -252,11 +252,6 @@ private:
        setCursorPos(1,15);
        buildVerticalWall(43);
     
-      //  setCursorPos(2,30);
-      //  ShowConsoleCursor(true);
-      //  cout<<"CHOICE : ";
-      //  getline(cin,operationChoice);
-      //  ShowConsoleCursor(false);
 
       askChoice(2,30,operationChoice);
     
@@ -332,7 +327,6 @@ private:
   }
   void InvalidInputErr() //! heavy error
   {
-    
     scrClr(0.5);
     ShowConsoleCursor(false);
     setCursorPos(8,26);
@@ -540,6 +534,7 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
          }
       }
    
+   transform(str.begin(), str.end(), str.begin(), ::toupper); //*convert to uppercase
   }
 
   bool EmptyInput(string &input)  //?checking if input is empty(hint : enter key)
@@ -619,7 +614,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
     
     tempStorage=course_name;
     replaceWithHyphen(tempStorage); //hyphen convert
-
+    
     SemPath = AMS_Path + "\\" + tempStorage + "-SEM-" + sem ; //making semesterpath with coursename
   
     tempStorage=subject_name;
@@ -643,9 +638,9 @@ class SET_WRITE_DB: public MODULE_GENERAL
             
              system(command.c_str()); // creating FAC&STUD_DETAILS directory by CMD
              
-             command = "mkdir " + SemPath + "\\MONTHLY-RECORDS" ; // making COMMAND FOR MONTHLY_RECORDS folder
+             command = "mkdir " + SemPath + "\\MONTHLY-REPORTS" ; // making COMMAND FOR MONTHLY_REPORTS folder
            
-             system(command.c_str()); // creating MONTHLY_RECORDS directory by CMD
+             system(command.c_str()); // creating MONTHLY_REPORTS directory by CMD
 
              /**************************************************/
              
