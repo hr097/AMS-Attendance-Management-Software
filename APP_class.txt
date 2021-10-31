@@ -1,0 +1,51 @@
+NOTE: AA CLASS INHERITENCE NA CASE MA public + protected ma che e share krse
+
+static int MODULE_CHOICE; // static main ma use thse module select krva
+
+public:
+
+void SetColor(int ForgC)
+ 
+void setCursorPos(int x, int y=0)
+
+void ShowConsoleCursor(bool showFlag) 
+
+void scrClr(float i=0.0)
+
+void buildVerticalWall(int briks)
+
+void buildHorizontalWall(int endBrick,string data)
+
+void startApp()
+
+void debug(int do_what=0) 
+
+private:
+
+
+void initApp() 
+
+int HomeScreen()
+
+int GetDesktopResolution()
+
+void setConsoleSize()
+
+
+protected:
+
+int ConvertChoiceToINT;          //*variable for converting string input to integer
+virtual void SetNoObj()=0;   //* set no object creation
+
+void InvalidInputErr()
+void InvalidInputErr(string err_msg,int color,int pos)
+
+
+int validateString(string input,int Bnd)
+
+int validateString(string input) //OVRLD
+
+
+
+
+

@@ -17,12 +17,21 @@ file        :index.cpp
 Bugs        :no bugs
 Memory used : 1 same variable that is "int line" is declared in two functions so we can declare globally one time
 
+
 Date:29/10/2021
 file        :index.cpp
 Bugs        :1)bug Fixed semster already exist added , bugsolved of application crashed error
              2)bug fix updated:  calling of confirmation() , writeDataTofile() , createSemester was incorrect in module 1
-             3)bug found in update faculty detail part (no part) that is if user enter wrong input in choice then control is                moving forward by confirmation part
+             3)bug found in update faculty detail part (no part) that is if user enter wrong input in choice then control is  moving forward by confirmation part
 Memory used : based on requirement(no extra variable are declared)
+
+
+Date:31/10/2021
+file        : index.cpp
+Bugs        : No bugs All bugs fixed
+Memory used : int i is used in two function that is 1)void convertStringtoArray(string arg,char* argcopy)
+                                                    2)void replaceWithHyphen(string &str)
+
 
 
 
@@ -37,7 +46,7 @@ Memory used : based on requirement(no extra variable are declared)
 variables :
 
 
-***class GENERAL_INIT   		:   int ConvertChoiceToINT;
+***class APP   		:   int ConvertChoiceToINT;
                             	            static int MODULE_CHOICE;
 
    void buildHorizontalWall()  		:int run,int line_start
@@ -46,25 +55,52 @@ variables :
 
    void initApp()       		: short winWidth,short winHeight,short scrBufferWidth,short scrBufferHeight 
 
-   int askChoice()      		: bool match,string operationChoice,int line
+   int HomeScreen()      		: bool match,string operationChoice,int line
 
    int GetDesktopResolution() 		: int size,int horizontal,int vertical
 
+protected :
+    int ConvertChoiceToINT; 
+
+   int validateString(string input,int Bnd):int flag=0,tem=1,string i
 
 
 
-***class MODULE_GENERAL_FUNCTION 	: public GENERAL_INIT:  string AMS_Path,FacultyName,FacultyEmail ,CHAR pathDocument[MAX_PATH]
 
-   void getDataFromFile(string path,string &FcName,int lineNo): int Fileline=1;
+***class MODULE_GENERAL_FUNCTION 	: public GENERAL_INIT:    string AMS_Path;
+  string command;
+  string SemPath;
+  string tempStorage;
+
+  string FacultyName;
+  string FacultyEmail;
+  string course_name;
+  string sem;
+  string subject_name;
+  string numberOfstudents;
+
+  string student_name;
+  string student_email;
+  string RoLLNo;
+
+   
 
    void convertStringtoArray(string arg,char* argcopy)  : int i , string str
 
-   void replaceWith_(string &str)   :  int i,j;
+   void replaceWithHyphen(string &str)  :  int i,j;
 
 
 
 
 ***class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION :  string course_name,sem,subject_name,command,SemCreatePath;
+
+int confirmation()         : int line;
+int InfoModification()     : int line;
+int studConfirmation()     : int line;
+int InfoStudModification() : int line;
+
+void askStudDetails()      : int ROLLNO;
+
 
 
    
