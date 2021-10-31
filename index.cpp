@@ -11,7 +11,8 @@
 #include<math.h> //* math operations
 #include<fstream> //* file handling functions access
 #include<string> //* string library function access
-#include<regex>  //* for email validation
+#include<regex>  //* for email validation access
+#include<algorithm>//* transform functions access
 
 //--------FOR-DOCUMENT PATH GETTING------/
 
