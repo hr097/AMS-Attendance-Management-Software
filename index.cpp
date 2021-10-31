@@ -13,6 +13,9 @@
 #include<string> //* C++ STL( string library) function access
 #include<regex>  //* for email validation
 #include<algorithm> //* for transform function access
+#include<ctime> //* for getting current date and time 
+#include<sstream> //* for conversion to string
+
 //--------FOR-DOCUMENT PATH GETTING------/
 
 #include <shlobj.h> 
@@ -67,7 +70,64 @@ class APP //*GRAND PARENT CLASS
 
   static int MODULE_CHOICE; //*module selector static variable
   
-  APP(){ }
+  APP()
+  {  //*******************GET-CURRENT-DATE**************************//
+     string temp; //temp variable for storage
+     time_t tmNow; // structure variable
+     tmNow = time(NULL); 
+     struct tm t = *localtime(&tmNow);   //pre defined function
+        
+     stringstream ss; //string stream class object
+     ss<<t.tm_mday;   // pass day
+     temp = ss.str(); // it returns as string
+     CUR_DATE = temp;      // save to input parameter
+     ss.str(""); //flush string stream class so new input can be taken
+     ss<<(t.tm_mon+1); //pass months
+     temp = ss.str();  //returns month
+     CUR_DATE = CUR_DATE + "/";    //add slash
+     CUR_DATE = CUR_DATE + temp;   //concate to input para
+        
+     ss.str(""); //flush string stream class so new input can be taken
+     ss<<(t.tm_year+1900); //pass year
+     temp = ss.str();  //returns year
+     CUR_DATE = CUR_DATE + "/";    //add slash
+     CUR_DATE = CUR_DATE + temp;  //concate to input para
+        
+     ss.str("");   //flush string stream class so new input can be taken
+
+    //*******************CURRENT-DATE**********************************//
+
+    //*******************GET-CURRENT-TIME******************************//
+            
+            int meridiem_Flag=0; //0=AM 1=PM
+            if(t.tm_hour>12)
+            {
+                t.tm_hour=(t.tm_hour-12);
+                meridiem_Flag=1;    
+            } 
+            ss<<t.tm_hour;
+            temp = ss.str();
+            CUR_TIME = temp;
+
+            if(stoi(CUR_TIME)<10)
+            {
+                CUR_TIME = "0" + CUR_TIME;
+            }
+            ss.str("");
+            ss<<(t.tm_min);
+            temp = ss.str();
+            if(stoi(temp)<10)
+            {
+                temp = "0" + temp;
+            }
+            CUR_TIME = CUR_TIME + ":";
+            CUR_TIME = CUR_TIME + temp;
+
+            ss.str("");
+
+            CUR_TIME+=(meridiem_Flag==0)?" AM":" PM";
+    //*******************CURRENT-TIME*********************************//
+  }
 
   void SetColor(int ForgC) //?for setting individual text color
   {
@@ -218,14 +278,17 @@ private:
        int line;
 
        gotoHomeScreen:
-    
-       setCursorPos(1);
+      
+       Date();
+       Time();
+
+       setCursorPos(2);
        cout<< setw(55) <<" || ATTENDANCE MANAGEMENT SYSTEM ||"<<endl; //TITLE OF APP
 
        bool match = false;
        string operationChoice;
     
-       setCursorPos(2,15);
+       setCursorPos(1,15);
     
        buildVerticalWall(43);
     
@@ -315,6 +378,7 @@ private:
   protected:
 
   virtual void SetNoObj()=0; //*for disable object creation of APP
+  string CUR_DATE,CUR_TIME;//*CURRENT DATE TIME FOR APPLICATION
   int ConvertChoiceToINT; //*variable for converting string input to integer
   void askChoice(int h,int v,string &input)
   {
@@ -343,12 +407,23 @@ private:
     scrClr();
     setCursorPos(9,pos);
     SetColor(color);
-    ShowConsoleCursor(false);
+    ShowConsoleCursor(false); //hide cursor
     cout<<err_msg<<endl; //error on sem semester creation
-    scrClr(2);
+    scrClr(2); // screen stops so user can read message 
     SetColor(0);
   }
-  
+  void succeedMSG(string msg,string msg2,int color,int color2,int pos)
+  {
+    scrClr();
+    setCursorPos(9,pos);
+    SetColor(color);
+    ShowConsoleCursor(false);//hide cursor
+    cout<<msg; //mess 1 st 
+    SetColor(color2);
+    cout<<msg2; //mess 2  nd
+    scrClr(2); // screen stops so user can read message 
+    SetColor(0);
+  }
   int validateString(string input,int Bnd) //* string input validate as integer
   {
 
@@ -391,6 +466,22 @@ private:
     {
       return -1; // error
     }
+  }
+  void Date()
+  {
+    setCursorPos(1,15);
+    cout<<"DATE : ";
+    SetColor(2);
+    cout<<CUR_DATE;
+    SetColor(0);
+  }
+  void Time()
+  {
+    setCursorPos(0,16);
+    cout<<"TIME : ";
+    SetColor(2);
+    cout<<CUR_TIME;
+    SetColor(0);
   }
 
 };
@@ -1131,8 +1222,12 @@ class SET_WRITE_DB: public MODULE_GENERAL
    
   }
   
-
-   protected:
+  void SetUpSucceed()
+  {
+    tempStorage = course_name + " SEM " + sem + " " +subject_name;
+    succeedMSG("SET UP SUCCESSFUL OF ",tempStorage,2,0,20);
+  }
+  protected:
 
   /****************************************************************************/
 
@@ -1174,6 +1269,7 @@ int main()
               case 1:{
                          SW.askFacDetails();
                          SW.askStudDetails();
+                         SW.SetUpSucceed();
                          break;
                      }
               case 2:{
