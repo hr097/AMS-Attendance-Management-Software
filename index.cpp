@@ -525,14 +525,14 @@ class MODULE_GENERAL : public APP
 
   virtual void SetNoObj()=0; //*for disable object creation of APP
  
-  //********** MAIN *************/ 
+  //********** MAIN MODULE_GENERAL *************/ 
 
   string AMS_Path;
   string command;
   string SemPath;
   string tempStorage;
  
- /******************************/
+ /********************************************/
 
 //********** FACULTY *************/ 
 
@@ -541,7 +541,6 @@ class MODULE_GENERAL : public APP
   string course_name;
   string sem;
   string subject_name;
-  string numberOfstudents;
 
 /********************************/
   
@@ -667,44 +666,26 @@ class MODULE_GENERAL : public APP
 
 };
 
-class SET_WRITE_DB: public MODULE_GENERAL 
+class MODULE_1: public MODULE_GENERAL 
 {
   
-  //!=============================DATA-MEMBERS================================//
+  //*=============================DATA-MEMBERS================================//
 
-  /********************************* MODULE_1 *********************************/
   
   private:
 
+  string numberOfstudents; //number of students
+
   public:
+
 
   protected:
-
-    void SetNoObj()
-    {
-      //? by empty defination of pure virtual function here we are restricating creation of parent class
-      //?and grand parent object
-    } 
-
-  /*****************************************************************************/
-
-  /********************************* MODULE_2 *********************************/
-   private:
-   public:
-   protected:
-  /*****************************************************************************/
   
-  //!=============================DATA-MEMBERS-END================================// 
+  //*=============================DATA-MEMBERS-END================================// 
   
 
-  //?=============================MEMBERS-FUNCTIONS===================================//
+  //*=============================MEMBERS-FUNCTIONS===================================//
   
-  public:
-  SET_WRITE_DB() 
-  {
-    AppPath(AMS_Path); //* for each module you will get project folder (database)path like that
-  }
-  /********************************* MODULE_1 *********************************/
 
   private:
   
@@ -901,10 +882,10 @@ class SET_WRITE_DB: public MODULE_GENERAL
        }
   }
 
-  //***************************************************************************/
+  /***************************************************************************/
 
 
-  //********** STUDENT DETAILS CONFIRMATION AND MODIFICATION **********/
+  /********** STUDENT DETAILS CONFIRMATION AND MODIFICATION **********/
 
   int studConfirmation() //?basic confirmation message for user
   {
@@ -1011,7 +992,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
        }
   }
 
-  //************************************************************************/
+  /************************************************************************/
 
    void UpdateName(string &input) //?Faculty & student name update input
    { 
@@ -1135,6 +1116,11 @@ class SET_WRITE_DB: public MODULE_GENERAL
 
   public:
 
+  MODULE_1() 
+  {
+    AppPath(AMS_Path); //* for each module you will get project folder (database)path like that
+  }
+
   void askFacDetails() //?asking faculty details
   { 
 
@@ -1235,24 +1221,38 @@ class SET_WRITE_DB: public MODULE_GENERAL
     tempStorage = course_name + " SEM " + sem + " " +subject_name;
     succeedMSG("SET UP SUCCESSFUL OF ",tempStorage,2,0,20);
   }
-  protected:
-
-  /****************************************************************************/
-
-  /********************************* MODULE_2 *********************************/
-   private:
-   public:
-   protected:
-  /****************************************************************************/
-   public:
-
-  ~SET_WRITE_DB() //TODO:DESTRUCTOR
+  
+  ~MODULE_1() //TODO:DESTRUCTOR
   {
 
   }
-  //?=============================MEMBERS-FUNCTIONS===================================//
+
+  protected:
+
+  void SetNoObj()
+  {
+    //? by empty defination of pure virtual function here we are restricating creation of parent class
+    //?and grand parent object
+  } 
+  //*==============================MEMBERS-FUNCTIONS===================================//
 };
 
+class MODULE_2:public MODULE_GENERAL
+{
+
+//******************************** DATA -MEMBERS *********************************/
+ private:
+ public:
+ protected:
+//*********************************************************************************/
+
+//******************************** MEMBER-FUNCTIONS *********************************/
+ private:
+ public:
+ protected:
+//************************************************************************************/
+
+};
 
 /****************************MODULE-END************************************/
 
@@ -1263,7 +1263,7 @@ int main()
     //*jay kashtbhanjan dev
     bool loop=true;
     
-    SET_WRITE_DB SW;
+    MODULE_1 SW;
 
  
     while(loop)
