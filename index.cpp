@@ -71,23 +71,26 @@ class APP //*GRAND PARENT CLASS
   static int MODULE_CHOICE; //*module selector static variable
   
   APP()
-  {  //*******************GET-CURRENT-DATE**************************//
+  { 
+     //*******************GET-CURRENT-DATE**************************//
      string temp; //temp variable for storage
      time_t tmNow; // structure variable
-     tmNow = time(NULL); 
+     tmNow = time(NULL); //set to initial zero=NULL
      struct tm t = *localtime(&tmNow);   //pre defined function
         
      stringstream ss; //string stream class object
      ss<<t.tm_mday;   // pass day
      temp = ss.str(); // it returns as string
      CUR_DATE = temp;      // save to input parameter
+
      ss.str(""); //flush string stream class so new input can be taken
+
      ss<<(t.tm_mon+1); //pass months
      temp = ss.str();  //returns month
      CUR_DATE = CUR_DATE + "/";    //add slash
      CUR_DATE = CUR_DATE + temp;   //concate to input para
         
-     ss.str(""); //flush string stream class so new input can be taken
+     ss.str(""); 
      ss<<(t.tm_year+1900); //pass year
      temp = ss.str();  //returns year
      CUR_DATE = CUR_DATE + "/";    //add slash
@@ -100,23 +103,24 @@ class APP //*GRAND PARENT CLASS
     //*******************GET-CURRENT-TIME******************************//
             
             int meridiem_Flag=0; //0=AM 1=PM
-            if(t.tm_hour>12)
+            if(t.tm_hour>12) // if hours is greter than 12 then convert into 12 hour formet
             {
                 t.tm_hour=(t.tm_hour-12);
-                meridiem_Flag=1;    
+                meridiem_Flag=1;    //Flag set to show AM-PM
             } 
-            ss<<t.tm_hour;
-            temp = ss.str();
-            CUR_TIME = temp;
 
-            if(stoi(CUR_TIME)<10)
+            ss<<t.tm_hour; // pass Hours
+            temp = ss.str(); // it returns as string
+            CUR_TIME = temp; 
+
+            if(stoi(CUR_TIME)<10) // if hours is between 1 to 9 the like 09 ,01 ...put zero before digit
             {
                 CUR_TIME = "0" + CUR_TIME;
             }
             ss.str("");
             ss<<(t.tm_min);
             temp = ss.str();
-            if(stoi(temp)<10)
+            if(stoi(temp)<10) //convert to int for cheking condition
             {
                 temp = "0" + temp;
             }
@@ -125,7 +129,7 @@ class APP //*GRAND PARENT CLASS
 
             ss.str("");
 
-            CUR_TIME+=(meridiem_Flag==0)?" AM":" PM";
+            CUR_TIME+=(meridiem_Flag==0)?" AM":" PM"; //AM and PM
     //*******************CURRENT-TIME*********************************//
   }
 
@@ -140,7 +144,6 @@ class APP //*GRAND PARENT CLASS
       wColor = (csbi.wAttributes & 0xF0) + (ForgC & 0x0F);
       SetConsoleTextAttribute(hStdOut, wColor);
     }
-    return;
   }
   
   void setCursorPos(int x, int y=0) //?IMPORTANT : ->relative position is set
@@ -189,12 +192,12 @@ class APP //*GRAND PARENT CLASS
   { 
     cout<<"|";
     int run=1;
-    int line_start = int(endBrick / 6);
-  
+    int line_start = int(endBrick / 6);//! @viraj line_start can be removed for memory saving
+    //! by direct call if(run == (endBrick / 6)) //
     while(run<endBrick)
     {
       
-      if(run == line_start)
+      if(run == line_start) //
       {
         cout<<data;
         run+=(data.length()-1);
@@ -211,7 +214,7 @@ class APP //*GRAND PARENT CLASS
   }
 
   void debug(int do_what=0) //?for debugging purposes at last we will delete it 0=pause 1=pause & print
-  {
+  { //!will remove this at last @viraj note down
     #include<conio.h> // * console input output library
     if(!do_what)
     getch();
@@ -224,11 +227,11 @@ class APP //*GRAND PARENT CLASS
     if(MODULE_CHOICE==0) //* only 1 time initiaization function need to be called after 1 time just we need ro refresh home screen so is/else here
     {
       initApp();
-      MODULE_CHOICE = HomeScreen();
+      MODULE_CHOICE = HomeScreen(); //return module choice for first time
     }
     else
     {
-      MODULE_CHOICE = HomeScreen();
+      MODULE_CHOICE = HomeScreen(); //return module choice after first time
     }
     
   }
@@ -279,14 +282,14 @@ private:
 
        gotoHomeScreen:
       
-       Date();
-       Time();
+       Date(); //current date print
+       Time(); //current time print
 
        setCursorPos(2);
        cout<< setw(55) <<" || ATTENDANCE MANAGEMENT SYSTEM ||"<<endl; //TITLE OF APP
 
        bool match = false;
-       string operationChoice;
+       string operationChoice; 
     
        setCursorPos(1,15);
     
@@ -365,7 +368,7 @@ private:
   void setConsoleSize() //? for setting console size
   { 
         CONSOLE_FONT_INFOEX cfi; //structure variable
-        cfi.cbSize = sizeof(cfi);
+        cfi.cbSize = sizeof(cfi); //total bytes of cfi
         cfi.nFont = 0;
         cfi.dwFontSize.X = 0;                   // Width of each character in the font
         cfi.dwFontSize.Y = GetDesktopResolution();                  // Height getting
@@ -380,16 +383,18 @@ private:
   virtual void SetNoObj()=0; //*for disable object creation of APP
   string CUR_DATE,CUR_TIME;//*CURRENT DATE TIME FOR APPLICATION
   int ConvertChoiceToINT; //*variable for converting string input to integer
-  void askChoice(int h,int v,string &input)
+
+  void askChoice(int h,int v,string &input) //*general choice taking function
   {
     setCursorPos(h,v);
     ShowConsoleCursor(true);
     cout<<"CHOICE : ";
-    fflush(stdin);
-    getline(cin,input);
+    fflush(stdin); //flushind standard input buffer
+    getline(cin,input); //taking white space string input
     ShowConsoleCursor(false);
   }
-  void InvalidInputErr() //! heavy error
+
+  void InvalidInputErr() //*invalid input error function
   {
     scrClr(0.5);
     ShowConsoleCursor(false);
@@ -402,11 +407,12 @@ private:
     scrClr(1);
     SetColor(0);
   }
+
   void InvalidInputErr(string err_msg,int color,int pos) //? overloaded version //?medium level error 
   {
     scrClr();
-    setCursorPos(9,pos);
-    SetColor(color);
+    setCursorPos(9,pos);//set cursor position
+    SetColor(color);//setting text color
     ShowConsoleCursor(false); //hide cursor
     cout<<err_msg<<endl; //error on sem semester creation
     scrClr(2); // screen stops so user can read message 
@@ -432,7 +438,7 @@ private:
       for(tem=1;tem<=Bnd;tem++)
       {
           
-          if(to_string(tem) == input)
+          if(to_string(tem) == input) //convert tem int to string to check input valid condition
           {
             flag = 1; 
             break;
@@ -493,9 +499,9 @@ private:
 /****************************APP-CLASS-END***************************/
 
 /****************************MODULE-START*****************************************/
-class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FUNCTIONS HERE AND INHERIT THIS CLASS TO YOURS
+class MODULE_GENERAL : public APP  
 {
-
+  //TODO: ALL MD development TEAM PLEASE CONTRIBUTE YOUR FUNCTIONS HERE AND INHERIT THIS CLASS TO YOURS
   // ? this are general function class which can be used by all 4 module developers
   // *email functionalities also be included here since all 2 modules are using it
   // ? you have to make functions very generalized so other MD developers can use it
@@ -509,6 +515,7 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
   {
 
   }
+
   ~MODULE_GENERAL()
   {
 
@@ -518,14 +525,14 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
 
   virtual void SetNoObj()=0; //*for disable object creation of APP
  
-  //********** MAIN *************/ 
+  //********** MAIN MODULE_GENERAL *************/ 
 
   string AMS_Path;
   string command;
   string SemPath;
   string tempStorage;
  
- /******************************/
+ /********************************************/
 
 //********** FACULTY *************/ 
 
@@ -534,7 +541,6 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
   string course_name;
   string sem;
   string subject_name;
-  string numberOfstudents;
 
 /********************************/
   
@@ -660,43 +666,26 @@ class MODULE_GENERAL : public APP  //TODO: ALL MD TEAM PLEASE CONTRIBUTE YOUR FU
 
 };
 
-class SET_WRITE_DB: public MODULE_GENERAL 
+class MODULE_1: public MODULE_GENERAL 
 {
   
-  //!=============================DATA-MEMBERS================================//
+  //*=============================DATA-MEMBERS================================//
 
-  /********************************* MODULE_1 *********************************/
   
   private:
 
+  string numberOfstudents; //number of students
+
   public:
+
 
   protected:
-    void SetNoObj()
-    {
-      //? by empty defination of pure virtual function here we are restricating creation of parent class
-      //?and grand parent object
-    } 
-
-  /*****************************************************************************/
-
-  /********************************* MODULE_2 *********************************/
-   private:
-   public:
-   protected:
-  /*****************************************************************************/
   
-  //!=============================DATA-MEMBERS-END================================// 
+  //*=============================DATA-MEMBERS-END================================// 
   
 
-  //?=============================MEMBERS-FUNCTIONS===================================//
+  //*=============================MEMBERS-FUNCTIONS===================================//
   
-  public:
-  SET_WRITE_DB() 
-  {
-    AppPath(AMS_Path); //* for each module you will get project folder (database)path like that
-  }
-  /********************************* MODULE_1 *********************************/
 
   private:
   
@@ -755,12 +744,12 @@ class SET_WRITE_DB: public MODULE_GENERAL
               tempStorage=subject_name; //re used tempStorage
               replaceWithHyphen(tempStorage);
                
-              command = command + tempStorage ; 
+              command = command + tempStorage ; //command for making path for writting data to file 
                
               tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt";   //* it will keep record of each semester that is created like all data of faculty | folderName
-                                                                      //! module development 2 you will need that okay for listing out folders
+                                                                      
               writeDataToFile(tempStorage,command); //*writting data to file
-              return 1; //al above code works then returns 1 = successfully
+              return 1; //all above code works then returns 1 = successfully
               /***********************************************/
         }
         else  //if that semester already exist
@@ -824,7 +813,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
     getline(cin,tempStorage); //*re-used tempStorage for storage
     ShowConsoleCursor(false);
 
-    ConvertChoiceToINT = validateString(tempStorage);
+    ConvertChoiceToINT = validateString(tempStorage); //validate input
     
     if(ConvertChoiceToINT == -1) //validate input
     {
@@ -893,10 +882,10 @@ class SET_WRITE_DB: public MODULE_GENERAL
        }
   }
 
-  //***************************************************************************/
+  /***************************************************************************/
 
 
-  //********** STUDENT DETAILS CONFIRMATION AND MODIFICATION **********/
+  /********** STUDENT DETAILS CONFIRMATION AND MODIFICATION **********/
 
   int studConfirmation() //?basic confirmation message for user
   {
@@ -938,7 +927,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
     fflush(stdin);
     ShowConsoleCursor(true);
     cout << "Type : ";
-    getline(cin,tempStorage); //*re-used tempStorage for storage
+    getline(cin,tempStorage); //*re-used tempStorage for storing
     ShowConsoleCursor(false);
 
     ConvertChoiceToINT = validateString(tempStorage);
@@ -1003,7 +992,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
        }
   }
 
-  //************************************************************************/
+  /************************************************************************/
 
    void UpdateName(string &input) //?Faculty & student name update input
    { 
@@ -1104,7 +1093,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
       scrClr(1); // user can read no.
   }
 
-  void askNumberOfStudents() //?askig number of students in semeter
+  void askNumberOfStudents() //?asking number of students 
   { 
     reAskNumStud:
     scrClr(0.5);
@@ -1126,6 +1115,11 @@ class SET_WRITE_DB: public MODULE_GENERAL
   }
 
   public:
+
+  MODULE_1() 
+  {
+    AppPath(AMS_Path); //* for each module you will get project folder (database)path like that
+  }
 
   void askFacDetails() //?asking faculty details
   { 
@@ -1222,29 +1216,43 @@ class SET_WRITE_DB: public MODULE_GENERAL
    
   }
   
-  void SetUpSucceed()
+  void SetUpSucceed() //module 1 successfully worked
   {
     tempStorage = course_name + " SEM " + sem + " " +subject_name;
     succeedMSG("SET UP SUCCESSFUL OF ",tempStorage,2,0,20);
   }
-  protected:
-
-  /****************************************************************************/
-
-  /********************************* MODULE_2 *********************************/
-   private:
-   public:
-   protected:
-  /****************************************************************************/
-   public:
-
-  ~SET_WRITE_DB() //TODO:DESTRUCTOR
+  
+  ~MODULE_1() //TODO:DESTRUCTOR
   {
 
   }
-  //?=============================MEMBERS-FUNCTIONS===================================//
+
+  protected:
+
+  void SetNoObj()
+  {
+    //? by empty defination of pure virtual function here we are restricating creation of parent class
+    //?and grand parent object
+  } 
+  //*==============================MEMBERS-FUNCTIONS===================================//
 };
 
+class MODULE_2:public MODULE_GENERAL
+{
+
+//******************************** DATA -MEMBERS *********************************/
+ private:
+ public:
+ protected:
+//*********************************************************************************/
+
+//******************************** MEMBER-FUNCTIONS *********************************/
+ private:
+ public:
+ protected:
+//************************************************************************************/
+
+};
 
 /****************************MODULE-END************************************/
 
@@ -1255,7 +1263,7 @@ int main()
     //*jay kashtbhanjan dev
     bool loop=true;
     
-    SET_WRITE_DB SW;
+    MODULE_1 SW;
 
  
     while(loop)
