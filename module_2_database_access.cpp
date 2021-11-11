@@ -1,9 +1,9 @@
-#include<iostream>
-#include<string> 
-#include<fstream>
-#include<vector>
-#include<algorithm>
-#include<stdlib.h>
+#include<iostream>  //C++ std input out put use
+#include<string>   // C++ STRING STL use
+#include<fstream> //* file handling use
+#include<vector> //*STL DYNAMIC ARRAY used
+#include<algorithm> //* STL class use
+#include<stdlib.h> //*c language standard library functions
 #include<tuple>    //* for using tuples (group of element key->value type)
 
 using namespace std;
@@ -135,7 +135,7 @@ int main()
 
     TEMP_STR[3]="NOT FOUND !";// set temp_str = not found flag so if data not found then print it
 
-    for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
+    for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find folder path using vector tuple we have 3 input parameter coursename , sem , subject name
     {   
       
         if(TEMP_STR[0]==get<0>((*i)))
