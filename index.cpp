@@ -380,7 +380,7 @@ private:
 
   protected:
 
-  virtual void SetNoObj()=0; //*for disable object creation of APP
+  // virtual void SetNoObj()=0; //*for disable object creation of APP
   string CUR_DATE,CUR_TIME;//*CURRENT DATE TIME FOR APPLICATION
   int ConvertChoiceToINT; //*variable for converting string input to integer
 
@@ -1232,7 +1232,6 @@ class MODULE_1: public MODULE_GENERAL
   void SetNoObj()
   {
     //? by empty defination of pure virtual function here we are restricating creation of parent class
-    //?and grand parent object
   } 
   //*==============================MEMBERS-FUNCTIONS===================================//
 };
@@ -1263,21 +1262,21 @@ int main()
     //*jay kashtbhanjan dev
     bool loop=true;
     
-    MODULE_1 SW;
+    APP A;
 
- 
     while(loop)
     {
-          SW.startApp(); // the App
-          SW.scrClr();  //clear screen
-          SW.setCursorPos(2,10); //set cursor position
+          A.startApp(); // the App
+          A.scrClr();  //clear screen
+          A.setCursorPos(2,10); //set cursor position
       
             switch(APP::MODULE_CHOICE)
             {
-              case 1:{
-                         SW.askFacDetails();
-                         SW.askStudDetails();
-                         SW.SetUpSucceed();
+              case 1:{   
+                         MODULE_1 MD1;
+                         MD1.askFacDetails();
+                         MD1.askStudDetails();
+                         MD1.SetUpSucceed();
                          break;
                      }
               case 2:{
@@ -1296,7 +1295,7 @@ int main()
               default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);break;}
             }
     
-        SW.scrClr();       //clear screen
+        A.scrClr();       //clear screen'
     }
 
     return 0;
