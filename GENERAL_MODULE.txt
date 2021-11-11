@@ -28,8 +28,6 @@ void getDataFromFile(string path,string &FcName,int lineNo)
 
 void writeDataToFile(string path,string &FcName)
 
-void convertStringtoArray(string arg,char* argcopy)
-
 string convertIntToString(int &in)
 
 string convertArrayTostring(char* arg)

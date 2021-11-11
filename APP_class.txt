@@ -34,12 +34,16 @@ void setConsoleSize()
 
 protected:
 
+void askChoice(int h,int v,string &input)
+
 int ConvertChoiceToINT;          //*variable for converting string input to integer
-virtual void SetNoObj()=0;   //* set no object creation
+
 
 void InvalidInputErr()
 void InvalidInputErr(string err_msg,int color,int pos)
-
+void succeedMSG(string msg,string msg2,int color,int color2,int pos)
+void Date()
+void Time()
 
 int validateString(string input,int Bnd)
 

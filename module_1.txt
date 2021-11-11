@@ -1,0 +1,27 @@
+class MODULE_1:
+
+private:
+
+int createSemester()
+int confirmation()
+int InfoModification()
+int studConfirmation()
+int InfoStudModification()
+void UpdateName(string &input)
+void UpdateEmail(string &input)
+void EnterCourseName()
+void EnterSem()
+void EnterSubject() 
+void rollNo(int RollNo)
+void askNumberOfStudents()
+
+
+public:
+
+void askFacDetails()
+void askStudDetails()
+void SetUpSucceed()
+
+protected:
+
+void SetNoObj()

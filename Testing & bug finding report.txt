@@ -32,6 +32,10 @@ Bugs        : No bugs All bugs fixed
 Memory used : int i is used in two function that is 1)void convertStringtoArray(string arg,char* argcopy)
                                                     2)void replaceWithHyphen(string &str)
 
+Date:11/11/2021
+file        :index.cpp
+Bugs        :No bugs 
+Memory used :based on requirement(no extra variable are declared)
 
 
 
@@ -47,27 +51,27 @@ variables :
 
 
 ***class APP   		:   int ConvertChoiceToINT;
-                            	            static int MODULE_CHOICE;
+                            static int MODULE_CHOICE;
 
-   void buildHorizontalWall()  		:int run,int line_start
-   int validateString()        		:int flag=0,tem=1;
-                               		 string i;
+   APP()                                :string temp,int meridiem_Flag=0;
+
+   void buildHorizontalWall()  		:int run;
 
    void initApp()       		: short winWidth,short winHeight,short scrBufferWidth,short scrBufferHeight 
 
-   int HomeScreen()      		: bool match,string operationChoice,int line
+   int HomeScreen()      		: string operationChoice,int line
 
    int GetDesktopResolution() 		: int size,int horizontal,int vertical
 
 protected :
     int ConvertChoiceToINT; 
 
-   int validateString(string input,int Bnd):int flag=0,tem=1,string i
+   int validateString(string input,int Bnd):int flag=0,tem=1; 
 
 
 
 
-***class MODULE_GENERAL_FUNCTION 	: public GENERAL_INIT:    string AMS_Path;
+***class MODULE_GENERAL_FUNCTION 	: public GENERAL_INIT:      string AMS_Path;
   string command;
   string SemPath;
   string tempStorage;
@@ -77,7 +81,6 @@ protected :
   string course_name;
   string sem;
   string subject_name;
-  string numberOfstudents;
 
   string student_name;
   string student_email;
@@ -85,14 +88,18 @@ protected :
 
    
 
-   void convertStringtoArray(string arg,char* argcopy)  : int i , string str
+void getDataFromFile(string path,string &FcName,int lineNo)  : int FileLine=1;
 
-   void replaceWithHyphen(string &str)  :  int i,j;
+  string convertIntToString(int &in)     : string str;
+
+   void replaceWithHyphen(string &str)  :  int i,j,string list;
 
 
 
 
-***class SET_WRITE_DB: public MODULE_GENERAL_FUNCTION :  string course_name,sem,subject_name,command,SemCreatePath;
+***class MODULE_1: public MODULE_GENERAL :
+
+string numberOfstudents
 
 int confirmation()         : int line;
 int InfoModification()     : int line;
@@ -104,6 +111,12 @@ void askStudDetails()      : int ROLLNO;
 
 
    
+
+*** class MODULE_2:public MODULE_GENERAL  :
+
+bool checkDB()             :bool isEmpty;
+void askCourseChoice()     :int line;
+
    
                           
 

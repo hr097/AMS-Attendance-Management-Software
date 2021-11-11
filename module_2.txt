@@ -1,0 +1,23 @@
+class MODULE_2 : 
+
+private:
+
+vector<string> buffer,LIST; //vector buffer for file handling data receiver
+string *SCLT_ch;  //! DRASHTI USE
+vector<tuple<string,string,string,string>> DATA;
+
+int checkDuplicateRecord(vector<string> vec,string search)
+void getFolderPath()
+void getSemesterRecordFile()
+void ExtractStringFromBuffer()
+
+public :
+
+bool checkDB()
+void askCourseChoice()
+void askSemsterChoice()
+void askSubjectChoice()
+
+protected:
+
+void SetNoObj()
