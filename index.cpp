@@ -35,7 +35,7 @@
   #include<wincon.h>
   #include<string>
 
-  #endif  // user 1 
+  //#endif  // user 1 
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -56,7 +56,7 @@ lpConsoleCurrentFontEx);
 }
 #endif
 
-//#endif // user 2
+#endif // user 2
 
 
 using namespace std; //? standard namespace for  resolving naming coflicts
@@ -1237,8 +1237,8 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
  private:
 
  vector<string> buffer,LIST; //vector buffer for file handling data receiver
- string *SCLT_ch;  //! DRASHTI USE
  vector<tuple<string,string,string,string>> DATA; // search-access vector-tuple
+ 
  
  public:
  
@@ -1264,6 +1264,87 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
        return 1; // if not found then return 1
      }
  }
+ void DisplayList_Input(string &put,int select=0)
+ { 
+   int listFlag = 1,chFlag=0,countFlag=0;
+   auto i = LIST.begin();
+   
+    setCursorPos(1,20);
+    buildVerticalWall(30);
+    setCursorPos(1,20);
+    buildHorizontalWall(30," ");
+        
+    //cout << LIST.size();
+    while(i != LIST.end()) 
+    {
+        
+        // cout << temp;
+        start:
+		displayAgain:
+        //flag = 0;
+        chFlag=0;
+        setCursorPos(1,20);
+        if(select==0)
+        buildHorizontalWall(30,to_string(5*countFlag+listFlag) + ") " + (*i)); 
+        else
+        buildHorizontalWall(20,"Sem-"+(*i)); 
+        setCursorPos(1,20);
+        buildHorizontalWall(30," "); 
+        listFlag++;
+        i++;
+        
+        if(listFlag > 5 && i !=LIST.end())
+        {
+         
+            chFlag=1;
+            countFlag++;
+            setCursorPos(1,20);
+            buildHorizontalWall(30,"TYPE '+' FOR EXTENDED LIST");
+            setCursorPos(1,20);
+            buildVerticalWall(30);
+            askChoice(2,30,tempStorage);
+            listFlag = 1;
+            scrClr(0.5);
+            if(tempStorage=="+")
+            {
+                setCursorPos(1,20);
+                buildVerticalWall(30);
+                goto start;
+            }
+			else
+			{
+				break;
+			}
+			ConvertChoiceToINT = validateString(tempStorage,countFlag+4);
+            if(ConvertChoiceToINT == 0)
+            { 
+                goto displayAgain;
+            }
+        
+        
+        }
+    }
+    if(chFlag==0)
+    {
+        setCursorPos(1,20);
+        buildVerticalWall(30);
+        // ShowConsoleCursor(true);
+        // cout<<endl<<"choose course : ";
+        // getline(cin,TEMP_STR[0]);
+        // ShowConsoleCursor(false);
+        askChoice(2,30,tempStorage);
+		ConvertChoiceToINT = validateString(tempStorage,countFlag+4);
+        if(ConvertChoiceToINT == 0)
+        { 
+            goto displayAgain;
+        }
+        scrClr(0.5);
+
+    }                               
+
+   LIST.clear();//flush vector data for re-using
+   tempStorage.clear();//flush string for re-using
+ }
 
  void getFolderPath()
  {
@@ -1276,6 +1357,9 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
                       SemPath=get<3>((*i)); 
       
     }
+    cout<<endl<<SemPath;
+    scrClr(4);
+
  }
  void getSemesterRecordFile()
  {
@@ -1335,10 +1419,12 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
   }
 
  public:
+
   MODULE_2()
   {
     
   }
+
   bool checkDB() //* functions for checking first time database semster Records exists or not
   {  
     
@@ -1349,15 +1435,15 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
        isEmpty = read.peek() == EOF;
        if(isEmpty)
        {
-         InvalidInputErr("NO SETUP EXIST ! PLEASE ADD ATLEST 1 SETUP",4,19);
-         read.close();
+          InvalidInputErr("NO SETUP EXIST ! PLEASE ADD ATLEST 1 SETUP",4,19);
+          read.close();
           return false;
        }
        else
        { 
-         read.close();
-         getSemesterRecordFile();
-         ExtractStringFromBuffer();
+          read.close();
+          getSemesterRecordFile();
+          ExtractStringFromBuffer();
           return true;
        }
 
@@ -1365,83 +1451,32 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
 
   void askCourseChoice()
   {
-       
-      int line; //temp variable for building box
-
-      reInputCourseChoise: // re input course
-      
-      //  Date(); //current date print
-      //  Time(); //current time print
-
-       setCursorPos(1);
-       cout<< setw(62) <<" => WHICH INFORMATION DO YOU WANT TO MODIFY ? "<<endl; 
-
-       string operationChoice; 
-    
-       setCursorPos(1,15);
-    
-       buildVerticalWall(43);
-      
-       //!concatenate LOGIC 1
-       line=0; //* re used variable
-    
-       while(line<11)
-       {
-           setCursorPos(1,15);
-           if(line==1)
-           buildHorizontalWall(43,"1) NEW SETUP FOR SEMESTER"); //! here we pass vector data
-           else if(line==3)
-           buildHorizontalWall(43,"2) TAKE ATTENDANCE "); //! here we pass vector data
-           else if(line==5)
-           buildHorizontalWall(43,"3) CUSTOMIZED ATTENDANCE REPORT ");//! here we pass vector data
-           else if(line==7)
-           buildHorizontalWall(43,"4) SEARCH & UPDATE DETAILS ");//! here we pass vector data
-           else if(line==9)
-           buildHorizontalWall(43,"5) EXIT ");//! here we pass more choice
-           else if(line==11)
-           buildHorizontalWall(43,"TYPE + TO SEE EXTENDED LIST");//! here we pass more choice
-           else 
-           buildHorizontalWall(43," ");
-           line++;
-       }
-    
-       setCursorPos(1,15);
-       buildVerticalWall(43);
-    
-
-      askChoice(2,30,operationChoice);
-    
-       if(!cin)
-       {
-           cin.clear();
-           cin.ignore(80,'\n');
-       }
-    
-       ConvertChoiceToINT = validateString(operationChoice,5);
-    
-       if(!ConvertChoiceToINT)
-       { 
-           goto reInputCourseChoise;
-       }
-       else
-       {
-         //! here integer choice( (int_choice-1)) will be find out into string array or in vector list 
-         //! and we store it in the course_name varible ->INHERITED FROM GENERAK_MODULE
-       }
-
-      LIST.clear();//flush vector data for re-using
-  }
-  void askSemsterChoice()
-  {   
-
-      for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
+     DisplayList_Input(course_name);  
+     for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
       {   
         
           if(course_name==get<0>((*i))) //! input required
           {   
              if(checkDuplicateRecord(LIST,get<1>((*i)))) // cheking if duplicate 
              {
-                 LIST.push_back(get<1>((*i))); //making list for input of UI screen
+                 LIST.push_back(get<1>((*i))); //making list for input of UI screen of semester
+             }
+          }
+                 
+      }
+
+  }
+  void askSemsterChoice()
+  {   
+      DisplayList_Input(sem,1);
+      for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
+      {   
+        
+          if(course_name==get<0>((*i))&&sem==get<1>((*i))) //! input required
+          {   
+             if(checkDuplicateRecord(LIST,get<2>((*i)))) // cheking if duplicate 
+             {
+                 LIST.push_back(get<2>((*i))); //making list for input of UI screen
              }
           }
                  
@@ -1449,32 +1484,18 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
 
       //! LOGIC 2
 
-      LIST.clear();//flush vector data for re-using
+
   }
   void askSubjectChoice()
   {
-    for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
-    {   
-      
-        if(course_name==get<0>((*i))&&sem==get<1>((*i))) 
-        {
-           if(checkDuplicateRecord(LIST,get<2>((*i)))) // cheking if duplicate 
-           {
-               LIST.push_back(get<2>((*i))); //making list for input of UI screen
-           }
-        }
-               
-    }
-
-    //! LOGIC 3
-    LIST.clear();//flush vector data for re-using
+    DisplayList_Input(subject_name);
     getFolderPath();
   }
 
  ~MODULE_2()
  {
-   buffer.clear();
-   LIST.clear();
+   buffer.clear(); //clear buffer
+   LIST.clear();   //clear List
  }
  
  protected:
@@ -1519,14 +1540,14 @@ int main()
                          break;
                      }
               case 2:{ 
-                       MODULE_2 MD2;
-                       if(MD2.checkDB())
-                       {
-                       MD2.askCourseChoice();
-                       MD2.askSemsterChoice();
-                       MD2.askSubjectChoice();
-                       //TODO: SANJAL CODE HERE
-                       }
+                         MODULE_2 MD2;
+                         if(MD2.checkDB())
+                         {
+                          MD2.askCourseChoice();
+                          MD2.askSemsterChoice();
+                          MD2.askSubjectChoice();
+                          //TODO: SANJAL CODE HERE
+                         }
                        break;
                      }
               case 3:{
