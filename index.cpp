@@ -288,7 +288,6 @@ private:
        setCursorPos(2);
        cout<< setw(55) <<" || ATTENDANCE MANAGEMENT SYSTEM ||"<<endl; //TITLE OF APP
 
-       bool match = false;
        string operationChoice; 
     
        setCursorPos(1,15);
@@ -380,7 +379,6 @@ private:
 
   protected:
 
-  // virtual void SetNoObj()=0; //*for disable object creation of APP
   string CUR_DATE,CUR_TIME;//*CURRENT DATE TIME FOR APPLICATION
   int ConvertChoiceToINT; //*variable for converting string input to integer
 
@@ -666,7 +664,7 @@ class MODULE_GENERAL : public APP
 
 };
 
-class MODULE_1: public MODULE_GENERAL 
+class MODULE_1: public MODULE_GENERAL //*module 1 class
 {
   
   //*=============================DATA-MEMBERS================================//
@@ -1236,7 +1234,7 @@ class MODULE_1: public MODULE_GENERAL
   //*==============================MEMBERS-FUNCTIONS===================================//
 };
 
-class MODULE_2:public MODULE_GENERAL
+class MODULE_2:public MODULE_GENERAL //*module 2 class
 {
 
 //******************************** DATA -MEMBERS *********************************/
@@ -1248,7 +1246,83 @@ class MODULE_2:public MODULE_GENERAL
 //******************************** MEMBER-FUNCTIONS *********************************/
  private:
  public:
+  MODULE_2(){}
+
+  void askCourseName()
+  {
+       
+
+       int line; //temp variable for building box
+
+       reInputCourseChoise: // re input course
+      
+      //  Date(); //current date print
+      //  Time(); //current time print
+
+       setCursorPos(1);
+       cout<< setw(62) <<" => WHICH INFORMATION DO YOU WANT TO MODIFY ? "<<endl; 
+
+       string operationChoice; 
+    
+       setCursorPos(1,15);
+    
+       buildVerticalWall(43);
+      
+       //!concatenate
+       line=0; //* re used variable
+    
+       while(line<11)
+       {
+           setCursorPos(1,15);
+           if(line==1)
+           buildHorizontalWall(43,"1) NEW SETUP FOR SEMESTER"); //! here we pass vector data
+           else if(line==3)
+           buildHorizontalWall(43,"2) TAKE ATTENDANCE "); //! here we pass vector data
+           else if(line==5)
+           buildHorizontalWall(43,"3) CUSTOMIZED ATTENDANCE REPORT ");//! here we pass vector data
+           else if(line==7)
+           buildHorizontalWall(43,"4) SEARCH & UPDATE DETAILS ");//! here we pass vector data
+           else if(line==9)
+           buildHorizontalWall(43,"5) EXIT ");//! here we pass more choice
+           else if(line==11)
+           buildHorizontalWall(43,"TYPE + TO SEE EXTENDED LIST");//! here we pass more choice
+           else 
+           buildHorizontalWall(43," ");
+           line++;
+       }
+    
+       setCursorPos(1,15);
+       buildVerticalWall(43);
+    
+
+      askChoice(2,30,operationChoice);
+    
+       if(!cin)
+       {
+           cin.clear();
+           cin.ignore(80,'\n');
+       }
+    
+       ConvertChoiceToINT = validateString(operationChoice,5);
+    
+       if(!ConvertChoiceToINT)
+       { 
+           goto reInputCourseChoise;
+       }
+       else
+       {
+         //! here integer choice( (int_choice-1)) will be find out into string array or in vector list 
+         //! and we store it in the course_name varible ->INHERITED FROM GENERAK_MODULE
+       }
+      //  return(ConvertChoiceToINT);
+  }
+
+ ~MODULE_2(){}
  protected:
+ void SetNoObj()
+{
+  //? by empty defination of pure virtual function here we are restricating creation of parent class
+} 
 //************************************************************************************/
 
 };
@@ -1279,7 +1353,8 @@ int main()
                          MD1.SetUpSucceed();
                          break;
                      }
-              case 2:{
+              case 2:{ 
+                       MODULE_2 MD2;
                        break;
                      }
               case 3:{
