@@ -511,7 +511,7 @@ class MODULE_GENERAL : public APP
 
   MODULE_GENERAL()
   {
-
+      AppPath(AMS_Path);
   }
 
   ~MODULE_GENERAL()
@@ -992,8 +992,8 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
 
   /************************************************************************/
 
-   void UpdateName(string &input) //?Faculty & student name update input
-   { 
+  void UpdateName(string &input) //?Faculty & student name update input
+  { 
       reinput:
       scrClr(0.5);
       setCursorPos(9,20);
@@ -1115,7 +1115,7 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
 
   MODULE_1() 
   {
-    AppPath(AMS_Path); //* for each module you will get project folder (database)path like that
+    
   }
 
   void askFacDetails() //?asking faculty details
@@ -1337,7 +1337,7 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
  public:
   MODULE_2()
   {
-    AppPath(AMS_Path);
+    
   }
   bool checkDB() //* functions for checking first time database semster Records exists or not
   {  
