@@ -15,6 +15,8 @@
 #include<algorithm> //* for transform function access
 #include<ctime> //* for getting current date and time 
 #include<sstream> //* for conversion to string
+#include<vector> //*STL DYNAMIC ARRAY used
+#include<tuple>    //* for using tuples (group of element key->value type)
 
 //--------FOR-DOCUMENT PATH GETTING------/
 
@@ -33,7 +35,7 @@
   #include<wincon.h>
   #include<string>
 
-  //#endif  // user 1 
+  #endif  // user 1 
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -54,7 +56,7 @@ lpConsoleCurrentFontEx);
 }
 #endif
 
-#endif // user 2
+//#endif // user 2
 
 
 using namespace std; //? standard namespace for  resolving naming coflicts
@@ -192,12 +194,10 @@ class APP //*GRAND PARENT CLASS
   { 
     cout<<"|";
     int run=1;
-    int line_start = int(endBrick / 6);//! @viraj line_start can be removed for memory saving
-    //! by direct call if(run == (endBrick / 6)) //
     while(run<endBrick)
     {
       
-      if(run == line_start) //
+      if(run == (endBrick / 6)) //
       {
         cout<<data;
         run+=(data.length()-1);
@@ -235,7 +235,6 @@ class APP //*GRAND PARENT CLASS
     }
     
   }
- 
 
 
 ~APP() {}
@@ -288,7 +287,6 @@ private:
        setCursorPos(2);
        cout<< setw(55) <<" || ATTENDANCE MANAGEMENT SYSTEM ||"<<endl; //TITLE OF APP
 
-       bool match = false;
        string operationChoice; 
     
        setCursorPos(1,15);
@@ -327,7 +325,7 @@ private:
            cin.ignore(80,'\n');
        }
     
-       ConvertChoiceToINT = validateString(operationChoice,5);
+       ConvertChoiceToINT = validateString(operationChoice,5,1);
     
        if(!ConvertChoiceToINT)
        { 
@@ -378,9 +376,9 @@ private:
         SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi); //pass reference of that structure to OUTPUT HANDLE 
   }
 
+
   protected:
 
-  virtual void SetNoObj()=0; //*for disable object creation of APP
   string CUR_DATE,CUR_TIME;//*CURRENT DATE TIME FOR APPLICATION
   int ConvertChoiceToINT; //*variable for converting string input to integer
 
@@ -407,7 +405,6 @@ private:
     scrClr(1);
     SetColor(0);
   }
-
   void InvalidInputErr(string err_msg,int color,int pos) //? overloaded version //?medium level error 
   {
     scrClr();
@@ -418,6 +415,7 @@ private:
     scrClr(2); // screen stops so user can read message 
     SetColor(0);
   }
+
   void succeedMSG(string msg,string msg2,int color,int color2,int pos)
   {
     scrClr();
@@ -430,12 +428,13 @@ private:
     scrClr(2); // screen stops so user can read message 
     SetColor(0);
   }
-  int validateString(string input,int Bnd) //* string input validate as integer
+  int validateString(string input,int Bnd,int start) //* string input validate as integer
   {
 
       int flag=0,tem=1;
-      
-      for(tem=1;tem<=Bnd;tem++)
+      if(start==0)
+      start++;      
+      for(tem=start;tem<=Bnd;tem++)
       {
           
           if(to_string(tem) == input) //convert tem int to string to check input valid condition
@@ -513,7 +512,7 @@ class MODULE_GENERAL : public APP
 
   MODULE_GENERAL()
   {
-
+      AppPath(AMS_Path);
   }
 
   ~MODULE_GENERAL()
@@ -525,14 +524,14 @@ class MODULE_GENERAL : public APP
 
   virtual void SetNoObj()=0; //*for disable object creation of APP
  
-  //********** MAIN *************/ 
+  //********** MAIN MODULE_GENERAL *************/ 
 
   string AMS_Path;
   string command;
   string SemPath;
   string tempStorage;
  
- /******************************/
+ /********************************************/
 
 //********** FACULTY *************/ 
 
@@ -541,7 +540,6 @@ class MODULE_GENERAL : public APP
   string course_name;
   string sem;
   string subject_name;
-  string numberOfstudents;
 
 /********************************/
   
@@ -552,7 +550,7 @@ class MODULE_GENERAL : public APP
   string RoLLNo;
  
 /*******************************/
-
+ 
   void AppPath(string &path) //?Getting Project path for each module Variable used Ams_Path for storing path
   {
     CHAR pathDocument[MAX_PATH]; //string to store path
@@ -606,14 +604,14 @@ class MODULE_GENERAL : public APP
 
   string convertIntToString(int &in) //?meaning itself defining
   {
-  string str = to_string(in);
-  return str;
+    string str = to_string(in);
+    return str;
   }
 
   string convertArrayTostring(char* arg) //?meaning itself defining
   {
-  string re(arg);
-  return re;
+    string re(arg);
+    return re;
   }
 
   void replaceWithHyphen(string &str) //?file-folderName not allowed special symbols so hyphen conversion
@@ -664,47 +662,29 @@ class MODULE_GENERAL : public APP
     else
         return 0;
   }
-
+  
 };
 
-class SET_WRITE_DB: public MODULE_GENERAL 
+class MODULE_1: public MODULE_GENERAL //*module 1 class
 {
   
-  //!=============================DATA-MEMBERS================================//
+  //*=============================DATA-MEMBERS================================//
 
-  /********************************* MODULE_1 *********************************/
   
   private:
 
+  string numberOfstudents; //number of students
+
   public:
+
 
   protected:
-
-    void SetNoObj()
-    {
-      //? by empty defination of pure virtual function here we are restricating creation of parent class
-      //?and grand parent object
-    } 
-
-  /*****************************************************************************/
-
-  /********************************* MODULE_2 *********************************/
-   private:
-   public:
-   protected:
-  /*****************************************************************************/
   
-  //!=============================DATA-MEMBERS-END================================// 
+  //*=============================DATA-MEMBERS-END================================// 
   
 
-  //?=============================MEMBERS-FUNCTIONS===================================//
+  //*=============================MEMBERS-FUNCTIONS===================================//
   
-  public:
-  SET_WRITE_DB() 
-  {
-    AppPath(AMS_Path); //* for each module you will get project folder (database)path like that
-  }
-  /********************************* MODULE_1 *********************************/
 
   private:
   
@@ -889,7 +869,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
            cin.clear();
            cin.ignore(80,'\n');
        }
-       ConvertChoiceToINT = validateString(tempStorage,7); //validate input
+       ConvertChoiceToINT = validateString(tempStorage,7,1); //validate input
 
        if(ConvertChoiceToINT==0) //if wrong input
        { 
@@ -901,10 +881,10 @@ class SET_WRITE_DB: public MODULE_GENERAL
        }
   }
 
-  //***************************************************************************/
+  /***************************************************************************/
 
 
-  //********** STUDENT DETAILS CONFIRMATION AND MODIFICATION **********/
+  /********** STUDENT DETAILS CONFIRMATION AND MODIFICATION **********/
 
   int studConfirmation() //?basic confirmation message for user
   {
@@ -999,7 +979,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
            cin.clear();
            cin.ignore(80,'\n');
        }
-       ConvertChoiceToINT = validateString(tempStorage,3); //validate input
+       ConvertChoiceToINT = validateString(tempStorage,3,1); //validate input
 
        if(ConvertChoiceToINT==0) //if wrong input
        { 
@@ -1011,10 +991,10 @@ class SET_WRITE_DB: public MODULE_GENERAL
        }
   }
 
-  //************************************************************************/
+  /************************************************************************/
 
-   void UpdateName(string &input) //?Faculty & student name update input
-   { 
+  void UpdateName(string &input) //?Faculty & student name update input
+  { 
       reinput:
       scrClr(0.5);
       setCursorPos(9,20);
@@ -1080,7 +1060,7 @@ class SET_WRITE_DB: public MODULE_GENERAL
       getline(cin,sem);       //input
       ShowConsoleCursor(false); // hide cursor for flickring cursor
       
-      if(!validateString(sem,10)) //validate sem input
+      if(!validateString(sem,10,1)) //validate sem input
       {goto reinputOfsem;}
 
   }
@@ -1124,25 +1104,35 @@ class SET_WRITE_DB: public MODULE_GENERAL
     ShowConsoleCursor(true);
     getline(cin,numberOfstudents);   
     ShowConsoleCursor(false);
-    ConvertChoiceToINT = validateString(numberOfstudents,5000);
+    ConvertChoiceToINT = validateString(numberOfstudents,5000,1);
     if(ConvertChoiceToINT == 0)
     { 
         goto reAskNumStud;
-      
     }
 
   }
 
   public:
 
+  MODULE_1() 
+  {
+    
+  }
+
   void askFacDetails() //?asking faculty details
   { 
-
+   
     reAskFacDet: //re asking  details of faculty
 
     EnterCourseName(); //course name input 
     EnterSem(); //sem input 
     EnterSubject();  //subject input 
+
+    if(!createSemester()) //semester confirmation
+    {
+     goto reAskFacDet; //*reasking faculty details as semester already exists
+    }
+
     askNumberOfStudents(); //number of students
     
     command = AMS_Path + "\\USER-INFO\\userdetails.txt"; // making path for getting data from file
@@ -1155,10 +1145,6 @@ class SET_WRITE_DB: public MODULE_GENERAL
 
     if(confirmation()) // basic confirmation dialog if yes then semester folder create
     {   
-        
-        if(createSemester()) //semester confirmation
-        {
-       
         command = SemPath + "\\FAC-STUD-DETAILS\\faculty"+"-sem-"+ sem +".txt"; //path making for writting into file
         
         writeDataToFile(command,FacultyName); //writting faculty data to files
@@ -1168,11 +1154,6 @@ class SET_WRITE_DB: public MODULE_GENERAL
         writeDataToFile(command,subject_name);
         writeDataToFile(command,numberOfstudents);
 
-        }
-        else
-        {
-          goto reAskFacDet; //*reasking faculty details as semester already exists
-        }
     }
     else
     { 
@@ -1235,24 +1216,357 @@ class SET_WRITE_DB: public MODULE_GENERAL
     tempStorage = course_name + " SEM " + sem + " " +subject_name;
     succeedMSG("SET UP SUCCESSFUL OF ",tempStorage,2,0,20);
   }
-  protected:
-
-  /****************************************************************************/
-
-  /********************************* MODULE_2 *********************************/
-   private:
-   public:
-   protected:
-  /****************************************************************************/
-   public:
-
-  ~SET_WRITE_DB() //TODO:DESTRUCTOR
+  
+  ~MODULE_1() //TODO:DESTRUCTOR
   {
 
   }
-  //?=============================MEMBERS-FUNCTIONS===================================//
+
+  protected:
+
+  void SetNoObj()
+  {
+    //? by empty defination of pure virtual function here we are restricating creation of parent class
+  } 
+  //*==============================MEMBERS-FUNCTIONS===================================//
 };
 
+class MODULE_2:public MODULE_GENERAL //*module 2 class
+{
+
+//******************************** DATA -MEMBERS *********************************/
+ private:
+
+ vector<string> buffer,LIST; //vector buffer for file handling data receiver
+ vector<tuple<string,string,string,string>> DATA; // search-access vector-tuple
+ 
+ 
+ public:
+ 
+ protected:
+
+//*********************************************************************************/
+
+//******************************** MEMBER-FUNCTIONS *********************************/
+ private:
+ 
+ int checkDuplicateRecord(vector<string> vec,string search) //*for cheking if duplicate records found in vector_storage
+ {
+     vector<string>::iterator it; //iterator
+ 
+     it = find(vec.begin(), vec.end(),search); // finding elemnt in vector
+ 
+  if (it != vec.end())
+ 	{
+       return 0; // if found then return 0
+ 	}
+ 	else
+     {
+       return 1; // if not found then return 1
+     }
+ }
+ void DisplayList_Input(string &put,int select=0)
+ { 
+   int listFlag = 1,chFlag=0,countFlag=0,temp=1;
+   auto i = LIST.begin();
+   
+    setCursorPos(1,20);
+    buildVerticalWall(35);
+    setCursorPos(1,20);
+    buildHorizontalWall(35," ");
+        
+    while(i != LIST.end()) 
+    {
+        
+		    displayAgain:
+        chFlag=0;
+        setCursorPos(1,20);
+        if(select==0)
+        buildHorizontalWall(35,to_string(5*countFlag+listFlag) + ") " + (*i)); 
+        else
+        buildHorizontalWall(35,to_string(5*countFlag+listFlag) + ") " + "Sem-" + (*i)); 
+        setCursorPos(1,20);
+        buildHorizontalWall(35," "); 
+        listFlag++;
+        i++;
+        
+        if(listFlag > 5 && i !=LIST.end())
+        {
+         
+            chFlag=1;
+            countFlag++;
+            setCursorPos(1,20);
+            buildHorizontalWall(35,"TYPE '+' FOR EXTENDED LIST");
+            setCursorPos(1,20);
+            buildHorizontalWall(35," "); 
+            setCursorPos(1,20);
+            buildVerticalWall(35);
+            askChoice(2,35,tempStorage);
+            scrClr(0.5);
+            if(tempStorage=="+")
+            {
+                setCursorPos(1,20);
+                buildVerticalWall(35);
+                listFlag = 1;
+                chFlag=0;
+                setCursorPos(1,20);
+                buildHorizontalWall(35," "); 
+                goto displayAgain;
+            }
+			      else
+			      {    
+                ConvertChoiceToINT = validateString(tempStorage,countFlag*5,(countFlag-1)*5); 
+                if(ConvertChoiceToINT == 0)
+                { 
+                    while(temp != (listFlag))
+                    {
+                      i--;
+                      temp++;
+                    }
+                    temp = 1;
+                    countFlag--;
+                    listFlag = 1;
+                    setCursorPos(1,20);
+                    buildVerticalWall(35);
+                    chFlag=0;
+                    setCursorPos(1,20);
+                    buildHorizontalWall(35," "); 
+                    goto displayAgain;
+                }
+                else
+                {
+                  break;
+                }
+			      }
+        }
+    }
+    if(chFlag==0)
+    {
+        setCursorPos(1,20);
+        buildVerticalWall(35);
+        askChoice(2,30,tempStorage);
+
+        if(tempStorage == "+")
+        {
+          InvalidInputErr();
+          while(temp != (listFlag))
+          {
+            i--;
+            temp++;
+          }
+          temp = 1;
+          listFlag = 1;
+          setCursorPos(1,0);
+          buildVerticalWall(35);
+          setCursorPos(1,20);
+          buildHorizontalWall(35," "); 
+          goto displayAgain;
+        }
+		    ConvertChoiceToINT = validateString(tempStorage,(((countFlag)*5+listFlag-1)),((countFlag)*5));
+        if(ConvertChoiceToINT == 0)
+        { 
+            while(temp != (listFlag))
+            {
+              i--;
+              temp++;
+            }
+            temp=1;
+            listFlag = 1;
+            setCursorPos(1,20);
+            buildVerticalWall(35);
+            setCursorPos(1,20);
+            buildHorizontalWall(35," "); 
+            goto displayAgain;
+        }
+        scrClr(0.5);
+
+    } 
+    for(i =LIST.begin(),countFlag=1; i != LIST.end();++i,countFlag++)   
+    {
+         if(countFlag==ConvertChoiceToINT)
+         {
+           put=(*i);
+         }
+    }                   
+
+   LIST.clear();//flush vector data for re-using
+   tempStorage.clear();//flush string for re-using
+ }
+
+ void getFolderPath()
+ {
+    for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find folder path using vector tuple we have 3 input parameter coursename , sem , subject name
+    {   
+      
+        if(course_name==get<0>((*i)))
+            if(sem==get<1>((*i)))
+                if(subject_name==get<2>((*i)))
+                      SemPath=get<3>((*i)); 
+      
+    }
+    SemPath = AMS_Path + "\\" + SemPath;
+    //cout<<endl<<SemPath;
+    //scrClr(2);
+
+ }
+ void getSemesterRecordFile()
+ {
+    tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt";//making path to AMS->OTHER->semsterRecord.txt
+    fstream fin(tempStorage.c_str(),ios::in); // file opened in reading mode
+    
+    if(!fin.is_open()) // if not opened
+    {
+        cout<<" DATABASE ERROR 404 : FILE NOT OPENED !";
+    }
+    else // if opened
+    {   
+        tempStorage.clear(); // clear for re-using
+        getline(fin,tempStorage); // tempStorage used as temporary storage
+        
+        while(!fin.eof()) // data receive until file ends
+        {    
+            buffer.push_back(tempStorage); // save that string(data) in vector
+            getline(fin,tempStorage); // fetch again from file
+        } 
+        fin.close();//file close 
+    }
+    
+    sort(buffer.begin(), buffer.end()); //sorted file data in vector in Dictionary order
+    tempStorage.clear(); //for re-using
+ }
+
+ void ExtractStringFromBuffer()
+ {
+    for (auto i = buffer.begin(); i != buffer.end(); ++i) //insert in to vector-tuple from vector buffer with extracting string
+    {
+        tempStorage = (*i); // temp variable for moving vector tempStorage to string
+        int found_pos,temp_pos; // temp variable for position storing
+
+        found_pos = tempStorage.find("|"); // find the first occurance of '|'
+        course_name = tempStorage.substr(0,(found_pos)); // get proper course name from string and save it to course_name
+        temp_pos = (found_pos+1); // making next finding position
+
+        if(checkDuplicateRecord(LIST,course_name)) // cheking if duplicate course
+        {
+            LIST.push_back(course_name); //making list for input of UI screen of course select
+        }
+        
+        found_pos = tempStorage.find("|",temp_pos);     //finds string till 1st pipe i.e coursename
+        sem = tempStorage.substr(temp_pos,(found_pos-temp_pos));//stores the string in TEMP_STR
+        temp_pos = (found_pos+1);  //searching next position
+
+        found_pos = tempStorage.find("|", temp_pos);   //finds string till 2nd pipe i.e. semester
+        subject_name = tempStorage.substr(temp_pos,(found_pos-temp_pos)); //stores the string in TEMP_STR
+        temp_pos = (found_pos+1);  //searching next position
+         
+        found_pos = tempStorage.find("|", temp_pos); //finds string till 3rd pipe i.e. subjectname
+        SemPath = tempStorage.substr(temp_pos); //stores the string in TEMP_STR
+
+        DATA.push_back(make_tuple(course_name,sem,subject_name,SemPath)); //makes a final string to display
+    }
+    tempStorage.clear();      //clearing for reusing
+    course_name.clear();      //clearing for reusing
+    sem.clear();              //clearing for reusing
+    subject_name.clear();     //clearing for reusing
+    SemPath.clear();          //clearing for reusing
+  }
+
+ public:
+
+  MODULE_2()
+  {
+    
+  }
+
+  bool checkDB() //* functions for checking first time database semster Records exists or not
+  {  
+    
+    tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt";//making path to AMS->OTHER->semsterRecord.txt
+    fstream read(tempStorage.c_str(),ios::in); // file opened in reading mode
+    bool isEmpty;
+
+       isEmpty = read.peek() == EOF;
+       if(isEmpty)
+       {
+          InvalidInputErr("NO SETUP EXIST ! PLEASE ADD ATLEST 1 SETUP",4,19);
+          read.close();
+          return false;
+       }
+       else
+       { 
+          read.close();
+          getSemesterRecordFile();
+          ExtractStringFromBuffer();
+          return true;
+       }
+       tempStorage.clear(); //clear for re-using
+
+  }
+
+  void askCourseChoice()
+  {
+     DisplayList_Input(course_name);  
+     //cout<< LIST.size() << endl;
+     for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
+      {   
+        
+          if(course_name==get<0>((*i))) //! input required
+          {   
+             if(checkDuplicateRecord(LIST,get<1>((*i)))) // cheking if duplicate 
+             {
+                 LIST.push_back(get<1>((*i))); //making list for input of UI screen of semester
+             }
+          }
+                 
+      }
+
+
+  }
+  void askSemsterChoice()
+  {   
+      DisplayList_Input(sem,1);
+      for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
+      {   
+          if(course_name==get<0>((*i))&&sem==get<1>((*i))) //! input required
+          {   
+             if(checkDuplicateRecord(LIST,get<2>((*i)))) // cheking if duplicate 
+             {  
+                 LIST.push_back(get<2>((*i))); //making list for input of UI screen
+             }
+          }
+                 
+      }
+
+      //! LOGIC 2
+
+
+  }
+  void askSubjectChoice()
+  {
+    DisplayList_Input(subject_name);
+    getFolderPath();
+  }
+
+ ~MODULE_2()
+ {
+   buffer.clear(); //clear buffer
+   LIST.clear();   //clear List
+ }
+ 
+ protected:
+ void SetNoObj()
+{
+  //? by empty defination of pure virtual function here we are restricating creation of parent class
+} 
+//************************************************************************************/
+
+};
+
+
+
+//---------------------------STATIC DEFINATIONS-MODULE-2------------------------------/
+
+//-----------------------------------------------------------------------------------/
 
 /****************************MODULE-END************************************/
 
@@ -1263,24 +1577,32 @@ int main()
     //*jay kashtbhanjan dev
     bool loop=true;
     
-    SET_WRITE_DB SW;
+    APP A;
 
- 
     while(loop)
     {
-          SW.startApp(); // the App
-          SW.scrClr();  //clear screen
-          SW.setCursorPos(2,10); //set cursor position
+          A.startApp(); // the App
+          A.scrClr();  //clear screen
+          A.setCursorPos(2,10); //set cursor position
       
             switch(APP::MODULE_CHOICE)
             {
-              case 1:{
-                         SW.askFacDetails();
-                         SW.askStudDetails();
-                         SW.SetUpSucceed();
+              case 1:{   
+                         MODULE_1 MD1;
+                         MD1.askFacDetails();
+                         MD1.askStudDetails();
+                         MD1.SetUpSucceed();
                          break;
                      }
-              case 2:{
+              case 2:{ 
+                         MODULE_2 MD2;
+                         if(MD2.checkDB())
+                         {
+                          MD2.askCourseChoice();
+                          MD2.askSemsterChoice();
+                          MD2.askSubjectChoice();
+                          //TODO: SANJAL CODE HERE
+                         }
                        break;
                      }
               case 3:{
@@ -1296,7 +1618,7 @@ int main()
               default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);break;}
             }
     
-        SW.scrClr();       //clear screen
+        A.scrClr();       //clear screen'
     }
 
     return 0;
