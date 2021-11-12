@@ -35,7 +35,7 @@
   #include<wincon.h>
   #include<string>
 
-  //#endif  // user 1 
+  #endif  // user 1 
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -56,7 +56,7 @@ lpConsoleCurrentFontEx);
 }
 #endif
 
-#endif // user 2
+//#endif // user 2
 
 
 using namespace std; //? standard namespace for  resolving naming coflicts
@@ -325,7 +325,7 @@ private:
            cin.ignore(80,'\n');
        }
     
-       ConvertChoiceToINT = validateString(operationChoice,5);
+       ConvertChoiceToINT = validateString(operationChoice,5,1);
     
        if(!ConvertChoiceToINT)
        { 
@@ -428,12 +428,13 @@ private:
     scrClr(2); // screen stops so user can read message 
     SetColor(0);
   }
-  int validateString(string input,int Bnd) //* string input validate as integer
+  int validateString(string input,int Bnd,int start) //* string input validate as integer
   {
 
       int flag=0,tem=1;
-      
-      for(tem=1;tem<=Bnd;tem++)
+      if(start==0)
+      start++;      
+      for(tem=start;tem<=Bnd;tem++)
       {
           
           if(to_string(tem) == input) //convert tem int to string to check input valid condition
@@ -868,7 +869,7 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
            cin.clear();
            cin.ignore(80,'\n');
        }
-       ConvertChoiceToINT = validateString(tempStorage,7); //validate input
+       ConvertChoiceToINT = validateString(tempStorage,7,1); //validate input
 
        if(ConvertChoiceToINT==0) //if wrong input
        { 
@@ -978,7 +979,7 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
            cin.clear();
            cin.ignore(80,'\n');
        }
-       ConvertChoiceToINT = validateString(tempStorage,3); //validate input
+       ConvertChoiceToINT = validateString(tempStorage,3,1); //validate input
 
        if(ConvertChoiceToINT==0) //if wrong input
        { 
@@ -1059,7 +1060,7 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
       getline(cin,sem);       //input
       ShowConsoleCursor(false); // hide cursor for flickring cursor
       
-      if(!validateString(sem,10)) //validate sem input
+      if(!validateString(sem,10,1)) //validate sem input
       {goto reinputOfsem;}
 
   }
@@ -1103,7 +1104,7 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
     ShowConsoleCursor(true);
     getline(cin,numberOfstudents);   
     ShowConsoleCursor(false);
-    ConvertChoiceToINT = validateString(numberOfstudents,5000);
+    ConvertChoiceToINT = validateString(numberOfstudents,5000,1);
     if(ConvertChoiceToINT == 0)
     { 
         goto reAskNumStud;
@@ -1266,30 +1267,26 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
  }
  void DisplayList_Input(string &put,int select=0)
  { 
-   int listFlag = 1,chFlag=0,countFlag=0;
+   int listFlag = 1,chFlag=0,countFlag=0,temp=1;
    auto i = LIST.begin();
    
     setCursorPos(1,20);
-    buildVerticalWall(30);
+    buildVerticalWall(35);
     setCursorPos(1,20);
-    buildHorizontalWall(30," ");
+    buildHorizontalWall(35," ");
         
-    //cout << LIST.size();
     while(i != LIST.end()) 
     {
         
-        // cout << temp;
-        start:
-		displayAgain:
-        //flag = 0;
+		    displayAgain:
         chFlag=0;
         setCursorPos(1,20);
         if(select==0)
-        buildHorizontalWall(30,to_string(5*countFlag+listFlag) + ") " + (*i)); 
+        buildHorizontalWall(35,to_string(5*countFlag+listFlag) + ") " + (*i)); 
         else
-        buildHorizontalWall(20,"Sem-"+(*i)); 
+        buildHorizontalWall(35,to_string(5*countFlag+listFlag) + ") " + "Sem-" + (*i)); 
         setCursorPos(1,20);
-        buildHorizontalWall(30," "); 
+        buildHorizontalWall(35," "); 
         listFlag++;
         i++;
         
@@ -1299,48 +1296,98 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
             chFlag=1;
             countFlag++;
             setCursorPos(1,20);
-            buildHorizontalWall(30,"TYPE '+' FOR EXTENDED LIST");
+            buildHorizontalWall(35,"TYPE '+' FOR EXTENDED LIST");
             setCursorPos(1,20);
-            buildVerticalWall(30);
-            askChoice(2,30,tempStorage);
-            listFlag = 1;
+            buildHorizontalWall(35," "); 
+            setCursorPos(1,20);
+            buildVerticalWall(35);
+            askChoice(2,35,tempStorage);
             scrClr(0.5);
             if(tempStorage=="+")
             {
                 setCursorPos(1,20);
-                buildVerticalWall(30);
-                goto start;
-            }
-			else
-			{
-				break;
-			}
-			ConvertChoiceToINT = validateString(tempStorage,countFlag+4);
-            if(ConvertChoiceToINT == 0)
-            { 
+                buildVerticalWall(35);
+                listFlag = 1;
+                chFlag=0;
+                setCursorPos(1,20);
+                buildHorizontalWall(35," "); 
                 goto displayAgain;
             }
-        
-        
+			      else
+			      {    
+                ConvertChoiceToINT = validateString(tempStorage,countFlag*5,(countFlag-1)*5); 
+                if(ConvertChoiceToINT == 0)
+                { 
+                    while(temp != (listFlag))
+                    {
+                      i--;
+                      temp++;
+                    }
+                    temp = 1;
+                    countFlag--;
+                    listFlag = 1;
+                    setCursorPos(1,20);
+                    buildVerticalWall(35);
+                    chFlag=0;
+                    setCursorPos(1,20);
+                    buildHorizontalWall(35," "); 
+                    goto displayAgain;
+                }
+                else
+                {
+                  break;
+                }
+			      }
         }
     }
     if(chFlag==0)
     {
         setCursorPos(1,20);
-        buildVerticalWall(30);
-        // ShowConsoleCursor(true);
-        // cout<<endl<<"choose course : ";
-        // getline(cin,TEMP_STR[0]);
-        // ShowConsoleCursor(false);
+        buildVerticalWall(35);
         askChoice(2,30,tempStorage);
-		ConvertChoiceToINT = validateString(tempStorage,countFlag+4);
+
+        if(tempStorage == "+")
+        {
+          InvalidInputErr();
+          while(temp != (listFlag))
+          {
+            i--;
+            temp++;
+          }
+          temp = 1;
+          listFlag = 1;
+          setCursorPos(1,0);
+          buildVerticalWall(35);
+          setCursorPos(1,20);
+          buildHorizontalWall(35," "); 
+          goto displayAgain;
+        }
+		    ConvertChoiceToINT = validateString(tempStorage,(((countFlag)*5+listFlag-1)),((countFlag)*5));
         if(ConvertChoiceToINT == 0)
         { 
+            while(temp != (listFlag))
+            {
+              i--;
+              temp++;
+            }
+            temp=1;
+            listFlag = 1;
+            setCursorPos(1,20);
+            buildVerticalWall(35);
+            setCursorPos(1,20);
+            buildHorizontalWall(35," "); 
             goto displayAgain;
         }
         scrClr(0.5);
 
-    }                               
+    } 
+    for(i =LIST.begin(),countFlag=1; i != LIST.end();++i,countFlag++)   
+    {
+         if(countFlag==ConvertChoiceToINT)
+         {
+           put=(*i);
+         }
+    }                   
 
    LIST.clear();//flush vector data for re-using
    tempStorage.clear();//flush string for re-using
@@ -1357,8 +1404,11 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
                       SemPath=get<3>((*i)); 
       
     }
+    
+    SemPath = AMS_Path + "\\" + SemPath;
+    setCursorPos(6,20);
     cout<<endl<<SemPath;
-    scrClr(4);
+    scrClr(2);
 
  }
  void getSemesterRecordFile()
@@ -1384,6 +1434,7 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
     }
     
     sort(buffer.begin(), buffer.end()); //sorted file data in vector in Dictionary order
+    tempStorage.clear(); //for re-using
  }
 
  void ExtractStringFromBuffer()
@@ -1415,7 +1466,11 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
 
         DATA.push_back(make_tuple(course_name,sem,subject_name,SemPath)); //makes a final string to display
     }
-    tempStorage.clear(); //clearing for reusing
+    tempStorage.clear();      //clearing for reusing
+    course_name.clear();      //clearing for reusing
+    sem.clear();              //clearing for reusing
+    subject_name.clear();     //clearing for reusing
+    SemPath.clear();          //clearing for reusing
   }
 
  public:
@@ -1446,12 +1501,14 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
           ExtractStringFromBuffer();
           return true;
        }
+       tempStorage.clear(); //clear for re-using
 
   }
 
   void askCourseChoice()
   {
      DisplayList_Input(course_name);  
+     //cout<< LIST.size() << endl;
      for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
       {   
         
@@ -1465,17 +1522,17 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
                  
       }
 
+
   }
   void askSemsterChoice()
   {   
       DisplayList_Input(sem,1);
       for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
       {   
-        
           if(course_name==get<0>((*i))&&sem==get<1>((*i))) //! input required
           {   
              if(checkDuplicateRecord(LIST,get<2>((*i)))) // cheking if duplicate 
-             {
+             {  
                  LIST.push_back(get<2>((*i))); //making list for input of UI screen
              }
           }
