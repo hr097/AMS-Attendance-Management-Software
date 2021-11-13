@@ -281,8 +281,8 @@ private:
 
        gotoHomeScreen:
       
-       Date(); //current date print
-       Time(); //current time print
+       Date(1,15); //current date print
+       Time(0,16); //current time print
 
        setCursorPos(2);
        cout<< setw(55) <<" || ATTENDANCE MANAGEMENT SYSTEM ||"<<endl; //TITLE OF APP
@@ -471,17 +471,17 @@ private:
       return -1; // error
     }
   }
-  void Date()
+  void Date(int v,int h)
   {
-    setCursorPos(1,15);
+    setCursorPos(v,h);
     cout<<"DATE : ";
     SetColor(2);
     cout<<CUR_DATE;
     SetColor(0);
   }
-  void Time()
+  void Time(int v,int h)
   {
-    setCursorPos(0,16);
+    setCursorPos(v,h);
     cout<<"TIME : ";
     SetColor(2);
     cout<<CUR_TIME;
@@ -540,6 +540,7 @@ class MODULE_GENERAL : public APP
   string sem;
   string subject_name;
 
+
 /********************************/
   
 //********** STUDENT *************/   
@@ -547,7 +548,8 @@ class MODULE_GENERAL : public APP
   string student_name;
   string student_email;
   string RoLLNo;
- 
+  string numberOfstudents; 
+
 /*******************************/
  
   void AppPath(string &path) //?Getting Project path for each module Variable used Ams_Path for storing path
@@ -672,7 +674,6 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
   
   private:
 
-  string numberOfstudents; //number of students
 
   public:
 
@@ -1560,7 +1561,7 @@ int main()
                        loop=false; // exit Application
                        break;
                      }
-              default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);break;}
+              default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);break;} // exception case
             }
     
         A.scrClr();       //clear screen'
