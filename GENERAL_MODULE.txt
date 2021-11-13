@@ -13,26 +13,37 @@ private:
 
 protected:
 
+  string AMS_Path;
+  string command;
+  string SemPath;
+  string tempStorage;
+
+  string FacultyName;
+  string FacultyEmail;
+  string course_name;
+  string sem;
+  string subject_name;
+
+  string student_name;
+  string student_email;
+  string RoLLNo;
+  string numberOfstudents; 
+
 virtual void SetNoObj()=0; //*for disable object creation of  MODULE_GENERAL
 
-string AMS_Path,command,FacultyName,FacultyEmail,course_name,sem,subject_name,SemCreatePath,ans,temp_path,numberOfstudents,tempStorage,SemPath;
-
-//student
-string student_name;
-string student_email;
-string RoLLNo;
 
 void AppPath(string &path)
 
-void getDataFromFile(string path,string &FcName,int lineNo)
+void getDataFromFile(string path,string &FcName,int lineNo)   : int FileLine=1;
 
 void writeDataToFile(string path,string &FcName)
 
-string convertIntToString(int &in)
+string convertIntToString(int &in)            : string str;
 
 string convertArrayTostring(char* arg)
 
-void replaceWithHyphen(string &str)
+void replaceWithHyphen(string &str)           :  int i,j,string list;
+
 
 bool EmptyInput(string &input)
 

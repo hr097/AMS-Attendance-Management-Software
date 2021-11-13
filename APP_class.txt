@@ -1,8 +1,11 @@
 NOTE: AA CLASS INHERITENCE NA CASE MA public + protected ma che e share krse
 
+int ConvertChoiceToINT;
 static int MODULE_CHOICE; // static main ma use thse module select krva
 
 public:
+
+APP()                                :string temp,int meridiem_Flag=0;
 
 void SetColor(int ForgC)
  
@@ -14,7 +17,8 @@ void scrClr(float i=0.0)
 
 void buildVerticalWall(int briks)
 
-void buildHorizontalWall(int endBrick,string data)
+void buildHorizontalWall(int endBrick,string data)   : int run;
+
 
 void startApp()
 
@@ -23,29 +27,30 @@ void debug(int do_what=0)
 private:
 
 
-void initApp() 
+void initApp()                  : short winWidth,short winHeight,short scrBufferWidth,short scrBufferHeight 
 
-int HomeScreen()
+int HomeScreen()                 : string operationChoice,int line
 
-int GetDesktopResolution()
+int GetDesktopResolution()       : int size,int horizontal,int vertical
+
 
 void setConsoleSize()
 
 
 protected:
 
-void askChoice(int h,int v,string &input)
+string CUR_DATE,CUR_TIME;
 
 int ConvertChoiceToINT;          //*variable for converting string input to integer
 
-
+void askChoice(int h,int v,string &input)
 void InvalidInputErr()
 void InvalidInputErr(string err_msg,int color,int pos)
 void succeedMSG(string msg,string msg2,int color,int color2,int pos)
 void Date()
 void Time()
 
-int validateString(string input,int Bnd)
+int validateString(string input,int Bnd)    :int flag=0,tem=1;
 
 int validateString(string input) //OVRLD
 

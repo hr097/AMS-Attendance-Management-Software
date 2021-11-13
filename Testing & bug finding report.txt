@@ -37,6 +37,10 @@ file        :index.cpp
 Bugs        :No bugs 
 Memory used :based on requirement(no extra variable are declared)
 
+Date:13/11/2021
+file        :index.cpp
+Bugs        :No bugs found
+Memory used :based on requirement(no extra variable are declared)
 
 
 
@@ -47,77 +51,12 @@ Memory used :based on requirement(no extra variable are declared)
 
 
 
-variables :
-
-
-***class APP   		:   int ConvertChoiceToINT;
-                            static int MODULE_CHOICE;
-
-   APP()                                :string temp,int meridiem_Flag=0;
-
-   void buildHorizontalWall()  		:int run;
-
-   void initApp()       		: short winWidth,short winHeight,short scrBufferWidth,short scrBufferHeight 
-
-   int HomeScreen()      		: string operationChoice,int line
-
-   int GetDesktopResolution() 		: int size,int horizontal,int vertical
-
-protected :
-    int ConvertChoiceToINT; 
-
-   int validateString(string input,int Bnd):int flag=0,tem=1; 
-
-
-
-
-***class MODULE_GENERAL_FUNCTION 	: public GENERAL_INIT:      string AMS_Path;
-  string command;
-  string SemPath;
-  string tempStorage;
-
-  string FacultyName;
-  string FacultyEmail;
-  string course_name;
-  string sem;
-  string subject_name;
-
-  string student_name;
-  string student_email;
-  string RoLLNo;
-
-   
-
-void getDataFromFile(string path,string &FcName,int lineNo)  : int FileLine=1;
-
-  string convertIntToString(int &in)     : string str;
-
-   void replaceWithHyphen(string &str)  :  int i,j,string list;
-
-
-
-
-***class MODULE_1: public MODULE_GENERAL :
-
-string numberOfstudents
-
-int confirmation()         : int line;
-int InfoModification()     : int line;
-int studConfirmation()     : int line;
-int InfoStudModification() : int line;
-
-void askStudDetails()      : int ROLLNO;
 
 
 
    
 
-*** class MODULE_2:public MODULE_GENERAL  :
-
-bool checkDB()             :bool isEmpty;
-void askCourseChoice()     :int line;
-
-   
+debug() will remove at last
                           
 
 

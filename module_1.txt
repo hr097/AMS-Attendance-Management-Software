@@ -3,10 +3,10 @@ class MODULE_1:
 private:
 
 int createSemester()
-int confirmation()
-int InfoModification()
-int studConfirmation()
-int InfoStudModification()
+int confirmation()                : int line;
+int InfoModification()            : int line;
+int studConfirmation()            : int line;
+int InfoStudModification()        : int line;
 void UpdateName(string &input)
 void UpdateEmail(string &input)
 void EnterCourseName()
@@ -19,7 +19,8 @@ void askNumberOfStudents()
 public:
 
 void askFacDetails()
-void askStudDetails()
+void askStudDetails()             : int ROLLNO;
+
 void SetUpSucceed()
 
 protected:

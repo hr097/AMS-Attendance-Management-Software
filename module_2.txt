@@ -7,14 +7,15 @@ string *SCLT_ch;  //! DRASHTI USE
 vector<tuple<string,string,string,string>> DATA;
 
 int checkDuplicateRecord(vector<string> vec,string search)
+void DisplayList_Input(string &put,int select=0)      :int listFlag = 1,chFlag=0,countFlag=0,temp=1;
 void getFolderPath()
 void getSemesterRecordFile()
 void ExtractStringFromBuffer()
 
 public :
 
-bool checkDB()
-void askCourseChoice()
+bool checkDB()                   :bool isEmpty;
+void askCourseChoice()           :int line;
 void askSemsterChoice()
 void askSubjectChoice()
 
