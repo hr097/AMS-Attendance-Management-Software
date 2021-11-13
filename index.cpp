@@ -35,7 +35,7 @@
   #include<wincon.h>
   #include<string>
 
-  #endif  // user 1 
+ // #endif  // user 1 
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -56,7 +56,7 @@ lpConsoleCurrentFontEx);
 }
 #endif
 
-//#endif // user 2
+#endif // user 2
 
 
 using namespace std; //? standard namespace for  resolving naming coflicts
@@ -541,7 +541,6 @@ class MODULE_GENERAL : public APP
   string sem;
   string subject_name;
 
-
 /********************************/
   
 //********** STUDENT *************/   
@@ -550,7 +549,7 @@ class MODULE_GENERAL : public APP
   string student_email;
   string RoLLNo;
   string numberOfstudents; 
-
+ 
 /*******************************/
  
   void AppPath(string &path) //?Getting Project path for each module Variable used Ams_Path for storing path
@@ -1266,7 +1265,8 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
        return 1; // if not found then return 1
      }
  }
- void DisplayList_Input(string &put,int select=0)
+
+ void DisplayList_Input(string &put,int select=0) //* display the list and take appropriate input of corse/sem/subject
  { 
    int listFlag = 1,chFlag=0,countFlag=0,temp=1;
    auto i = LIST.begin();
@@ -1357,7 +1357,7 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
           }
           temp = 1;
           listFlag = 1;
-          setCursorPos(1,0);
+          setCursorPos(1,20);
           buildVerticalWall(35);
           setCursorPos(1,20);
           buildHorizontalWall(35," "); 
@@ -1382,7 +1382,7 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
         scrClr(0.5);
 
     } 
-    for(i =LIST.begin(),countFlag=1; i != LIST.end();++i,countFlag++)   
+    for(i =LIST.begin(),countFlag=1; i != LIST.end();++i,countFlag++)   // set data to string for searching
     {
          if(countFlag==ConvertChoiceToINT)
          {
@@ -1405,14 +1405,12 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
                       SemPath=get<3>((*i)); 
       
     }
-    
     SemPath = AMS_Path + "\\" + SemPath;
-    setCursorPos(6,20);
-    cout<<endl<<SemPath;
-    scrClr(2);
+    //cout<<endl<<SemPath;
+    //scrClr(2);
 
  }
- void getSemesterRecordFile()
+ void getSemesterRecordFile() //* get data of course-semester-sub-path records
  {
     tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt";//making path to AMS->OTHER->semsterRecord.txt
     fstream fin(tempStorage.c_str(),ios::in); // file opened in reading mode
@@ -1435,10 +1433,10 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
     }
     
     sort(buffer.begin(), buffer.end()); //sorted file data in vector in Dictionary order
-    tempStorage.clear(); //for re-using
+    tempStorage.clear(); //clearing for re-using
  }
 
- void ExtractStringFromBuffer()
+ void ExtractStringFromBuffer() //* extracting main string into substring like course - sem - sub - path
  {
     for (auto i = buffer.begin(); i != buffer.end(); ++i) //insert in to vector-tuple from vector buffer with extracting string
     {
@@ -1485,39 +1483,42 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
   {  
     
     tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt";//making path to AMS->OTHER->semsterRecord.txt
-    fstream read(tempStorage.c_str(),ios::in); // file opened in reading mode
+    fstream read(tempStorage.c_str(),ios::in); // file opened 
+
     bool isEmpty;
 
-       isEmpty = read.peek() == EOF;
+       isEmpty = read.peek() == EOF; // check if file is empty or not 
        if(isEmpty)
        {
           InvalidInputErr("NO SETUP EXIST ! PLEASE ADD ATLEST 1 SETUP",4,19);
           read.close();
-          return false;
+          isEmpty = false;
        }
        else
        { 
           read.close();
           getSemesterRecordFile();
           ExtractStringFromBuffer();
-          return true;
+          isEmpty = true;
        }
-       tempStorage.clear(); //clear for re-using
+      
+      tempStorage.clear(); //clear for re-using
+      return(isEmpty);
 
   }
 
-  void askCourseChoice()
+  void askCourseChoice() //* take input choice of course for attendance
   {
      DisplayList_Input(course_name);  
-     //cout<< LIST.size() << endl;
-     for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
+
+     for (auto i =DATA.begin(); i != DATA.end();++i)  //process to make list of semester in particular course 
       {   
         
-          if(course_name==get<0>((*i))) //! input required
+          if(course_name==get<0>((*i))) 
           {   
              if(checkDuplicateRecord(LIST,get<1>((*i)))) // cheking if duplicate 
              {
-                 LIST.push_back(get<1>((*i))); //making list for input of UI screen of semester
+                 LIST.push_back(get<1>((*i))); //making distinguish list
              }
           }
                  
@@ -1525,41 +1526,43 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
 
 
   }
-  void askSemsterChoice()
+  void askSemsterChoice() //* take input choice of semester for attendance
   {   
       DisplayList_Input(sem,1);
-      for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
+
+      for (auto i =DATA.begin(); i != DATA.end();++i)  //process to make list of subject in particular course & semester
       {   
-          if(course_name==get<0>((*i))&&sem==get<1>((*i))) //! input required
+          if(course_name==get<0>((*i))&&sem==get<1>((*i))) 
           {   
              if(checkDuplicateRecord(LIST,get<2>((*i)))) // cheking if duplicate 
              {  
-                 LIST.push_back(get<2>((*i))); //making list for input of UI screen
+                 LIST.push_back(get<2>((*i))); //making distinguish list 
              }
           }
                  
       }
-
-      //! LOGIC 2
-
-
   }
-  void askSubjectChoice()
+  //TODO: TEAM VIRAJ-SANJAL-SHIKKHA-NUPUR CODE 
+  //* YOUR FUCTIONS DEFINATIONS SHOULD BE HERE SO THAT IT CAN BE CALLED IN MAIN
+  //* e.g. confirmation()
+  
+  void askSubjectChoice() //* take input choice of subject for attendance
   {
     DisplayList_Input(subject_name);
-    getFolderPath();
+    getFolderPath(); 
   }
-
+  
  ~MODULE_2()
  {
-   buffer.clear(); //clear buffer
-   LIST.clear();   //clear List
+   buffer.clear(); //clearing buffer
+   LIST.clear();   //clearing List
  }
  
  protected:
+
  void SetNoObj()
 {
-  //? by empty defination of pure virtual function here we are restricating creation of parent class
+  //? by empty defination of pure virtual function here we are restricating creation of parent(GENERAL MODULE) class
 } 
 //************************************************************************************/
 
@@ -1575,20 +1578,21 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
 
 int main()
 {
-    //*jay swaminrayan
-    //*jay ganeshay namh
-    //*jay kashtbhanjan dev
-    bool loop=true;
+    //*jay swaminrayan *//
+    //*jay ganeshay namh *//
+    //*jay kashtbhanjan dev *//
+
+    bool loop=true; //set true to run app by 1 time
     
     APP A;
 
     while(loop)
     {
-          A.startApp(); // the App
-          A.scrClr();  //clear screen
-          A.setCursorPos(2,10); //set cursor position
+          A.startApp(); 
+          A.scrClr();  
+          A.setCursorPos(2,10); 
       
-            switch(APP::MODULE_CHOICE)
+            switch(APP::MODULE_CHOICE)// module choice asking
             {
               case 1:{   
                          MODULE_1 MD1;
@@ -1604,7 +1608,14 @@ int main()
                           MD2.askCourseChoice();
                           MD2.askSemsterChoice();
                           MD2.askSubjectChoice();
-                          //TODO: SANJAL CODE HERE
+
+                          //TODO: TEAM VIRAJ-SANJAL-SHIKKHA-NUPUR CODE HERE
+                          //* phase 2 start
+                          //* //TODO: TEAM VIRAJ YOUR FUNCTION CALL START FROM HERE confirmation()
+
+
+                          //TODO: TEAM DRASHTI-SHUBHAM-HARSHIL
+                          //* phase 3 start
                          }
                        break;
                      }
@@ -1618,12 +1629,11 @@ int main()
                        loop=false; // exit Application
                        break;
                      }
-              default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);break;} // exception case
+              default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);break;} //* exception case
             }
     
-        A.scrClr();       //clear screen'
+        A.scrClr();    // screen clear
     }
 
     return 0;
 }
-
