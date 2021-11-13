@@ -35,7 +35,7 @@
   #include<wincon.h>
   #include<string>
 
-  //#endif  // user 1 
+ // #endif  // user 1 
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -281,8 +281,8 @@ private:
 
        gotoHomeScreen:
       
-       Date(); //current date print
-       Time(); //current time print
+       Date(1,15); //current date print
+       Time(0,16); //current time print
 
        setCursorPos(2);
        cout<< setw(55) <<" || ATTENDANCE MANAGEMENT SYSTEM ||"<<endl; //TITLE OF APP
@@ -325,7 +325,7 @@ private:
            cin.ignore(80,'\n');
        }
     
-       ConvertChoiceToINT = validateString(operationChoice,5);
+       ConvertChoiceToINT = validateString(operationChoice,5,1);
     
        if(!ConvertChoiceToINT)
        { 
@@ -428,12 +428,13 @@ private:
     scrClr(2); // screen stops so user can read message 
     SetColor(0);
   }
-  int validateString(string input,int Bnd) //* string input validate as integer
+  int validateString(string input,int Bnd,int start) //* string input validate as integer
   {
 
       int flag=0,tem=1;
-      
-      for(tem=1;tem<=Bnd;tem++)
+      if(start==0)
+      start++;      
+      for(tem=start;tem<=Bnd;tem++)
       {
           
           if(to_string(tem) == input) //convert tem int to string to check input valid condition
@@ -471,17 +472,17 @@ private:
       return -1; // error
     }
   }
-  void Date()
+  void Date(int v,int h)
   {
-    setCursorPos(1,15);
+    setCursorPos(v,h);
     cout<<"DATE : ";
     SetColor(2);
     cout<<CUR_DATE;
     SetColor(0);
   }
-  void Time()
+  void Time(int v,int h)
   {
-    setCursorPos(0,16);
+    setCursorPos(v,h);
     cout<<"TIME : ";
     SetColor(2);
     cout<<CUR_TIME;
@@ -511,7 +512,7 @@ class MODULE_GENERAL : public APP
 
   MODULE_GENERAL()
   {
-
+      AppPath(AMS_Path);
   }
 
   ~MODULE_GENERAL()
@@ -547,6 +548,7 @@ class MODULE_GENERAL : public APP
   string student_name;
   string student_email;
   string RoLLNo;
+  string numberOfstudents; 
  
 /*******************************/
  
@@ -672,7 +674,6 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
   
   private:
 
-  string numberOfstudents; //number of students
 
   public:
 
@@ -868,7 +869,7 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
            cin.clear();
            cin.ignore(80,'\n');
        }
-       ConvertChoiceToINT = validateString(tempStorage,7); //validate input
+       ConvertChoiceToINT = validateString(tempStorage,7,1); //validate input
 
        if(ConvertChoiceToINT==0) //if wrong input
        { 
@@ -978,7 +979,7 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
            cin.clear();
            cin.ignore(80,'\n');
        }
-       ConvertChoiceToINT = validateString(tempStorage,3); //validate input
+       ConvertChoiceToINT = validateString(tempStorage,3,1); //validate input
 
        if(ConvertChoiceToINT==0) //if wrong input
        { 
@@ -992,8 +993,8 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
 
   /************************************************************************/
 
-   void UpdateName(string &input) //?Faculty & student name update input
-   { 
+  void UpdateName(string &input) //?Faculty & student name update input
+  { 
       reinput:
       scrClr(0.5);
       setCursorPos(9,20);
@@ -1059,7 +1060,7 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
       getline(cin,sem);       //input
       ShowConsoleCursor(false); // hide cursor for flickring cursor
       
-      if(!validateString(sem,10)) //validate sem input
+      if(!validateString(sem,10,1)) //validate sem input
       {goto reinputOfsem;}
 
   }
@@ -1103,7 +1104,7 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
     ShowConsoleCursor(true);
     getline(cin,numberOfstudents);   
     ShowConsoleCursor(false);
-    ConvertChoiceToINT = validateString(numberOfstudents,5000);
+    ConvertChoiceToINT = validateString(numberOfstudents,5000,1);
     if(ConvertChoiceToINT == 0)
     { 
         goto reAskNumStud;
@@ -1115,7 +1116,7 @@ class MODULE_1: public MODULE_GENERAL //*module 1 class
 
   MODULE_1() 
   {
-    AppPath(AMS_Path); //* for each module you will get project folder (database)path like that
+    
   }
 
   void askFacDetails() //?asking faculty details
@@ -1237,8 +1238,8 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
  private:
 
  vector<string> buffer,LIST; //vector buffer for file handling data receiver
- string *SCLT_ch;  //! DRASHTI USE
  vector<tuple<string,string,string,string>> DATA; // search-access vector-tuple
+ 
  
  public:
  
@@ -1265,6 +1266,134 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
      }
  }
 
+ void DisplayList_Input(string &put,int select=0) //* display the list and take appropriate input of corse/sem/subject
+ { 
+   int listFlag = 1,chFlag=0,countFlag=0,temp=1;
+   auto i = LIST.begin();
+   
+    setCursorPos(1,20);
+    buildVerticalWall(35);
+    setCursorPos(1,20);
+    buildHorizontalWall(35," ");
+        
+    while(i != LIST.end()) 
+    {
+        
+		    displayAgain:
+        chFlag=0;
+        setCursorPos(1,20);
+        if(select==0)
+        buildHorizontalWall(35,to_string(5*countFlag+listFlag) + ") " + (*i)); 
+        else
+        buildHorizontalWall(35,to_string(5*countFlag+listFlag) + ") " + "Sem-" + (*i)); 
+        setCursorPos(1,20);
+        buildHorizontalWall(35," "); 
+        listFlag++;
+        i++;
+        
+        if(listFlag > 5 && i !=LIST.end())
+        {
+         
+            chFlag=1;
+            countFlag++;
+            setCursorPos(1,20);
+            buildHorizontalWall(35,"TYPE '+' FOR EXTENDED LIST");
+            setCursorPos(1,20);
+            buildHorizontalWall(35," "); 
+            setCursorPos(1,20);
+            buildVerticalWall(35);
+            askChoice(2,35,tempStorage);
+            scrClr(0.5);
+            if(tempStorage=="+")
+            {
+                setCursorPos(1,20);
+                buildVerticalWall(35);
+                listFlag = 1;
+                chFlag=0;
+                setCursorPos(1,20);
+                buildHorizontalWall(35," "); 
+                goto displayAgain;
+            }
+			      else
+			      {    
+                ConvertChoiceToINT = validateString(tempStorage,countFlag*5,(countFlag-1)*5); 
+                if(ConvertChoiceToINT == 0)
+                { 
+                    while(temp != (listFlag))
+                    {
+                      i--;
+                      temp++;
+                    }
+                    temp = 1;
+                    countFlag--;
+                    listFlag = 1;
+                    setCursorPos(1,20);
+                    buildVerticalWall(35);
+                    chFlag=0;
+                    setCursorPos(1,20);
+                    buildHorizontalWall(35," "); 
+                    goto displayAgain;
+                }
+                else
+                {
+                  break;
+                }
+			      }
+        }
+    }
+    if(chFlag==0)
+    {
+        setCursorPos(1,20);
+        buildVerticalWall(35);
+        askChoice(2,30,tempStorage);
+
+        if(tempStorage == "+")
+        {
+          InvalidInputErr();
+          while(temp != (listFlag))
+          {
+            i--;
+            temp++;
+          }
+          temp = 1;
+          listFlag = 1;
+          setCursorPos(1,20);
+          buildVerticalWall(35);
+          setCursorPos(1,20);
+          buildHorizontalWall(35," "); 
+          goto displayAgain;
+        }
+		    ConvertChoiceToINT = validateString(tempStorage,(((countFlag)*5+listFlag-1)),((countFlag)*5));
+        if(ConvertChoiceToINT == 0)
+        { 
+            while(temp != (listFlag))
+            {
+              i--;
+              temp++;
+            }
+            temp=1;
+            listFlag = 1;
+            setCursorPos(1,20);
+            buildVerticalWall(35);
+            setCursorPos(1,20);
+            buildHorizontalWall(35," "); 
+            goto displayAgain;
+        }
+        scrClr(0.5);
+
+    } 
+    for(i =LIST.begin(),countFlag=1; i != LIST.end();++i,countFlag++)   // set data to string for searching
+    {
+         if(countFlag==ConvertChoiceToINT)
+         {
+           put=(*i);
+         }
+    }                   
+
+   LIST.clear();//flush vector data for re-using
+   tempStorage.clear();//flush string for re-using
+ }
+
  void getFolderPath()
  {
     for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find folder path using vector tuple we have 3 input parameter coursename , sem , subject name
@@ -1276,8 +1405,12 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
                       SemPath=get<3>((*i)); 
       
     }
+    SemPath = AMS_Path + "\\" + SemPath;
+    //cout<<endl<<SemPath;
+    //scrClr(2);
+
  }
- void getSemesterRecordFile()
+ void getSemesterRecordFile() //* get data of course-semester-sub-path records
  {
     tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt";//making path to AMS->OTHER->semsterRecord.txt
     fstream fin(tempStorage.c_str(),ios::in); // file opened in reading mode
@@ -1300,9 +1433,10 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
     }
     
     sort(buffer.begin(), buffer.end()); //sorted file data in vector in Dictionary order
+    tempStorage.clear(); //clearing for re-using
  }
 
- void ExtractStringFromBuffer()
+ void ExtractStringFromBuffer() //* extracting main string into substring like course - sem - sub - path
  {
     for (auto i = buffer.begin(); i != buffer.end(); ++i) //insert in to vector-tuple from vector buffer with extracting string
     {
@@ -1331,156 +1465,104 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
 
         DATA.push_back(make_tuple(course_name,sem,subject_name,SemPath)); //makes a final string to display
     }
-    tempStorage.clear(); //clearing for reusing
+    tempStorage.clear();      //clearing for reusing
+    course_name.clear();      //clearing for reusing
+    sem.clear();              //clearing for reusing
+    subject_name.clear();     //clearing for reusing
+    SemPath.clear();          //clearing for reusing
   }
 
  public:
+
   MODULE_2()
   {
-    AppPath(AMS_Path);
+    
   }
+
   bool checkDB() //* functions for checking first time database semster Records exists or not
   {  
     
     tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt";//making path to AMS->OTHER->semsterRecord.txt
-    fstream read(tempStorage.c_str(),ios::in); // file opened in reading mode
+    fstream read(tempStorage.c_str(),ios::in); // file opened 
+
     bool isEmpty;
 
-       isEmpty = read.peek() == EOF;
+       isEmpty = read.peek() == EOF; // check if file is empty or not 
        if(isEmpty)
        {
-         InvalidInputErr("NO SETUP EXIST ! PLEASE ADD ATLEST 1 SETUP",4,19);
-         read.close();
-          return false;
+          InvalidInputErr("NO SETUP EXIST ! PLEASE ADD ATLEST 1 SETUP",4,19);
+          read.close();
+          isEmpty = false;
        }
        else
        { 
-         read.close();
-         getSemesterRecordFile();
-         ExtractStringFromBuffer();
-          return true;
+          read.close();
+          getSemesterRecordFile();
+          ExtractStringFromBuffer();
+          isEmpty = true;
        }
+      
+      tempStorage.clear(); //clear for re-using
+      return(isEmpty);
 
   }
 
-  void askCourseChoice()
+  void askCourseChoice() //* take input choice of course for attendance
   {
-       
-      int line; //temp variable for building box
+     DisplayList_Input(course_name);  
 
-      reInputCourseChoise: // re input course
-      
-      //  Date(); //current date print
-      //  Time(); //current time print
-
-       setCursorPos(1);
-       cout<< setw(62) <<" => WHICH INFORMATION DO YOU WANT TO MODIFY ? "<<endl; 
-
-       string operationChoice; 
-    
-       setCursorPos(1,15);
-    
-       buildVerticalWall(43);
-      
-       //!concatenate LOGIC 1
-       line=0; //* re used variable
-    
-       while(line<11)
-       {
-           setCursorPos(1,15);
-           if(line==1)
-           buildHorizontalWall(43,"1) NEW SETUP FOR SEMESTER"); //! here we pass vector data
-           else if(line==3)
-           buildHorizontalWall(43,"2) TAKE ATTENDANCE "); //! here we pass vector data
-           else if(line==5)
-           buildHorizontalWall(43,"3) CUSTOMIZED ATTENDANCE REPORT ");//! here we pass vector data
-           else if(line==7)
-           buildHorizontalWall(43,"4) SEARCH & UPDATE DETAILS ");//! here we pass vector data
-           else if(line==9)
-           buildHorizontalWall(43,"5) EXIT ");//! here we pass more choice
-           else if(line==11)
-           buildHorizontalWall(43,"TYPE + TO SEE EXTENDED LIST");//! here we pass more choice
-           else 
-           buildHorizontalWall(43," ");
-           line++;
-       }
-    
-       setCursorPos(1,15);
-       buildVerticalWall(43);
-    
-
-      askChoice(2,30,operationChoice);
-    
-       if(!cin)
-       {
-           cin.clear();
-           cin.ignore(80,'\n');
-       }
-    
-       ConvertChoiceToINT = validateString(operationChoice,5);
-    
-       if(!ConvertChoiceToINT)
-       { 
-           goto reInputCourseChoise;
-       }
-       else
-       {
-         //! here integer choice( (int_choice-1)) will be find out into string array or in vector list 
-         //! and we store it in the course_name varible ->INHERITED FROM GENERAK_MODULE
-       }
-
-      LIST.clear();//flush vector data for re-using
-  }
-  void askSemsterChoice()
-  {   
-
-      for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
+     for (auto i =DATA.begin(); i != DATA.end();++i)  //process to make list of semester in particular course 
       {   
         
-          if(course_name==get<0>((*i))) //! input required
+          if(course_name==get<0>((*i))) 
           {   
              if(checkDuplicateRecord(LIST,get<1>((*i)))) // cheking if duplicate 
              {
-                 LIST.push_back(get<1>((*i))); //making list for input of UI screen
+                 LIST.push_back(get<1>((*i))); //making distinguish list
              }
           }
                  
       }
 
-      //! LOGIC 2
 
-      LIST.clear();//flush vector data for re-using
   }
-  void askSubjectChoice()
+  void askSemsterChoice() //* take input choice of semester for attendance
+  {   
+      DisplayList_Input(sem,1);
+
+      for (auto i =DATA.begin(); i != DATA.end();++i)  //process to make list of subject in particular course & semester
+      {   
+          if(course_name==get<0>((*i))&&sem==get<1>((*i))) 
+          {   
+             if(checkDuplicateRecord(LIST,get<2>((*i)))) // cheking if duplicate 
+             {  
+                 LIST.push_back(get<2>((*i))); //making distinguish list 
+             }
+          }
+                 
+      }
+  }
+  //TODO: TEAM VIRAJ-SANJAL-SHIKKHA-NUPUR CODE 
+  //* YOUR FUCTIONS DEFINATIONS SHOULD BE HERE SO THAT IT CAN BE CALLED IN MAIN
+  //* e.g. confirmation()
+  
+  void askSubjectChoice() //* take input choice of subject for attendance
   {
-    for (auto i =DATA.begin(); i != DATA.end();++i)  //process to find searched data by user
-    {   
-      
-        if(course_name==get<0>((*i))&&sem==get<1>((*i))) 
-        {
-           if(checkDuplicateRecord(LIST,get<2>((*i)))) // cheking if duplicate 
-           {
-               LIST.push_back(get<2>((*i))); //making list for input of UI screen
-           }
-        }
-               
-    }
-
-    //! LOGIC 3
-    LIST.clear();//flush vector data for re-using
-    getFolderPath();
+    DisplayList_Input(subject_name);
+    getFolderPath(); 
   }
-
+  
  ~MODULE_2()
  {
-   buffer.clear();
-   LIST.clear();
+   buffer.clear(); //clearing buffer
+   LIST.clear();   //clearing List
  }
  
  protected:
+
  void SetNoObj()
 {
-  //? by empty defination of pure virtual function here we are restricating creation of parent class
+  //? by empty defination of pure virtual function here we are restricating creation of parent(GENERAL MODULE) class
 } 
 //************************************************************************************/
 
@@ -1496,20 +1578,21 @@ class MODULE_2:public MODULE_GENERAL //*module 2 class
 
 int main()
 {
-    //*jay swaminrayan
-    //*jay ganeshay namh
-    //*jay kashtbhanjan dev
-    bool loop=true;
+    //*jay swaminrayan *//
+    //*jay ganeshay namh *//
+    //*jay kashtbhanjan dev *//
+
+    bool loop=true; //set true to run app by 1 time
     
     APP A;
 
     while(loop)
     {
-          A.startApp(); // the App
-          A.scrClr();  //clear screen
-          A.setCursorPos(2,10); //set cursor position
+          A.startApp(); 
+          A.scrClr();  
+          A.setCursorPos(2,10); 
       
-            switch(APP::MODULE_CHOICE)
+            switch(APP::MODULE_CHOICE)// module choice asking
             {
               case 1:{   
                          MODULE_1 MD1;
@@ -1519,14 +1602,21 @@ int main()
                          break;
                      }
               case 2:{ 
-                       MODULE_2 MD2;
-                       if(MD2.checkDB())
-                       {
-                       MD2.askCourseChoice();
-                       MD2.askSemsterChoice();
-                       MD2.askSubjectChoice();
-                       //TODO: SANJAL CODE HERE
-                       }
+                         MODULE_2 MD2;
+                         if(MD2.checkDB())
+                         {
+                          MD2.askCourseChoice();
+                          MD2.askSemsterChoice();
+                          MD2.askSubjectChoice();
+
+                          //TODO: TEAM VIRAJ-SANJAL-SHIKKHA-NUPUR CODE HERE
+                          //* phase 2 start
+                          //* //TODO: TEAM VIRAJ YOUR FUNCTION CALL START FROM HERE confirmation()
+
+
+                          //TODO: TEAM DRASHTI-SHUBHAM-HARSHIL
+                          //* phase 3 start
+                         }
                        break;
                      }
               case 3:{
@@ -1539,10 +1629,10 @@ int main()
                        loop=false; // exit Application
                        break;
                      }
-              default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);break;}
+              default:{cout<<endl<<"ERROR: APPLICATION CRASHED!!!"<<endl;exit(1);break;} //* exception case
             }
     
-        A.scrClr();       //clear screen'
+        A.scrClr();    // screen clear
     }
 
     return 0;
