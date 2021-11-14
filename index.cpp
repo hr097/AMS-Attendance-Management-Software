@@ -35,7 +35,7 @@
   #include<wincon.h>
   #include<string>
 
- // #endif  // user 1  DRASHTI
+  #endif  // user 1  DRASHTI
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -56,7 +56,7 @@ lpConsoleCurrentFontEx);
 }
 #endif
 
-#endif // user 2 HARSHIL
+//#endif // user 2 HARSHIL
 
 
 using namespace std; //* standard namespace for  resolving naming coflicts
@@ -398,12 +398,12 @@ private:
   int YesNoInput(string inputAsk,string &in)
   {
      int line;
-     setCursorPos(2,15);
+     setCursorPos(2,17);
      buildVerticalWall(43);
      line=0;
      while(line<3)
      {
-       setCursorPos(1,15);
+       setCursorPos(1,17);
        if(line==1)
        {
          buildHorizontalWall(43,inputAsk);     //message BOX-UI
@@ -417,7 +417,7 @@ private:
          
        line++;
      }
-     setCursorPos(1,15);
+     setCursorPos(1,17);
      buildVerticalWall(43);
      setCursorPos(2,30);
      fflush(stdin);
@@ -1616,9 +1616,120 @@ string lastline()
                  
       }
   }
-  //TODO: TEAM VIRAJ-SANJAL-SHIKKHA-NUPUR CODE 
-  //* YOUR FUCTIONS DEFINATIONS SHOULD BE HERE SO THAT IT CAN BE CALLED IN MAIN
-  //* e.g. confirmation()
+
+  int ProccedForAttendance() //* functions for reconfirming to proceed to attendance
+  {     
+        int line=0;
+        reinputforattedance:
+
+        scrClr(0.5); // clear screen
+
+      
+        line = 0;
+        command.clear();                                                              
+        command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt"; // making path to access faculty-sem-?-.tx       
+
+            setCursorPos(1,7);
+            buildVerticalWall(65);
+        
+            while(line < 9)
+            {
+                setCursorPos(1,7);
+                if (line == 1)
+                {
+                   
+                    getDataFromFile(command, FacultyName, 1);
+
+                    buildHorizontalWall(65,"FACULTY NAME         :   "+FacultyName);
+                }  
+                else if (line == 3)
+                {
+                  //getDataFromFile(command, FacultyEmail, 2);
+                  buildHorizontalWall(65,"COURSE : " + course_name + "   SEM : " + sem + "   Subject : " + subject_name);
+                  
+                }
+                else if (line == 5)
+                {
+                    getDataFromFile(command,numberOfstudents,6);
+                    buildHorizontalWall(65,"NUMBER OF STUDENT    :   "+numberOfstudents);
+                    
+                    
+                }
+                else if(line == 7)
+                {
+                    // getDataFromFile(command, subject_name, 4);
+                    // buildHorizontalWall(60,"4) Subject Name : "+subject_name);
+                    buildHorizontalWall(65,"DATE : "+ CUR_DATE +"           "+"TIME : " + CUR_TIME);
+                }
+                // else if(line == 5)
+                // {
+                    // getDataFromFile(command, sem, 5);
+                    // buildHorizontalWall(60,"5) Sem : "+sem);
+                // }
+                // else if(line == 7)
+                // {
+
+                    // buildHorizontalWall(60,"DATE : "+ CUR_DATE +"           "+"TIME : " + CUR_TIME);
+                    //Date(1, 15); // current date print
+                   // Time(0, 19); // current time print
+                // }
+                else
+                    buildHorizontalWall(65, " ");
+                line++;
+            }
+
+            setCursorPos(1, 7);
+            buildVerticalWall(65);
+            
+            //read.close();
+            
+            tempStorage.clear();
+            command.clear();
+
+            ConvertChoiceToINT=YesNoInput("DO YOU WANT TO PROCCED FURTHER ?",tempStorage);
+            
+            if(ConvertChoiceToINT == -1) //validate input
+            {
+              InvalidInputErr(); //error message
+              goto reinputforattedance;
+            }
+
+            // line = 0;
+            // setCursorPos(1, 15);
+            // buildVerticalWall(50);
+            // while(line < 3 )
+            // {
+                // setCursorPos(0, 15);
+                // if(line == 1)
+                // {
+                    // buildHorizontalWall(50,"Proceed further to take Attendance ?");
+                // }
+                // else if(line==2)
+                // {
+                    // buildHorizontalWall(50,"[Press 1 to proceed / 0 to exit ] ");
+                // }
+                // else
+                    // buildHorizontalWall(50, " ");
+                // line++;
+            // }
+            // setCursorPos(1, 15);
+            // buildVerticalWall(50);
+
+            // ShowCursor(true);
+            // setCursorPos(1, 30);
+            // cin >> response;
+            // if (response == 1)
+            // {
+                //further functions
+            // }
+            // else
+            // {
+                // HomeScreen();
+            // }
+        //}
+
+        return (ConvertChoiceToINT);
+  }
 
   void askSubjectChoice() //? take input choice of subject for attendance
   {
@@ -1634,7 +1745,7 @@ string lastline()
 
     int i,tem;
     string MCH,ACH,choice;
-    //string ABSENT_ARR[numberOfstudents];
+    // string ABSENT_ARR[numberOfstudents];
 
     command =  SemPath + "\\DAILY-RECORD\\records.txt";
   
@@ -1855,17 +1966,11 @@ int main()
                           MD2.askSemsterChoice();
                           MD2.askSubjectChoice();
 
-                          //TODO: TEAM VIRAJ-SANJAL-SHIKKHA-NUPUR CODE HERE
-                          //* phase 2 start
-                          //* //TODO: TEAM VIRAJ YOUR FUNCTION CALL START FROM HERE confirmation()
-
-
-                          if(true)
+                          if(MD2.ProccedForAttendance())
                           {
                             MD2.takeAttendance();
                           }
-                          
-                         }
+                        }
                        break;
                      }
               case 3:{
