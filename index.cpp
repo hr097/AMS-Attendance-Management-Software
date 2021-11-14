@@ -35,7 +35,7 @@
   #include<wincon.h>
   #include<string>
 
-  #endif  // user 1  DRASHTI
+  //#endif  // user 1  DRASHTI
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -56,7 +56,7 @@ lpConsoleCurrentFontEx);
 }
 #endif
 
-//#endif // user 2 HARSHIL
+#endif // user 2 HARSHIL
 
 
 using namespace std; //* standard namespace for  resolving naming coflicts
@@ -1617,7 +1617,7 @@ string lastline()
       }
   }
 
-  int ProccedForAttendance() //* functions for reconfirming to proceed to attendance
+  int proceedForAttendance() //* functions for reconfirming to proceed to attendance
   {     
         int line=0;
         reinputforattedance:
@@ -1632,47 +1632,53 @@ string lastline()
             setCursorPos(1,7);
             buildVerticalWall(65);
         
-            while(line < 9)
+            while(line < 15)
             {
                 setCursorPos(1,7);
                 if (line == 1)
                 {
                    
                     getDataFromFile(command, FacultyName, 1);
-
-                    buildHorizontalWall(65,"FACULTY NAME         :   "+FacultyName);
+                    buildHorizontalWall(65,"FACULTY NAME         :  "+FacultyName);
                 }  
                 else if (line == 3)
                 {
-                  //getDataFromFile(command, FacultyEmail, 2);
-                  buildHorizontalWall(65,"COURSE : " + course_name + "   SEM : " + sem + "   Subject : " + subject_name);
+                  buildHorizontalWall(65,"COURSE               :  " + course_name );
                   
                 }
                 else if (line == 5)
                 {
-                    getDataFromFile(command,numberOfstudents,6);
-                    buildHorizontalWall(65,"NUMBER OF STUDENT    :   "+numberOfstudents);
-                    
-                    
+                  buildHorizontalWall(65,"SEM                  :  " + sem );
+                  
                 }
-                else if(line == 7)
+                else if (line == 7)
                 {
-                    // getDataFromFile(command, subject_name, 4);
-                    // buildHorizontalWall(60,"4) Subject Name : "+subject_name);
-                    buildHorizontalWall(65,"DATE : "+ CUR_DATE +"           "+"TIME : " + CUR_TIME);
+                  buildHorizontalWall(65,"SUBJECT              :  " + subject_name);
+                  
                 }
-                // else if(line == 5)
-                // {
-                    // getDataFromFile(command, sem, 5);
-                    // buildHorizontalWall(60,"5) Sem : "+sem);
-                // }
-                // else if(line == 7)
-                // {
+                else if (line == 9)
+                {
+                    getDataFromFile(command,numberOfstudents,6);
+                    buildHorizontalWall(65,"NUMBER OF STUDENTS   :  "+numberOfstudents);
+                    
+                }
+                else if(line == 11)
+                {   
+                   cout<<"|";
+                   Date(0,9);
+                   Time(0,7);
+                   cout<<setw(18)<<"|";
+                }
+                else if(line == 13)
+                { 
+                  cout<<"|";
+                  SetColor(1);
+                  setCursorPos(0,16);
+                  cout<<"DO YOU WANT TO PROCEED FURTHER ?";
+                  SetColor(0);
+                  cout<<setw(18)<<"|";
+                }
 
-                    // buildHorizontalWall(60,"DATE : "+ CUR_DATE +"           "+"TIME : " + CUR_TIME);
-                    //Date(1, 15); // current date print
-                   // Time(0, 19); // current time print
-                // }
                 else
                     buildHorizontalWall(65, " ");
                 line++;
@@ -1681,52 +1687,22 @@ string lastline()
             setCursorPos(1, 7);
             buildVerticalWall(65);
             
-            //read.close();
-            
             tempStorage.clear();
             command.clear();
 
-            ConvertChoiceToINT=YesNoInput("DO YOU WANT TO PROCCED FURTHER ?",tempStorage);
+            setCursorPos(2,32);
+            fflush(stdin);
+            ShowConsoleCursor(true);
+            cout << "Type : ";
+            getline(cin,tempStorage);
+            ShowConsoleCursor(false);
+            ConvertChoiceToINT = validateString(tempStorage); //validate input // line re used as return value storage
             
             if(ConvertChoiceToINT == -1) //validate input
             {
               InvalidInputErr(); //error message
               goto reinputforattedance;
             }
-
-            // line = 0;
-            // setCursorPos(1, 15);
-            // buildVerticalWall(50);
-            // while(line < 3 )
-            // {
-                // setCursorPos(0, 15);
-                // if(line == 1)
-                // {
-                    // buildHorizontalWall(50,"Proceed further to take Attendance ?");
-                // }
-                // else if(line==2)
-                // {
-                    // buildHorizontalWall(50,"[Press 1 to proceed / 0 to exit ] ");
-                // }
-                // else
-                    // buildHorizontalWall(50, " ");
-                // line++;
-            // }
-            // setCursorPos(1, 15);
-            // buildVerticalWall(50);
-
-            // ShowCursor(true);
-            // setCursorPos(1, 30);
-            // cin >> response;
-            // if (response == 1)
-            // {
-                //further functions
-            // }
-            // else
-            // {
-                // HomeScreen();
-            // }
-        //}
 
         return (ConvertChoiceToINT);
   }
@@ -1738,8 +1714,7 @@ string lastline()
   }
   void takeAttendance()
   {
-    numberOfstudents="10";
-
+    
     command.clear();
     tempStorage.clear();
 
@@ -1966,7 +1941,7 @@ int main()
                           MD2.askSemsterChoice();
                           MD2.askSubjectChoice();
 
-                          if(MD2.ProccedForAttendance())
+                          if(MD2.proceedForAttendance())
                           {
                             MD2.takeAttendance();
                           }
