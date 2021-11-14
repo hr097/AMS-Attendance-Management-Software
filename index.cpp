@@ -35,7 +35,7 @@
   #include<wincon.h>
   #include<string>
 
-  //#endif  // user 1  DRASHTI
+  #endif  // user 1  DRASHTI
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -56,7 +56,7 @@ lpConsoleCurrentFontEx);
 }
 #endif
 
-#endif // user 2 HARSHIL
+//#endif // user 2 HARSHIL
 
 
 using namespace std; //* standard namespace for  resolving naming coflicts
@@ -783,7 +783,7 @@ class MODULE_1: public MODULE_GENERAL //?module 1 class
 
               command = course_name +"|"+sem+"|"+ subject_name +"|"+ tempStorage +"-SEM-" + sem + "-";
               
-              //transform(command.begin(), command.end(), command.begin(), ::toupper); //convert to uppercase
+              transform(command.begin(), command.end(), command.begin(), ::toupper); //convert to uppercase
 
               tempStorage=subject_name; //re used tempStorage
               replaceWithHyphen(tempStorage);
@@ -1265,7 +1265,7 @@ class MODULE_2:public MODULE_GENERAL //?module 2 class
    int listFlag = 1,chFlag=0,countFlag=0,temp_flag=1;
    auto i = LIST.begin(); 
    
-    (LIST.size()>=6)?setCursorPos(0,10):setCursorPos(1,20); // set box-view for list >5 and less than 5
+    (LIST.size()>6)?setCursorPos(0,10):setCursorPos(1,20); // set box-view for list >5 and less than 5
     buildVerticalWall(35);
     setCursorPos(1,20);
     buildHorizontalWall(35," ");
@@ -1505,6 +1505,26 @@ int ValidateAttendance(string &input)
     }
 }
 
+void MAP()
+{
+
+}
+
+void MAA()
+{
+
+}
+
+void EPR()
+{
+
+}
+
+void EAR()
+{
+  
+}
+
 string lastline()
 {
     ifstream fin;
@@ -1539,6 +1559,14 @@ string lastline()
     }
  return lastLine;
 }
+
+void AttendanceTakenSuccessfully() //module 1 successfully worked
+{
+  tempStorage.clear();
+  tempStorage = course_name + " SEM " + sem + " " +subject_name;
+  MSG("ATTENDANCE TAKEN OF ",tempStorage,2,0,20);
+}
+
 
  public:
 
@@ -1712,9 +1740,79 @@ string lastline()
     DisplayList_Input(subject_name);
     getFolderPath(); 
   }
+
+  int AttendanceWindow()
+  {
+    int i;
+    command.clear();
+    tempStorage.clear();
+
+    command =  SemPath + "\\DAILY-RECORD\\records.txt";
+    fstream finout(command.c_str(), ios::in);
+    if(!finout.is_open())
+    {
+      cout << "FILE NOT NOT OPENED  ! ";
+    }
+    else
+    {
+      i = lastline().find("|");
+      tempStorage = lastline().substr(0,i-1);
+      if(tempStorage == CUR_DATE)
+      {   
+          command.clear();
+          command = course_name + " SEM " + sem + " " +subject_name;
+          MSG(command," ATTENDANCE FOR TODAY IS ALREADY TAKEN !",2,0,14);
+          command.clear();
+          return 0;
+      }
+    }
+    int line=0;
+
+    reAskAtdM:
+    scrClr(0.5);
+    setCursorPos(4,18);
+    buildVerticalWall(43);
+    line=0; 
+    while(line<9) // build UI-Box screen
+    {
+        setCursorPos(1,18);
+        if(line==1)
+        buildHorizontalWall(43,"1) MARK ALL PRESENT ");
+        else if(line==3)
+        buildHorizontalWall(43,"2) MARK ALL ABSENT ");
+        else if(line==5)
+        buildHorizontalWall(43,"3) ENTER PRESENT ROLL NO. ");
+        else if(line==7)
+        buildHorizontalWall(43,"4) ENTER ABSENT ROLL NO. ");
+        else 
+        buildHorizontalWall(43," ");
+        line++;
+    }
+    setCursorPos(1,18);
+    buildVerticalWall(43);
+
+    askChoice(2,30,tempStorage);
+
+    ConvertChoiceToINT = validateString(tempStorage,4,1); 
+    if(!ConvertChoiceToINT) 
+    { 
+        goto reAskAtdM; 
+    }
+
+    return (ConvertChoiceToINT);
+
+  }
+
+  void takeAttendance(int choice)
+  {
+    (choice==1)?MAP():(choice==2)?MAA():(choice==3)?EPR():EAR();
+    AttendanceTakenSuccessfully();
+  } 
+
+
   void takeAttendance()
   {
-    
+    //AttendanceWindow();
     command.clear();
     tempStorage.clear();
 
@@ -1917,6 +2015,7 @@ int main()
     bool loop=true; //set true to run app by 1 time
     
     APP A;
+    
 
     while(loop)
     {
@@ -1943,8 +2042,9 @@ int main()
 
                           if(MD2.proceedForAttendance())
                           {
-                            MD2.takeAttendance();
+                            MD2.takeAttendance(MD2.AttendanceWindow());  
                           }
+
                         }
                        break;
                      }
