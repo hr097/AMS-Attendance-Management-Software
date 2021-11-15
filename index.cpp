@@ -553,11 +553,25 @@ class MODULE_GENERAL : public APP
 
   public:
 
-  MODULE_GENERAL()
+  MODULE_GENERAL() //?Getting Project path for each module Variable used AMS_Path for storing path
   {
-      AppPath(); // //* AMS DATABASE PATH WILL BE FIND OUT HERE IN ANY SYSTEM
+          //* AMS DATABASE PATH WILL BE ACCESSED IN ANY SYSTEM via this function
+          
+          CHAR pathDocument[MAX_PATH]; //string to store path
+          HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument);  //getting documents path
+   
+           if (result == S_OK)  //check if  documents path is successfully stored in pathdocuments
+           { 
+         
+           AMS_Path = pathDocument;// take original documents path into string
+           AMS_Path =  AMS_Path +  "\\AMS" ; //making AMS folder path
+   
+           }
+           else
+           {
+               cout << "ERROR PATH NOT FOUND : " << result << "\n"; //*error
+           }
   }
-
   ~MODULE_GENERAL()
   {
 
@@ -594,22 +608,6 @@ class MODULE_GENERAL : public APP
   string numberOfstudents; 
  
 /*******************************/
- 
-  void AppPath() //?Getting Project path for each module Variable used AMS_Path for storing path
-  {
-    CHAR pathDocument[MAX_PATH]; //string to store path
-    HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument);  //getting documents path
-   
-    if (result == S_OK)  //check if  documents path is successfully stored in pathdocuments
-    { 
-    AMS_Path= pathDocument; // take original documents path into string
-    AMS_Path =  AMS_Path + "\\AMS"; //making AMS folder path
-    }
-    else
-    {
-        cout << "ERROR PATH NOT FOUND : " << result << "\n"; //*error
-    }
-  } 
 
   void getDataFromFile(string path,string &FcName,int lineNo) //?get Data of given path file line by line in string
   {
@@ -741,7 +739,8 @@ class MODULE_1: public MODULE_GENERAL //?module 1 class
     SemPath = AMS_Path + "\\" + tempStorage + "-SEM-" + sem ; //making semesterpath with coursename
   
     tempStorage=subject_name;
-    replaceWithHyphen(tempStorage); 
+    //replaceWithHyphen(tempStorage); 
+    transform(tempStorage.begin(), tempStorage.end(), tempStorage.begin(), ::toupper);
 
     SemPath = SemPath + "-" + tempStorage  ; //proper subject folder create
 
@@ -786,10 +785,11 @@ class MODULE_1: public MODULE_GENERAL //?module 1 class
               transform(command.begin(), command.end(), command.begin(), ::toupper); //convert to uppercase
 
               tempStorage=subject_name; //re used tempStorage
-              replaceWithHyphen(tempStorage);
-               
+              //replaceWithHyphen(tempStorage);
+              transform(tempStorage.begin(), tempStorage.end(), tempStorage.begin(), ::toupper);
+      
               command = command + tempStorage ; //command for making path for writting data to file 
-               
+              tempStorage.clear();
               tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt";   //* it will keep record of each semester that is created like all data of faculty | folderName
                                                                       
               writeDataToFile(tempStorage,command); //*writting data to file
@@ -1262,8 +1262,8 @@ class MODULE_2:public MODULE_GENERAL //?module 2 class
 
  void DisplayList_Input(string &put,int select=0) //? display the list and take appropriate input of corse/sem/subject
  { 
-   int listFlag = 1,chFlag=0,countFlag=0,temp_flag=1;
-   auto i = LIST.begin(); 
+    int listFlag = 1,chFlag=0,countFlag=0,temp_flag=1;
+    auto i = LIST.begin(); 
    
     (LIST.size()>6)?setCursorPos(0,10):setCursorPos(1,20); // set box-view for list >5 and less than 5
     buildVerticalWall(35);
@@ -1335,6 +1335,7 @@ class MODULE_2:public MODULE_GENERAL //?module 2 class
 			      }
         }
     }
+
     if(chFlag==0)
     {
         setCursorPos(1,20);
@@ -1464,6 +1465,7 @@ class MODULE_2:public MODULE_GENERAL //?module 2 class
     subject_name.clear();     
     SemPath.clear();          
   }
+
   void lastlineDlt()
   {
       string line; 
@@ -1489,44 +1491,66 @@ class MODULE_2:public MODULE_GENERAL //?module 2 class
       }
   }
 
-int ValidateAttendance(string &input)
-{
-    for(int i=0;i<input.length();i++)
+  int ValidateAttendance(string &input) //?attendence validation either P or A
+  {
+      for(int i=0;i<input.length();i++)
+      {
+          input[i] = toupper(input[i]);
+      }
+      if(input == "P" || input == "A")
+      {
+          return 1;
+      }
+      else
+      {
+          return 0;
+      }
+  }
+
+  int ListShow(string &Attendance) // ? Final List for absent and presnt student
+  {
+    int i;
+    string choice;
+    cout << "LIST OF PRESENT ROLL NO. :"<<endl; //present list
+    for(int i = 0;i<Attendance.length();i++)
     {
-        input[i] = toupper(input[i]);
+       if(Attendance[i] == 'P')
+       {
+           cout << i+1 << " ";
+       }
     }
-    if(input == "P" || input == "A")
+    //TODO: aa bne vche ek line api shkay MAIN LINE BETWEEN SCREEN
+    cout<<endl<<"LIST OF ABSENT ROLL NO. :"<<endl; //absent list
+    for(int i = 0;i<Attendance.length();i++)
     {
-        return 1;
+      if(Attendance[i] == 'A')
+      {
+          cout << i+1 << " ";
+      }
     }
-    else
-    {
-        return 0;
-    }
-}
+    cout<<"\n\n1)SUBMIT\n";
+    cout<<"\n2)MODIFICATION\n\n";
+    askChoice(5,24,choice);
+    return validateString(choice,2,1);
 
-void MAP()
-{
+  }
 
-}
+  void Modification(string &Attendance) // ? modify the attendance data
+  {
 
-void MAA()
-{
+  }
 
-}
+  void Submit(string &Attendance) // ? Finally sent data to database
+  {
+    command.clear();
+    command = SemPath + "\\DAILY-RECORD\\records.txt"; //making path for file handling
+    fstream finout(command.c_str(),ios::app); //open file in append mode
+    finout<<"\n"+CUR_DATE +" | " +Attendance; // write data to file
+    finout.close(); //file close
+  } 
 
-void EPR()
-{
-
-}
-
-void EAR()
-{
-  
-}
-
-string lastline()
-{
+  string lastline()
+  {
     ifstream fin;
     string lastLine;  
 
@@ -1557,15 +1581,94 @@ string lastline()
         fin.close();
 
     }
- return lastLine;
-}
+    return lastLine;
+  }
 
-void AttendanceTakenSuccessfully() //module 1 successfully worked
-{
-  tempStorage.clear();
-  tempStorage = course_name + " SEM " + sem + " " +subject_name;
-  MSG("ATTENDANCE TAKEN OF ",tempStorage,2,0,20);
-}
+  void MarkAP_A(int choice) //? function to mark all students present/absent at once 
+  { 
+    scrClr(0.5);
+    tempStorage.clear();
+    for(int i = 1;i<= stoi(numberOfstudents);i++)
+    {  
+     
+      if(choice == 1)
+        tempStorage += "P";   //all present
+      else if(choice == 2)
+        tempStorage += "A";   //all absent
+    }
+    while(true)
+    {
+      if(ListShow(tempStorage) == 1)
+      {
+        Submit(tempStorage);
+        break;
+      }
+    }
+  }
+
+  void EnterPR_AR(int choice) // ? function for manually entering absent OR present numbers
+  { 
+
+    scrClr(0.5);
+    int i;
+    tempStorage.clear();
+    string MCH;
+
+      for(i=1;i<=stoi(numberOfstudents);i++) // fill up all data with all absent or all presnt for intially
+      {
+        if(choice == 3)
+          tempStorage += "A"; 
+        else if(choice == 4)
+          tempStorage += "P";
+      }
+      while(true) //*asking roll numbers presnt / absent
+      {
+        rollNoReask:
+        scrClr(0.5);
+        setCursorPos(5,16);
+        if(choice == 3)
+          cout << "ENTER PRESENT ROLL NO. : ";
+        else if(choice == 4)
+          cout << "ENTER ABSENT ROLL NO. : ";
+        getline(cin,MCH);
+        ConvertChoiceToINT = validateString(MCH,stoi(numberOfstudents),1);
+        if(ConvertChoiceToINT)
+        {   
+            tempStorage.replace((ConvertChoiceToINT-1),1,"A"); //modify for first time according to choice
+            reConfirmAB:
+            if(choice == 3)
+                ConvertChoiceToINT = YesNoInput(" ADD MORE PRESENT ROLL NO. ? ",MCH);
+            else if(choice == 4)
+                 ConvertChoiceToINT = YesNoInput(" ADD MORE ABSENT ROLL NO. ? ",MCH);
+             
+            if(ConvertChoiceToINT == -1) //validate input
+            {
+              InvalidInputErr(); //error message
+              goto reConfirmAB;
+            }
+            else if(ConvertChoiceToINT == 0) // no means goto file handling part
+            {
+              break;
+            }
+        }
+      }
+      while(true) //
+      {
+        if(ListShow(tempStorage) == 1)
+        {
+          Submit(tempStorage);
+          break;
+        } 
+      }
+    
+  }
+
+  void AttendanceTakenSuccessfully() //module 1 successfully worked
+  {
+    tempStorage.clear();
+    tempStorage = course_name + " SEM " + sem + " " +subject_name;
+    MSG("ATTENDANCE TAKEN OF ",tempStorage,2,0,20);
+  }
 
 
  public:
@@ -1645,7 +1748,13 @@ void AttendanceTakenSuccessfully() //module 1 successfully worked
       }
   }
 
-  int proceedForAttendance() //* functions for reconfirming to proceed to attendance
+  void askSubjectChoice() //? take input choice of subject for attendance
+  {
+    DisplayList_Input(subject_name);
+    getFolderPath(); 
+  }
+
+  int proceedForAttendance() //? functions for reconfirming to proceed to attendance
   {     
         int line=0;
         reinputforattedance:
@@ -1666,7 +1775,7 @@ void AttendanceTakenSuccessfully() //module 1 successfully worked
                 if (line == 1)
                 {
                    
-                    getDataFromFile(command, FacultyName, 1);
+                    getDataFromFile(command, FacultyName, 1);    //getting da
                     buildHorizontalWall(65,"FACULTY NAME         :  "+FacultyName);
                 }  
                 else if (line == 3)
@@ -1697,7 +1806,7 @@ void AttendanceTakenSuccessfully() //module 1 successfully worked
                    Time(0,7);
                    cout<<setw(18)<<"|";
                 }
-                else if(line == 13)
+                else if(line == 13)       //for confirm
                 { 
                   cout<<"|";
                   SetColor(1);
@@ -1735,13 +1844,8 @@ void AttendanceTakenSuccessfully() //module 1 successfully worked
         return (ConvertChoiceToINT);
   }
 
-  void askSubjectChoice() //? take input choice of subject for attendance
-  {
-    DisplayList_Input(subject_name);
-    getFolderPath(); 
-  }
-
-  int AttendanceWindow()
+  
+  int AttendanceWindow()  //? to display window with 4 Options of attendance
   {
     int i;
     command.clear();
@@ -1757,7 +1861,7 @@ void AttendanceTakenSuccessfully() //module 1 successfully worked
     {
       i = lastline().find("|");
       tempStorage = lastline().substr(0,i-1);
-      if(tempStorage == CUR_DATE)
+      if(tempStorage == CUR_DATE)   //to avoid taking attendance for the same day
       {   
           command.clear();
           command = course_name + " SEM " + sem + " " +subject_name;
@@ -1803,188 +1907,188 @@ void AttendanceTakenSuccessfully() //module 1 successfully worked
 
   }
 
-  void takeAttendance(int choice)
+  void takeAttendance(int choice)  //? Run appropriate option of taking attendace
   {
-    (choice==1)?MAP():(choice==2)?MAA():(choice==3)?EPR():EAR();
+    (choice==1 || choice == 2)?MarkAP_A(choice):EnterPR_AR(choice);
     AttendanceTakenSuccessfully();
   } 
 
+  // void takeAttendanceJ() //! delete asap
+  // {
+  //   //AttendanceWindow();
+  //   command.clear();
+  //   tempStorage.clear();
 
-  void takeAttendance()
-  {
-    //AttendanceWindow();
-    command.clear();
-    tempStorage.clear();
+  //   int i,tem;
+  //   string MCH,ACH,choice;
+  //   // string ABSENT_ARR[numberOfstudents];
 
-    int i,tem;
-    string MCH,ACH,choice;
-    // string ABSENT_ARR[numberOfstudents];
-
-    command =  SemPath + "\\DAILY-RECORD\\records.txt";
+  //   command =  SemPath + "\\DAILY-RECORD\\records.txt";
   
-    fstream finout(command.c_str(), ios::app | ios::in); // opened in append and reading mode
-    if (!finout.is_open())
-    {
-        cout << "FILE NOT NOT OPENED  ! ";
-    }
-    else
-    {
-        i = lastline().find("|");
-        tempStorage = lastline().substr(0,i-1);
+  //   fstream finout(command.c_str(), ios::app | ios::in); // opened in append and reading mode
+  //   if (!finout.is_open())
+  //   {
+  //       cout << "FILE NOT NOT OPENED  ! ";
+  //   }
+  //   else
+  //   {
+  //       i = lastline().find("|");
+  //       tempStorage = lastline().substr(0,i-1);
 
-        if(tempStorage == CUR_DATE)
-        {   
-            command.clear();
-            command = course_name + " SEM " + sem + " " +subject_name;
-            MSG(command," ATTENDANCE FOR TODAY IS ALREADY TAKEN !",2,0,14);
-            command.clear();
-        }
-        else
-        { 
+  //       if(tempStorage == CUR_DATE)
+  //       {   
+  //           command.clear();
+  //           command = course_name + " SEM " + sem + " " +subject_name;
+  //           MSG(command," ATTENDANCE FOR TODAY IS ALREADY TAKEN !",2,0,14);
+  //           command.clear();
+  //       }
+  //       else
+  //       { 
             
-            // finout<<"\n"+CUR_DATE +" | ";
+  //           // finout<<"\n"+CUR_DATE +" | ";
 
-            // for(i = 1;i<= stoi(numberOfstudents);i++)
-            // {    
-                // finout<<"P";
-            // }
-            // finout.close();
+  //           // for(i = 1;i<= stoi(numberOfstudents);i++)
+  //           // {    
+  //               // finout<<"P";
+  //           // }
+  //           // finout.close();
 
-            command.clear();
-            command = SemPath + "\\DAILY-RECORD\\records.txt";
-            //finout.open(command.c_str(),ios::app);
-            i = lastline().find("|");
+  //           command.clear();
+  //           command = SemPath + "\\DAILY-RECORD\\records.txt";
+  //           //finout.open(command.c_str(),ios::app);
+
+  //           i = lastline().find("|");
 
             
-            tempStorage = lastline();
+  //           //tempStorage = lastline();
+            
+  //           while(true)
+  //           {   
+  //                  rollNoReask:
 
-            while(true)
-            {   
-                   rollNoReask:
-
-                   scrClr(0.5);
-                   setCursorPos(5,16);
-                   cout << "ENTER ABSENT ROLL NO. : ";
-                   getline(cin,MCH);
-                   ConvertChoiceToINT = validateString(MCH,stoi(numberOfstudents),1);
-                   if(ConvertChoiceToINT)
-                   {   
-                       tempStorage.replace((i+1+ConvertChoiceToINT),1,"A");
+  //                  scrClr(0.5);
+  //                  setCursorPos(5,16);
+  //                  cout << "ENTER ABSENT ROLL NO. : ";
+  //                  getline(cin,MCH);
+  //                  ConvertChoiceToINT = validateString(MCH,stoi(numberOfstudents),1);
+  //                  if(ConvertChoiceToINT)
+  //                  {   
+  //                      tempStorage.replace((i+1+ConvertChoiceToINT),1,"A");
                        
-                       lastlineDlt();
-                       reConfirmAB:
+  //                      lastlineDlt();
+  //                      reConfirmAB:
                        
-                       ConvertChoiceToINT = YesNoInput(" ADD MORE ABSENT ROLL NO. ? ",choice);
+  //                      ConvertChoiceToINT = YesNoInput(" ADD MORE ABSENT ROLL NO. ? ",choice);
 
-                       if(ConvertChoiceToINT == -1) //validate input
-                       {
-                         InvalidInputErr(); //error message
-                         goto reConfirmAB;
-                       }
-                       else if(ConvertChoiceToINT == 0) // no means goto file handling part
-                       {
-                         break;
-                       }
+  //                      if(ConvertChoiceToINT == -1) //validate input
+  //                      {
+  //                        InvalidInputErr(); //error message
+  //                        goto reConfirmAB;
+  //                      }
+  //                      else if(ConvertChoiceToINT == 0) // no means goto file handling part
+  //                      {
+  //                        break;
+  //                      }
        
-                   }
-                   else
-                   {
-                     goto rollNoReask;
-                   }
-               }
+  //                  }
+  //                  else
+  //                  {
+  //                    goto rollNoReask;
+  //                  }
+  //              }
 
-               finout<<tempStorage;
-               finout.close();
+  //              finout<<tempStorage;
+  //              finout.close();
         
-               tempStorage = lastline();
-               i = tempStorage.find("|");
-               tempStorage = lastline().substr(i+2,tempStorage.length());
-               cout << "LIST OF PRESENT ROLL NO. :"<<endl;
-               for(i=0;i<tempStorage.length();i++)
-               {
-                  if(tempStorage[i] == 'P')
-                  {
-                      cout << i+1 << " ";
-                  }
-               }
+  //              tempStorage = lastline();
+  //              i = tempStorage.find("|");
+  //              tempStorage = lastline().substr(i+2,tempStorage.length());
+  //              cout << "LIST OF PRESENT ROLL NO. :"<<endl;
+  //              for(i=0;i<tempStorage.length();i++)
+  //              {
+  //                 if(tempStorage[i] == 'P')
+  //                 {
+  //                     cout << i+1 << " ";
+  //                 }
+  //              }
 
-               cout<<endl<<"LIST OF ABSENT ROLL NO. :"<<endl;
-               for(i=0;i<tempStorage.length();i++)
-               {
-                  if(tempStorage[i] == 'A')
-                  {
-                      cout << i+1 << " ";
-                  }
-               }
+  //              cout<<endl<<"LIST OF ABSENT ROLL NO. :"<<endl;
+  //              for(i=0;i<tempStorage.length();i++)
+  //              {
+  //                 if(tempStorage[i] == 'A')
+  //                 {
+  //                     cout << i+1 << " ";
+  //                 }
+  //              }
 
-              while(true)
-              {
-                     cout<<"\n\n1)SUBMIT\n";
-                     cout<<"\n2)MODIFICATION\n\n";
-                     // cout<<"CHOICE ";
-                     // getline(cin,choice);
-                     askChoice(5,24,choice);
+  //             while(true)
+  //             {
+  //                    cout<<"\n\n1)SUBMIT\n";
+  //                    cout<<"\n2)MODIFICATION\n\n";
+  //                    // cout<<"CHOICE ";
+  //                    // getline(cin,choice);
+  //                    askChoice(5,24,choice);
                      
-                     switch(validateString(choice,2,1))
-                     {
-                             case 1:
-                             {       finout<<"\n"+CUR_DATE +" | ";
-                                     for(i = 1;i<= stoi(numberOfstudents);i++)
-                                     {    
-                                          finout<<"P";
-                                     }
-                                     finout.close();
-                                     command.clear();
-                                     command = course_name + " SEM " + sem + " " +subject_name;
-                                     MSG(" ATTENDANCE FOR " + CUR_DATE +" FOR ",command + " IS TAKEN SUCCESSFULLY ",0,2,14);
-                                     break;
-                             }
-                             case 2:
-                             {
-                                     finout.close();
-                                     reAskRollNo:
-                                     cout<<"\n\nENTER ROLL NO. FOR WHICH DO YOU WANT TO MODIFY : ";
-                                     getline(cin,MCH);
-                                     ConvertChoiceToINT = validateString(MCH,stoi(numberOfstudents),1);
-                                     if(ConvertChoiceToINT)
-                                     {
-                                         reAskAtd:
-                                         cout<<"\n\nEnter Attendance For roll no "<<MCH << " :";
-                                         getline(cin,ACH);
-                                         if(ValidateAttendance(ACH))
-                                         {   
-                                             command.clear();
-                                             command = SemPath + "\\DAILY-RECORD\\records.txt";
-                                             finout.open(command.c_str(),ios::app);
-                                             tempStorage = lastline().find("|");
-                                             tempStorage = lastline();
-                                             tempStorage.replace((i+2+ConvertChoiceToINT),1,ACH);
-                                             lastlineDlt();
-                                             finout<<tempStorage;
-                                             finout.close();
-                                         }  
-                                         else
-                                         { 
-                                           goto reAskAtd;
-                                         }
+  //                    switch(validateString(choice,2,1))
+  //                    {
+  //                            case 1:
+  //                            {       finout<<"\n"+CUR_DATE +" | ";
+  //                                    for(i = 1;i<= stoi(numberOfstudents);i++)
+  //                                    {    
+  //                                         finout<<"P";
+  //                                    }
+  //                                    finout.close();
+  //                                    command.clear();
+  //                                    command = course_name + " SEM " + sem + " " +subject_name;
+  //                                    MSG(" ATTENDANCE FOR " + CUR_DATE +" FOR ",command + " IS TAKEN SUCCESSFULLY ",0,2,14);
+  //                                    break;
+  //                            }
+  //                            case 2:
+  //                            {
+  //                                    finout.close();
+  //                                    reAskRollNo:
+  //                                    cout<<"\n\nENTER ROLL NO. FOR WHICH DO YOU WANT TO MODIFY : ";
+  //                                    getline(cin,MCH);
+  //                                    ConvertChoiceToINT = validateString(MCH,stoi(numberOfstudents),1);
+  //                                    if(ConvertChoiceToINT)
+  //                                    {
+  //                                        reAskAtd:
+  //                                        cout<<"\n\nEnter Attendance For roll no "<<MCH << " :";
+  //                                        getline(cin,ACH);
+  //                                        if(ValidateAttendance(ACH))
+  //                                        {   
+  //                                            command.clear();
+  //                                            command = SemPath + "\\DAILY-RECORD\\records.txt";
+  //                                            finout.open(command.c_str(),ios::app);
+  //                                            tempStorage = lastline().find("|");
+  //                                            tempStorage = lastline();
+  //                                            tempStorage.replace((i+2+ConvertChoiceToINT),1,ACH);
+  //                                            lastlineDlt();
+  //                                            finout<<tempStorage;
+  //                                            finout.close();
+  //                                        }  
+  //                                        else
+  //                                        { 
+  //                                          goto reAskAtd;
+  //                                        }
                                         
-                                      }
-                                      else
-                                      {
-                                        goto reAskRollNo;
-                                      }
+  //                                     }
+  //                                     else
+  //                                     {
+  //                                       goto reAskRollNo;
+  //                                     }
                                          
-                              }
+  //                             }
 
-                        }
+  //                       }
 
-                }
+  //               }
 
-        }
+  //       }
 
-    }
+  //   }
     
-   }
+  //  }
 
  
  protected:
@@ -2013,7 +2117,7 @@ int main()
     //* jay kashtbhanjan dev *//
 
     bool loop=true; //set true to run app by 1 time
-    
+    int Tem;//to accept the Choice
     APP A;
     
 
@@ -2039,12 +2143,13 @@ int main()
                           MD2.askCourseChoice();
                           MD2.askSemsterChoice();
                           MD2.askSubjectChoice();
-
+                          
                           if(MD2.proceedForAttendance())
                           {
-                            MD2.takeAttendance(MD2.AttendanceWindow());  
+                            Tem = MD2.AttendanceWindow( );
+                            if(Tem)
+                              MD2.takeAttendance(Tem);  
                           }
-
                         }
                        break;
                      }
