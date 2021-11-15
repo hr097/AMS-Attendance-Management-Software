@@ -35,7 +35,7 @@
   #include <wincon.h>
   #include <string>
 
-//#endif  // user 1  DRASHTI
+#endif  // user 1  DRASHTI
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -56,7 +56,7 @@ extern "C"
 }
 #endif
 
-#endif // user 2 HARSHIL
+//#endif // user 2 HARSHIL
 
 using namespace std; // standard namespace for  resolving naming coflicts
 
@@ -604,7 +604,7 @@ public:
   MODULE_GENERAL() //?Getting Project path for each module Variable used AMS_Path for storing path
   {
     //* AMS DATABASE PATH WILL BE ACCESSED IN ANY SYSTEM via this function
-
+    int SHGFP_TYPE_CURRENT;
     CHAR pathDocument[MAX_PATH];   // string to store path
     HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument); // getting documents path
 
@@ -1655,10 +1655,23 @@ private:
 
   void submitAttendanceToDB(string & Attendance) // ? Finally data sent to database
   {
+    int sz;
     command.clear();
     command = SemPath + "\\DAILY-RECORD\\records.txt"; // making path for file handling
-    fstream finout(command.c_str(), ios::app);         // open file in append mode
-    finout << "\n" + CUR_DATE + " | " + Attendance;    // write data to file
+    ifstream finin(command.c_str(), ios::binary);         // open file in append mode
+    finin.seekg(0,ios::end);
+    sz = finin.tellg();
+    finin.close();
+    fstream finout(command.c_str(), ios::app);
+    if(!sz)
+    {
+      finout << CUR_DATE + " | " + CUR_TIME + " | " + Attendance;    // write data to file
+    }
+    else
+    {
+       finout <<"\n" + CUR_DATE + " | " + CUR_TIME + " | " + Attendance;
+    }
+     
     //!finout << "\n" + CUR_DATE +"/"+ CUR_TIME + " | " + Attendance;    // write data to file
     finout.close();                                    // file close
   }
@@ -1805,32 +1818,57 @@ private:
         else if (choice == 4)
           tempStorage += "P";
       }
-
       while(true) //*asking roll numbers present / absent
       {
         rollNoReask:
 
         scrClr(0.5);
-        setCursorPos(5, 16);
-
+        setCursorPos(9, 20);
+        
         if(choice == 3)
            cout << "ENTER PRESENT ROLL NO. : ";
         else if(choice == 4)
            cout << "ENTER ABSENT ROLL NO. : ";
-
+        
+        ShowConsoleCursor(true);
         getline(cin, MCH);
+        ShowConsoleCursor(false);
+
         ConvertChoiceToINT = validateString(MCH, stoi(numberOfstudents), 1);
-
-        setCursorPos(3); 
-
+        
         if(ConvertChoiceToINT)
         {
-          tempStorage.replace((ConvertChoiceToINT - 1), 1, "A"); // modify for first time according to choice
+          if(choice == 3)
+            tempStorage.replace((ConvertChoiceToINT - 1), 1, "P"); // modify for first time according to choice
+          else if(choice == 4)
+            tempStorage.replace((ConvertChoiceToINT - 1), 1, "A"); // modify for first time according to choice
           reConfirmAB:
           if(choice == 3)
-            ConvertChoiceToINT = YesNoInput(" ADD MORE PRESENT ROLL NO. ? ", MCH);
+          {
+            if(ConvertChoiceToINT<stoi(numberOfstudents) || ConvertChoiceToINT>0)
+            {
+              scrClr(0.5);
+              setCursorPos(4,17);
+              ConvertChoiceToINT = YesNoInput(" ADD MORE PRESENT ROLL NO. ? ", MCH);
+            }   
+            else
+              InvalidInputErr("INVALID ! RE-ENTER THE ROLL NO.",4,15);
+
+          }
+            
           else if(choice == 4)
-            ConvertChoiceToINT = YesNoInput(" ADD MORE ABSENT ROLL NO. ? ", MCH);
+          {
+            if(ConvertChoiceToINT<stoi(numberOfstudents) || ConvertChoiceToINT>0)
+            {
+                scrClr(0.5);
+                setCursorPos(4,17);
+                ConvertChoiceToINT = YesNoInput(" ADD MORE ABSENT ROLL NO. ? ", MCH);
+            }
+              
+            else
+              InvalidInputErr("INVALID ! RE-ENTER THE ROLL NO.",4,15);
+          }
+            
 
           if(ConvertChoiceToINT == -1) // validate input
           {
@@ -1847,7 +1885,8 @@ private:
       confirm:
 
       ListOfAttendance(tempStorage,choice);
-
+      
+      setCursorPos(4,17);
       ConvertChoiceToINT = YesNoInput(" DO YOU CONFIRM THESE ROLL NO. ? ", command);
       if(ConvertChoiceToINT == -1)
       {
