@@ -11,6 +11,7 @@ void DisplayList_Input(string &put,int select=0)      :int listFlag = 1,chFlag=0
 void getFolderPath()
 void getSemesterRecordFile()
 void ExtractStringFromBuffer()
+void ModificationOfAttDATA(string & Attendance,int choice)
 
 public :
 

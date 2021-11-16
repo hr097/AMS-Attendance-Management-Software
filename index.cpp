@@ -35,7 +35,7 @@
   #include <wincon.h>
   #include <string>
 
-//#endif  // user 1  DRASHTI
+//s#endif  // user 1  DRASHTI
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -2278,7 +2278,6 @@ private:
       //? by empty defination of pure virtual function here we are restricting creation of parent(GENERAL MODULE) class
     }
     //****************************/
-    
   };
 
   //*---------------------------STATIC DEFINATIONS-MODULE-2------------------------------/
