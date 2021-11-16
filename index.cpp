@@ -35,7 +35,7 @@
   #include <wincon.h>
   #include <string>
 
-#endif  // user 1  DRASHTI
+//#endif  // user 1  DRASHTI
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -56,11 +56,15 @@ extern "C"
 }
 #endif
 
-//#endif // user 2 HARSHIL
+#endif // user 2 HARSHIL
 
 using namespace std; // standard namespace for  resolving naming coflicts
 
 /*******************APP-MAIN-CLASS********************************/
+void Debug(string t)
+{
+  cout<<endl<<t<<getch();
+}
 
 class APP //*GRAND PARENT CLASS
 {
@@ -476,7 +480,7 @@ protected:
     scrClr(1);
     SetColor(0); // back to normal color
   }
-  void InvalidInputErr(string err_msg, int color, int pos) //? overloaded version //?medium level error
+  void warnMsg(string err_msg, int color, int pos) //? overloaded version //?medium level error
   {
     scrClr();
     setCursorPos(9, pos); // set cursor position
@@ -604,9 +608,9 @@ public:
   MODULE_GENERAL() //?Getting Project path for each module Variable used AMS_Path for storing path
   {
     //* AMS DATABASE PATH WILL BE ACCESSED IN ANY SYSTEM via this function
-    int SHGFP_TYPE_CURRENT;
+   
     CHAR pathDocument[MAX_PATH];   // string to store path
-    HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument); // getting documents path
+    HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL,SHGFP_TYPE_CURRENT,pathDocument); // getting documents path
 
     if (result == S_OK) // check if  documents path is successfully stored in pathdocuments
     {
@@ -834,7 +838,7 @@ private:
     }
     else // if that semester already exist
     {
-      InvalidInputErr("SEMSTER WITH THAT SUBJECT ALREADY EXIST !", 2, 19); // overloadedversion called
+      warnMsg("SEMSTER WITH THAT SUBJECT ALREADY EXIST !", 2, 19); // overloadedversion called
       return 0;                                                            // returns 0=failed as we are trying to create that same folder again
     }
   }
@@ -1046,14 +1050,14 @@ private:
     getline(cin, input);
     ShowConsoleCursor(false);
 
-    if (EmptyInput(input)) // EmptyInput VALIDATION
+    if(EmptyInput(input)) // EmptyInput VALIDATION
     {
       InvalidInputErr(); // input error
       goto reinputOfEmail;
     }
     else if (!validateEmail(input)) // email validation
     {
-      InvalidInputErr("INVALID E-MAIL ADDRESS !", 4, 26);
+      warnMsg("INVALID E-MAIL ADDRESS !", 4, 26);
       goto reinputOfEmail;
     }
     scrClr(0.5); // screen stops for reading
@@ -1331,6 +1335,38 @@ protected:
   //******************************** MEMBER-FUNCTIONS *********************************/
 
 private:
+ 
+
+   int validateRollNo(string input, int Bnd, int start) //? string input validate as integer
+   {
+      int flag = 0, tem = 1;
+      
+      if (start == 0)
+          start++;
+      for(tem = start; tem <= Bnd; tem++)
+      {
+        if(to_string(tem) == input) // convert tem int to string to check input valid condition
+        {
+          flag = 1;
+          break;
+        }
+      }
+      if(EmptyInput(input))
+      {
+        InvalidInputErr(); // input error
+        return 0;        
+      }
+      else if(flag == 0) //*IF flag=0 means input is invalid
+      {
+        MSG("ROLL NO. NOT EXIST ! ","RE-ENTER VALID ROLL NO",4,1,18);
+        return 0; //wait
+      }
+      else
+      {
+        return tem; //*returns converted string.to_int(INT)
+      }
+     
+  }
 
   int checkDuplicateRecord(vector<string> vec, string search) //?for cheking if duplicate records found in vector_storage
   {
@@ -1614,43 +1650,194 @@ private:
 
   void ListOfAttendance(string &Attendance, int choice) // ? Final List for absent and present student
   {
-    int i;
-    //string choice;
-
-    scrClr(0.5);
-
-    if(choice == 1)
+    int i,spacing_flag=0,space=1;
+    
+    if(choice == 3)
     {
-      setCursorPos(7, 20);
-      cout << "LIST OF PRESENT ROLL NO. :" << endl; // present list
-
-      for(i = 0; i < Attendance.length(); i++)
-      {
-        if (Attendance[i] == 'P')
-        {
-          cout << i + 1 << " ";
-        }
-      }
+      setCursorPos(2,24);
+      cout << "|| LIST OF PRESENT ROLL NO. ||" << endl; // present list
+      setCursorPos(1,1);
+      SetColor(1);
+      //cout << endl<<Attendance.length()<<getch();
+            for(i = 0;i < Attendance.length(); i++)
+            {
+               if(Attendance[i] == 'P')
+               { 
+                 if(space>=49&&space<=53)
+                    spacing_flag=1;
+       
+                 if(spacing_flag==0)
+                 {
+                  cout << i + 1 << " ";
+                  if(i<10)
+                  space++;
+                  else if(i<100)
+                  space+=2;
+                  else if(i<1000)
+                  space+=3;
+                  else if(i<10000)
+                  space+=4;
+                 }
+                 else
+                 {
+                   setCursorPos(1,1);
+                   spacing_flag=0;
+                   space=-2;
+                   cout << i + 1 << " ";
+                   if(i<10)
+                   space++;
+                   else if(i<100)
+                   space+=2;
+                   else if(i<1000)
+                   space+=3;
+                   else if(i<10000)
+                   space+=4;
+                  }
+               }
+            }
+       
     }
-    else if(choice == 2)
+
+    else if(choice == 4)
     {
+      setCursorPos(2,24);
+      cout << "|| LIST OF ABSENT  ROLL NO. ||" << endl; // absent list
+      setCursorPos(1,1);
+      SetColor(4);
+      
+             for(i = 0; i < Attendance.length(); i++)
+             {
+               if(Attendance[i] == 'A')
+               {
+                    
+                    if(space>=49&&space<=53)
+                    {spacing_flag=1;}
+       
+                    if(spacing_flag==0)
+                    {
+                      cout << i + 1 << " ";
+                      if(i<10)
+                      space++;
+                      else if(i<100)
+                      space+=2;
+                      else if(i<1000)
+                      space+=3;
+                      else if(i<10000)
+                      space+=4;      
+                    }
+                    else
+                    { 
+                      setCursorPos(1,1);
+                      spacing_flag=0;
+                      space=-2;
+                      cout << i + 1 << " ";
+       
+                      if(i<10)
+                      space++;
+                      else if(i<100)
+                      space+=2;
+                      else if(i<1000)
+                      space+=3;
+                      else if(i<10000)
+                      space+=4;
+                    }
+               }
+             }
+            
 
-      setCursorPos(7, 20);
-      cout << endl << "LIST OF ABSENT ROLL NO. :" << endl; // absent list
-      for(i = 0; i < Attendance.length(); i++)
-      {
-        if(Attendance[i] == 'A')
-        {
-          cout << i + 1 << " ";
-        }
-      }
+      
     }
+
+    SetColor(0);
 
   }
 
-  void ModificationOfAttDATA(string & Attendance) // ? modify the attendance data
-  {
-    
+  int ModificationOfAttDATA(string &Attendance,int choice) // ? modify the attendance data
+  {    
+      int Empty_flag=0,i;
+
+      command.clear(); 
+
+
+      while(true)
+      {  
+           scrClr(0.5);
+ 
+           setCursorPos(1,26);
+           SetColor(2);
+           cout << "TYPE '*' WHEN YOU ARE DONE" ;
+           SetColor(0);
+         
+           ListOfAttendance(Attendance,choice);
+          
+           setCursorPos(2,17);
+         
+           if(choice == 3)
+              cout << " ENTER ROLL NO. THAT YOU WANT MARK AS ABSENT  : ";
+           else if(choice == 4)
+              cout << " ENTER ROLL NO. THAT YOU WANT MARK AS PRESENT : ";
+         
+           ShowConsoleCursor(true);
+           getline(cin,command);
+           ShowConsoleCursor(false);
+           if(command=="*")
+           {
+               break;
+           }
+
+           ConvertChoiceToINT = validateRollNo(command,stoi(numberOfstudents), 1);
+        
+           if(ConvertChoiceToINT)
+           {
+             if(choice == 3)
+               Attendance.replace((ConvertChoiceToINT - 1), 1, "A"); // modify for first time according to choice
+             else if(choice == 4)
+               Attendance.replace((ConvertChoiceToINT - 1), 1, "P"); // modify for first time according to choice
+           }
+
+           Empty_flag=0;
+           i=0;
+
+           if(choice == 3)
+           {
+             while(i<=Attendance.length())
+             {
+               if(Attendance[i]=='P')
+               {
+                 Empty_flag=1;
+                 break;
+               }
+               Empty_flag=0;
+               i++;
+             }
+           }
+           else if(choice == 4)
+           { 
+             while(i<=Attendance.length())
+             {
+               if(Attendance[i]=='A')
+               {
+                 Empty_flag=1;
+                 break;
+               }
+               Empty_flag=0;
+               i++;
+             }
+           } 
+           if(!Empty_flag)
+           {           
+             if(choice == 3)
+              MarkAP_A(2); // all absent
+             else if(choice ==4)
+              MarkAP_A(1); //all present
+              return(Empty_flag);
+              break;
+           }
+           
+      }
+
+      return(!Empty_flag);
+      
   }
 
   void submitAttendanceToDB(string & Attendance) // ? Finally data sent to database
@@ -1672,8 +1859,7 @@ private:
        finout <<"\n" + CUR_DATE + " | " + CUR_TIME + " | " + Attendance;
     }
      
-    //!finout << "\n" + CUR_DATE +"/"+ CUR_TIME + " | " + Attendance;    // write data to file
-    finout.close();                                    // file close
+     finout.close();                                    // file close
   }
 
     string lastline()
@@ -1805,7 +1991,7 @@ private:
     int EnterPR_AR(int choice) // ? function for manually entering absent OR present numbers
     {
 
-      int i;
+      int i,Empty_flag=0;
       tempStorage.clear();
       command.clear();
 
@@ -1818,73 +2004,140 @@ private:
         else if (choice == 4)
           tempStorage += "P";
       }
-      while(true) //*asking roll numbers present / absent
-      {
-        rollNoReask:
-
-        scrClr(0.5);
-        setCursorPos(9, 20);
-        
         if(choice == 3)
-           cout << "ENTER PRESENT ROLL NO. : ";
-        else if(choice == 4)
-           cout << "ENTER ABSENT ROLL NO. : ";
-        
-        ShowConsoleCursor(true);
-        getline(cin, MCH);
-        ShowConsoleCursor(false);
-
-        ConvertChoiceToINT = validateString(MCH, stoi(numberOfstudents), 1);
-        
-        if(ConvertChoiceToINT)
         {
-          if(choice == 3)
-            tempStorage.replace((ConvertChoiceToINT - 1), 1, "P"); // modify for first time according to choice
-          else if(choice == 4)
-            tempStorage.replace((ConvertChoiceToINT - 1), 1, "A"); // modify for first time according to choice
-          reConfirmAB:
-          if(choice == 3)
+          while(i<=tempStorage.length())
           {
-            if(ConvertChoiceToINT<stoi(numberOfstudents) || ConvertChoiceToINT>0)
+            if(tempStorage[i]=='P')
             {
-              scrClr(0.5);
-              setCursorPos(4,17);
-              ConvertChoiceToINT = YesNoInput(" ADD MORE PRESENT ROLL NO. ? ", MCH);
-            }   
-            else
-              InvalidInputErr("INVALID ! RE-ENTER THE ROLL NO.",4,15);
-
-          }
-            
-          else if(choice == 4)
-          {
-            if(ConvertChoiceToINT<stoi(numberOfstudents) || ConvertChoiceToINT>0)
-            {
-                scrClr(0.5);
-                setCursorPos(4,17);
-                ConvertChoiceToINT = YesNoInput(" ADD MORE ABSENT ROLL NO. ? ", MCH);
+              Empty_flag=1;
+              break;
             }
-              
-            else
-              InvalidInputErr("INVALID ! RE-ENTER THE ROLL NO.",4,15);
-          }
-            
-
-          if(ConvertChoiceToINT == -1) // validate input
-          {
-            InvalidInputErr(); // error message
-            goto reConfirmAB;
-          }
-          else if (ConvertChoiceToINT == 0) // no means goto file handling part
-          {
-            break;
+            Empty_flag=0;
+            i++;
           }
         }
+        else if(choice == 4)
+        {
+          while(i<=tempStorage.length())
+          {
+            if(tempStorage[i]=='A')
+            {
+              Empty_flag=1;
+              break;
+            }
+            Empty_flag=0;
+            i++;
+          }
+        }
+
+   
+      while(true)
+      {
+         reInput:
+         scrClr(0.5);
+         
+         setCursorPos(1,26);
+         SetColor(2);
+         cout<<"TYPE '*' WHEN YOU ARE DONE";
+         SetColor(0);         
+
+         ListOfAttendance(tempStorage,choice);
+        
+         setCursorPos(2,26);
+         
+         if(choice == 3)
+            cout << "ENTER PRESENT ROLL NO. : ";
+         else if(choice == 4)
+            cout << "ENTER ABSENT ROLL NO.  : ";
+         
+         ShowConsoleCursor(true);
+         getline(cin, MCH);
+         ShowConsoleCursor(false);
+       
+          if(MCH=="*")
+          {  
+
+            if(!Empty_flag)
+            {
+                if(choice == 3)
+                {
+                 scrClr(0.5);
+                 setCursorPos(9,24);
+                 SetColor(1);
+                 cout << "ADD ATLEAST 1 PRESENT ROLL NO. !"<< endl; //warn message
+                 scrClr(1);
+                 SetColor(0);
+                 goto reInput;
+
+                }
+                else if(choice == 4)
+                {
+                 scrClr(0.5);
+                 setCursorPos(9,24);
+                 SetColor(4);
+                 cout << "ADD ATLEAST 1 ABSENT  ROLL NO. ! " << endl; //warn message
+                 scrClr(1);
+                 SetColor(0);
+                 goto reInput;
+                }
+             
+            }
+            else  
+            {
+              break;
+            }
+             
+          }
+             
+          ConvertChoiceToINT = validateRollNo(MCH, stoi(numberOfstudents), 1);
+      
+          if(ConvertChoiceToINT)
+          {
+            if(choice == 3)
+              tempStorage.replace((ConvertChoiceToINT - 1), 1, "P"); // modify for first time according to choice
+            else if(choice == 4)
+              tempStorage.replace((ConvertChoiceToINT - 1), 1, "A"); // modify for first time according to choice
+          }
+
+          Empty_flag=0;
+          i=0;
+
+          if(choice == 3)
+          {
+            while(i<=tempStorage.length())
+            {
+              if(tempStorage[i]=='A')
+              {
+                Empty_flag=1;
+                break;
+              }
+              Empty_flag=0;
+              i++;
+            }
+         }
+         else if(choice == 4)
+         {
+           while(i<=tempStorage.length())
+           {
+             if(tempStorage[i]=='P')
+             {
+               Empty_flag=1;
+               break;
+             }
+             Empty_flag=0;
+             i++;
+           }
+         }
+
       }
 
       confirm:
+      scrClr(0.5);
 
       ListOfAttendance(tempStorage,choice);
+      
+      command.clear();
       
       setCursorPos(4,17);
       ConvertChoiceToINT = YesNoInput(" DO YOU CONFIRM THESE ROLL NO. ? ", command);
@@ -1893,9 +2146,9 @@ private:
         InvalidInputErr();
         goto confirm;
       }
-      else if(ConvertChoiceToINT ==0)
+      else if(ConvertChoiceToINT == 0)
       {
-        ModificationOfAttDATA(tempStorage);
+        if(ModificationOfAttDATA(tempStorage,choice))
         goto confirm;
       }
 
@@ -1935,7 +2188,7 @@ private:
         
         if(!sz)
         {
-          InvalidInputErr("NO SETUP EXIST ! PLEASE ADD ATLEST 1 SETUP", 4, 19); // error msg
+          warnMsg("NO SETUP EXIST ! PLEASE ADD ATLEST 1 SETUP", 4, 19); // error msg
           read.close();
         }
         else
