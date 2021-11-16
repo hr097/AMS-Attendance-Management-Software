@@ -35,7 +35,7 @@
   #include <wincon.h>
   #include <string>
 
-//#endif  // user 1  DRASHTI
+//s#endif  // user 1  DRASHTI
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -60,7 +60,7 @@ extern "C"
 
 using namespace std; // standard namespace for  resolving naming coflicts
 
-/*******************APP-MAIN-CLASS********************************/
+/******APP-MAIN-CLASS***********/
 
 class APP //*GRAND PARENT CLASS
 {
@@ -73,7 +73,7 @@ public:
 
   APP()
   {
-    //*******************GET-CURRENT-DATE**************************//
+    //******GET-CURRENT-DATE*********//
 
     string temp;                      // temp variable for storage
     time_t tmNow;                     // structure variable
@@ -100,9 +100,9 @@ public:
 
     ss.str(""); // flush string stream class so new input can be taken
 
-    //*******************CURRENT-DATE**********************************//
+    //******CURRENT-DATE***********//
 
-    //*******************GET-CURRENT-TIME******************************//
+    //******GET-CURRENT-TIME***********//
 
     int meridiem_Flag = 0; // 0=AM 1=PM
     if(t.tm_hour > 12)    // if hours is greter than 12 then convert into 12 hour formet
@@ -133,7 +133,7 @@ public:
     ss.str("");
 
     CUR_TIME += (meridiem_Flag == 0) ? " AM" : " PM"; // AM and PM
-    //*******************CURRENT-TIME*********************************//
+    //******CURRENT-TIME************//
   }
 
   void SetColor(int ForgC) //?for setting individual text color
@@ -587,9 +587,9 @@ int APP::MODULE_CHOICE = 0; //? MODULE CHOICE WILL BE ACT LIKE GLOBALLY
 
 //-------------------------------------------------//
 
-/****************************APP-CLASS-END****************************************/
+/*********APP-CLASS-END*************/
 
-/*****************************************  MODULE-START  ************************************************/
+/**************  MODULE-START  *****************/
 class MODULE_GENERAL : public APP
 {
   // TODO: ALL Module development TEAM PLEASE CONTRIBUTE YOUR FUNCTIONS HERE AND INHERIT THIS CLASS TO YOURS
@@ -606,7 +606,7 @@ public:
     //* AMS DATABASE PATH WILL BE ACCESSED IN ANY SYSTEM via this function
     
     CHAR pathDocument[MAX_PATH];   // string to store path
-    HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, pathDocument); // getting documents path
+    HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL,SHGFP_TYPE_CURRENT,pathDocument); // getting documents path
 
     if (result == S_OK) // check if  documents path is successfully stored in pathdocuments
     {
@@ -628,16 +628,16 @@ protected:
 
   virtual void SetNoObj() = 0; //*WE MAKE THIS CLASS AS PURE VIRTUAL SO NO OBJECT OF THIS CLASS WILL BE CREATED IN MAIN()
 
-  //********** MAIN MODULE_GENERAL *************/
+  //**** MAIN MODULE_GENERAL *****/
 
   string AMS_Path;
   string command;
   string SemPath;
   string tempStorage;
 
-  /********************************************/
+  /****************/
 
-  //********** FACULTY *************/
+  //**** FACULTY *****/
 
   string FacultyName;
   string FacultyEmail;
@@ -645,16 +645,16 @@ protected:
   string sem;
   string subject_name;
 
-  /********************************/
+  /************/
 
-  //********** STUDENT *************/
+  //**** STUDENT *****/
 
   string student_name;
   string student_email;
   string RoLLNo;
   string numberOfstudents;
 
-  /*******************************/
+  /***********/
 
   void getDataFromFile(string path, string &input, int lineNo) //?get Data of given path file line by line in string
   {
@@ -783,7 +783,7 @@ private:
 
       system(command.c_str()); // creating  directory by CMD
 
-      //*********************  FOLDERS ***********************************************/
+      //*******  FOLDERS *****************/
 
       command = "mkdir " + SemPath + "\\DAILY-RECORD"; // making COMMAND FOR DAILY_RECORD folder
 
@@ -797,9 +797,9 @@ private:
 
       system(command.c_str()); // creating MONTHLY_REPORTS directory by CMD
 
-      /**********************************************************************************/
+      /****************************/
 
-      //*******************  FILES ******************************************************/
+      //*******  FILES ******************/
 
       command = "cd. > " + SemPath + "\\DAILY-RECORD\\records.txt"; // RECORDS.TXT file
       system(command.c_str());
@@ -830,7 +830,7 @@ private:
 
       writeDataToFile(tempStorage, command); //*writting data to file
       return 1;                              // all above code works then returns 1 = successfully
-      /***************************************************************************************/
+      /*****************************/
     }
     else // if that semester already exist
     {
@@ -933,9 +933,9 @@ private:
     }
   }
 
-  /***************************************************************************/
+  /*************************/
 
-  //********** STUDENT DETAILS CONFIRMATION AND MODIFICATION ****************/
+  //**** STUDENT DETAILS CONFIRMATION AND MODIFICATION ******/
 
   int studConfirmation() //?basic confirmation message for user
   {
@@ -1013,7 +1013,7 @@ private:
     }
   }
 
-  /************************************************************************/
+  /************************/
 
   void UpdateName(string &input) //?Faculty & student name update input
   {
@@ -1313,7 +1313,7 @@ private:
 class MODULE_2 : public MODULE_GENERAL //?module 2 class
 {
 
-  //******************************** DATA-MEMBERS **********************************/
+  //*********** DATA-MEMBERS *************/
 
 private:
 
@@ -1326,11 +1326,43 @@ public:
 
 protected:
 
-  //*********************************************************************************/
+  //***************************/
 
-  //******************************** MEMBER-FUNCTIONS *********************************/
+  //*********** MEMBER-FUNCTIONS ************/
 
 private:
+ 
+
+   int validateRollNo(string input, int Bnd, int start) //? string input validate as integer
+   {
+      int flag = 0, tem = 1;
+      
+      if (start == 0)
+          start++;
+      for(tem = start; tem <= Bnd; tem++)
+      {
+        if(to_string(tem) == input) // convert tem int to string to check input valid condition
+        {
+          flag = 1;
+          break;
+        }
+      }
+      if (EmptyInput(input))
+      {
+        InvalidInputErr(); // input error
+        return 0;        
+      }
+      else if(flag == 0) //*IF flag=0 means input is invalid
+      {
+        MSG("ROLL NO. NOT EXIST ! ","RE-ENTER VALID ROLL NO",4,1,18);
+        return 0;
+      }
+      else
+      {
+        return tem; //*returns converted string.to_int(INT)
+      }
+     
+   }
 
   int checkDuplicateRecord(vector<string> vec, string search) //?for cheking if duplicate records found in vector_storage
   {
@@ -1614,45 +1646,102 @@ private:
 
   void ListOfAttendance(string &Attendance, int choice) // ? Final List for absent and present student
   {
-    int i;
-    //string choice;
+    int i,spacing_flag=0,space=1;
 
     scrClr(0.5);
 
-    if(choice == 1)
+    if(choice == 3)
     {
-      setCursorPos(7, 20);
+      setCursorPos(1,24);
       cout << "LIST OF PRESENT ROLL NO. :" << endl; // present list
+      setCursorPos(1,1);
+     
 
-      for(i = 0; i < Attendance.length(); i++)
+      for(i = 0;i < Attendance.length(); i++)
       {
-        if (Attendance[i] == 'P')
-        {
-          cout << i + 1 << " ";
+        if(Attendance[i] == 'P')
+        { 
+          space++;
+          if(space==64)
+             spacing_flag=1;
+
+          if(spacing_flag==0)
+          {
+           cout << i + 1 << " ";
+           if(i<10)
+           space++;
+           else
+           space+=2;
+          }
+          else
+          {
+            //cout << endl <<" ";
+            setCursorPos(1);
+            spacing_flag=1;
+            space=1;
+          }
+          
         }
       }
     }
-    else if(choice == 2)
+    else if(choice == 4)
     {
 
-      setCursorPos(7, 20);
+      setCursorPos(1,24);
       cout << endl << "LIST OF ABSENT ROLL NO. :" << endl; // absent list
+      setCursorPos(1,1);
+      
       for(i = 0; i < Attendance.length(); i++)
       {
         if(Attendance[i] == 'A')
         {
-          cout << i + 1 << " ";
+             
+
+             if(space==64)
+             spacing_flag=1;
+
+             if(spacing_flag==0)
+             {
+               cout << i + 1 << " ";
+               if(i<10)
+               space++;
+               else
+               space+=2;
+             }
+             else
+             { 
+               setCursorPos(1);
+               //cout << endl <<" ";
+               spacing_flag=1;
+               space=1;
+             }
         }
       }
     }
 
   }
 
-  void ModificationOfAttDATA(string & Attendance) // ? modify the attendance data
+  void ModificationOfAttDATA(string & Attendance,int choice) // ? modify the attendance data
   {
+     int line=0;
+     scrClr(0.5);
+     setCursorPos(9,17);
+     cout<<"ENTER THE ROLL NO. TO MODIFY :"; 
+     ShowConsoleCursor(true);
+     getline(cin,tempStorage);
+     ShowConsoleCursor(false);
+     ConvertChoiceToINT = validateRollNo(tempStorage, stoi(numberOfstudents), 1);
+     if(ConvertChoiceToINT)
+     {
+          if(choice==3)
+             tempStorage.replace((ConvertChoiceToINT - 1), 1, "A"); // modify for first time according to choice  
+          else if(choice==4)
+             tempStorage.replace((ConvertChoiceToINT - 1), 1, "P");// modify for first time according to choice  
+        
+     }  
     
   }
-
+ //last code
   void submitAttendanceToDB(string & Attendance) // ? Finally data sent to database
   {
     int sz;
@@ -1672,8 +1761,7 @@ private:
        finout <<"\n" + CUR_DATE + " | " + CUR_TIME + " | " + Attendance;
     }
      
-    //!finout << "\n" + CUR_DATE +"/"+ CUR_TIME + " | " + Attendance;    // write data to file
-    finout.close();                                    // file close
+     finout.close();                                    // file close
   }
 
     string lastline()
@@ -1834,7 +1922,7 @@ private:
         getline(cin, MCH);
         ShowConsoleCursor(false);
 
-        ConvertChoiceToINT = validateString(MCH, stoi(numberOfstudents), 1);
+        ConvertChoiceToINT = validateRollNo(MCH, stoi(numberOfstudents), 1);
         
         if(ConvertChoiceToINT)
         {
@@ -1895,8 +1983,8 @@ private:
       }
       else if(ConvertChoiceToINT ==0)
       {
-        ModificationOfAttDATA(tempStorage);
-        goto confirm;
+        ModificationOfAttDATA(tempStorage,choice);
+        
       }
 
       if(ConvertChoiceToINT == 1)
@@ -2189,7 +2277,7 @@ private:
     {
       //? by empty defination of pure virtual function here we are restricting creation of parent(GENERAL MODULE) class
     }
-    //************************************************************************************/
+    //****************************/
   };
 
   //*---------------------------STATIC DEFINATIONS-MODULE-2------------------------------/
@@ -2198,7 +2286,7 @@ private:
 
   //-----------------------------------------------------------------------------------/
 
-  /**************************************   MODULES-END   ***************************************************/
+  /*************   MODULES-END   ******************/
 
   int main()
   {
