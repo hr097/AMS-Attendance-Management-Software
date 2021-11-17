@@ -35,7 +35,7 @@
   #include <wincon.h>
   #include <string>
 
-#endif  // user 1  DRASHTI
+//#endif  // user 1  DRASHTI
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -56,7 +56,7 @@ extern "C"
 }
 #endif
 
-//#endif // user 2 HARSHIL
+#endif // user 2 HARSHIL
 
 using namespace std; // standard namespace for  resolving naming coflicts
 
@@ -244,6 +244,7 @@ public:
   }
 
 private:
+
   void initApp() //?setting up first time APP screen by making console in full screen
   {
 
@@ -494,7 +495,7 @@ protected:
       setCursorPos(1,pos2); // set cursor position
       SetColor(color2);      // setting text color
       cout << err_msg2 << endl; // error msg      
-      scrClr(1);               // screen stops so user can read message
+      scrClr(2);               // screen stops so user can read message
       SetColor(0);
     }
     else
@@ -582,7 +583,34 @@ protected:
       return -1; // error
     }
   }
+  bool checkAlphaSpInput(string &input)  //function to check occurence of special charaters and alphabets
+  {
+    string list = "#%&{}\\/*>< $!:\'\"@+`|=";  
+    int i=0, j=0;
+    bool flag=false;
+    
+      for(i=0; i<=list.length(); i++)
+      {
+        for(j=0; j<=input.length(); j++)
+        {
+          if(input[j] == list[i])
+          {
+              flag=true;
+              break;
+          }
+        }
 
+        if((input>="A" && input<="Z") || (input>="a" && input<="z"))
+        {
+            flag=true;
+            break;
+        }
+        flag=false;
+
+      }
+      
+      return(flag);
+  }
   void Date(int v, int h) //? current Date print function
   {
     setCursorPos(v, h);//set cursor position as vertical and horizontal
@@ -1242,37 +1270,37 @@ private:
       {       // each function called according to requirement
               case 1:
               {
-                UpdateName(FacultyName);
+                UpdateName(FacultyName);//update faculty Name
                 break;
               } 
               case 2:
               {
-                UpdateEmail(FacultyEmail);
+                UpdateEmail(FacultyEmail);//update faculty email
                 break;
               }
               case 3:
               {
-                EnterCourseName();
+                EnterCourseName();//course Name
                 break;
               }
               case 4:
               {
-                EnterSem();
+                EnterSem();//semester
                 break;
               }
               case 5:
               {
-                EnterSubject();
+                EnterSubject();//subject
                 break;
               }
               case 6:
               {
-                askNumberOfStudents();
+                askNumberOfStudents();//total number of students
                 break;
               }
               case 7:
               {
-                scrClr(0.5);
+                scrClr(0.5);//clear screen
                 break;
               }
 
@@ -1371,7 +1399,7 @@ private:
    int validateRollNo(string input, int Bnd, int start) //? string input validate as integer
    {
       int flag = 0, tem = 1;
-     
+      
       if (start == 0)//roll no is 0
           start++;
       for(tem = start; tem <= Bnd; tem++)//roll no start with 1 and go to end boundry
@@ -1382,14 +1410,15 @@ private:
           break;
         }
       }
-      if(EmptyInput(input))//empty input check
+      
+      if(EmptyInput(input)||checkAlphaSpInput(input))//empty input check 
       {
         InvalidInputErr(); // input error
         return 0;        
       } 
       else if(flag == 0) //*IF flag=0 means input is invalid
       {
-        MSG("ROLL NO. NOT EXIST ! ","RE-ENTER VALID ROLL NO",4,1,18);
+        MSG(" ROLL NO. DOESN'T EXIST !"," ",4,1,25);
         return 0; //wait
  
       }
@@ -1593,7 +1622,7 @@ private:
 
     if(!fin.is_open()) // if not opened
     {
-      cout << " DATABASE ERROR 404 : FILE NOT OPENED !";
+      cout << " DATABASE-ERROR-404 !";
     }
     else // if opened
     {
@@ -1827,6 +1856,7 @@ private:
               cout << " ENTER ROLL NO. THAT YOU WANT TO MARK AS PRESENT : ";
          
            ShowConsoleCursor(true);//set console cursor
+           fflush(stdin);//flushing standard input buffer
            getline(cin,command);//take input
            ShowConsoleCursor(false);//set console cursor as hide
            if(command=="*")//if user enter *
@@ -1915,11 +1945,11 @@ private:
     fstream finout(command.c_str(), ios::app);
     if(!sz)
     {
-      finout << CUR_DATE + " | " + CUR_TIME + " | " + Attendance;    // write data to file
+      finout << CUR_DATE + "|" + CUR_TIME + "|" + Attendance;    // write data to file
     }
     else
     {
-       finout <<"\n" + CUR_DATE + " | " + CUR_TIME + " | " + Attendance;
+       finout <<"\n" + CUR_DATE + "|" + CUR_TIME + "|" + Attendance;
     }
      
      finout.close();                                    // file close
@@ -1927,14 +1957,14 @@ private:
 
   string lastline()
   {
-      ifstream fin;
+      ifstream fin;//create file object
       string lastLine;
 
-      command.clear();
-      command = SemPath + "\\DAILY-RECORD\\records.txt";
+      command.clear();//variable clear for re-use
+      command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command variable
 
-      fin.open(command.c_str());
-      if(fin.is_open())
+      fin.open(command.c_str());//file open in reading mode
+      if(fin.is_open())//file is open
       {
         fin.seekg(-1, ios_base::end); // go to one position before the EOF
 
@@ -1961,15 +1991,16 @@ private:
         }
 
         getline(fin, lastLine); // Read the current line
-        fin.close();
+        fin.close();//file close
 
       }
 
-      return lastLine;
+      return lastLine;//return value
     }
 
     int MarkAP_A(int choice) //? function to mark all students present/absent at once
     {
+      //variable clear for re-use
       tempStorage.clear();
       command.clear();
 
@@ -1983,13 +2014,13 @@ private:
       
       confirm:
 
-      if(choice == 1)
+      if(choice == 1)//if all student are present than print msg
       {
 
-        scrClr();
-        setCursorPos(5, 14);
-        ShowConsoleCursor(false);
-
+        scrClr();//clear screen
+        setCursorPos(5, 14);//set cursor
+        ShowConsoleCursor(false);//hide console cursor
+        //set UI Error 
         SetColor(0);
         cout << "ALL ";
 
@@ -2006,12 +2037,12 @@ private:
         cout << " WILL BE MARKED AS PRESENT";
         
       }
-      else if(choice == 2)
+      else if(choice == 2)//if all students are absent
       {
-        scrClr();
-        setCursorPos(5, 14);
-        ShowConsoleCursor(false);
-
+        scrClr();//cllear screen
+        setCursorPos(5, 14);//set cursor
+        ShowConsoleCursor(false);//cursor hide 
+         //set UI error
         SetColor(0);
         cout << "ALL ";
 
@@ -2030,67 +2061,71 @@ private:
       }
 
       setCursorPos(3); 
-
-      if(choice==1)
+      //confirm msg 
+      if(choice==1)//all students are present then confirm this details with yes /no in
       {
         ConvertChoiceToINT = YesNoInput("ALL PRESENT !", command,"ARE YOU SURE ?",1);
       }
-      else if(choice==2)
+      else if(choice==2)//all students are absent then confirm this details with yes /no in
       {
         ConvertChoiceToINT = YesNoInput("ALL ABSENT  !", command,"ARE YOU SURE ?",1);
       }
-      if(ConvertChoiceToINT == -1)
+      if(ConvertChoiceToINT == -1)//if choice is not yes/no then print error
       {
-        InvalidInputErr();
-        goto confirm;
+        InvalidInputErr();//error sho
+        goto confirm;//go to re-confirm
       }
 
-      if(ConvertChoiceToINT == 1)
-        submitAttendanceToDB(tempStorage);
+      if(ConvertChoiceToINT == 1)//if choice is yes than submit this details
+        submitAttendanceToDB(tempStorage);//submit 
 
-      return (ConvertChoiceToINT);
+      return (ConvertChoiceToINT);//return user input
     }
 
     int EnterPR_AR(int choice) // ? function for manually entering absent OR present numbers
     {
 
-      int i,Empty_flag=0;
+      int i,Empty_flag=0,count=1;
       bool flag=true;
+      bool CC_flag=true;
+      
+      //clear variable for re-use 
       tempStorage.clear();
       command.clear();
 
       string MCH;
 
-      for(i = 1; i <= stoi(numberOfstudents); i++) // fill up all data with all absent or all present by default initially
+      for(i = 1; i <= stoi(numberOfstudents); i++) 
       {
+        // fill up all data with all absent or all present by default initially
         if (choice == 3)
           tempStorage += "A";
         else if (choice == 4)
           tempStorage += "P";
       }
-        if(choice == 3)
+        if(choice == 3)//if choice is present
         {
           while(i<=tempStorage.length())
           {
-            if(tempStorage[i]=='P')
+            if(tempStorage[i]=='P')//fill up data with present
             {
-              Empty_flag=1;
+              Empty_flag=1;//empty flag true
               break;
             }
-            Empty_flag=0;
+            Empty_flag=0;//else empty flag false
             i++;
           }
         }
-        else if(choice == 4)
+        else if(choice == 4)//if choice is absent
         {
           while(i<=tempStorage.length())
           {
-            if(tempStorage[i]=='A')
+            if(tempStorage[i]=='A')//fill up with absent
             {
-              Empty_flag=1;
+              Empty_flag=1;//flag set as true
               break;
             }
-            Empty_flag=0;
+            Empty_flag=0;//else 0
             i++;
           }
         }
@@ -2099,17 +2134,16 @@ private:
       while(true)
       {
          
-
          reInput:
          
-         scrClr(0.5);
+         scrClr(0.5);//clear screen
          
-         setCursorPos(1,26);
-         SetColor(2);
+         setCursorPos(1,26);//set cursor
+         SetColor(2);//set color as green
          cout<<"TYPE '*' WHEN YOU ARE DONE";
          SetColor(0);         
 
-         ListOfAttendance(tempStorage,choice);
+         ListOfAttendance(tempStorage,choice);//show list of students
         
          setCursorPos(2,26);
          
@@ -2118,54 +2152,52 @@ private:
          else if(choice == 4)
             cout << "ENTER ABSENT ROLL NO.  : ";
          
-         ShowConsoleCursor(true);
+         ShowConsoleCursor(true);//cursor show
          fflush(stdin);
-         getline(cin, MCH);
-         ShowConsoleCursor(false);
-         
-          if(MCH=="*")
-          {  
-
-            if(!Empty_flag)
-            {
-                if(choice == 3)
-                {
-                 scrClr(0.5);
-                 setCursorPos(9,24);
-                 SetColor(1);
-                 cout << "ADD ATLEAST 1 PRESENT ROLL NO. !"<< endl; //warn message
-                 scrClr(1);
-                 SetColor(0);
-                 goto reInput;
-
-                }
-                else if(choice == 4)
-                {
-                 scrClr(0.5);
-                 setCursorPos(9,24);
-                 SetColor(4);
-                 cout << "ADD ATLEAST 1 ABSENT  ROLL NO. ! " << endl; //warn message
-                 scrClr(1);
-                 SetColor(0);
-                 goto reInput;
-                }
+         getline(cin, MCH);//take input
+         ShowConsoleCursor(false);//cursor hide
+        
+         if(MCH=="*")//if user press *
+         {  
+            
+           if(!Empty_flag)//flag is 0
+           {   
              
-            }
-            else  
-            {
-              break;
-            }
+               if(choice == 3)//choice is present
+               {
+                scrClr(0.5);
+                setCursorPos(9,24);//set cursor
+                SetColor(1);
+                cout << "ADD ATLEAST 1 PRESENT ROLL NO. !"<< endl; //warn message
+                scrClr(1);
+                SetColor(0);
+                goto reInput; //re-ask roll no
+               }
+               else if(choice == 4)//if choice is absent
+               {
+                scrClr(0.5);
+                setCursorPos(9,24); 
+                SetColor(4);
+                cout << "ADD ATLEAST 1 ABSENT  ROLL NO. ! " << endl; //warn message
+                scrClr(1);
+                SetColor(0);
+                goto reInput;
+               }
+           }
+           else  
+           {
+             break;
+           }
+            
+         }
              
-          }
-             
-          ConvertChoiceToINT = validateRollNo(MCH, stoi(numberOfstudents), 1);
+          ConvertChoiceToINT = validateRollNo(MCH, stoi(numberOfstudents), 1);//validate string
           
           if(ConvertChoiceToINT)
           {
-            // cout<< endl << "checkexist";
+            count++;
             if(choice == 3)
             {
-              // cout<< endl << "checkexist";
               if(checkExistRollNo(tempStorage,MCH,'P')) // check exist warning present
               goto reInput;
               else
@@ -2182,75 +2214,82 @@ private:
               
           }
 
-          Empty_flag=0;
+          if((count-1)==tempStorage.length())
+          {
+            break;
+          }
+          
+          Empty_flag=0;//set flag as 0
           i=0;
 
           if(choice == 3)
           {
             while(i<=tempStorage.length())
             {
-              if(tempStorage[i]=='A')
+              if(tempStorage[i]=='A')//set absent
               {
-                Empty_flag=1;
+                Empty_flag=1;//set flag as 1
                 break;
               }
-              Empty_flag=0;
+              Empty_flag=0;//set flag as 0
               i++;
             }
          }
-         else if(choice == 4)
+         else if(choice == 4)//if choice is absent
          {
            while(i<=tempStorage.length())
            {
-             if(tempStorage[i]=='P')
+             if(tempStorage[i]=='P')//if tempstorage == p
              {
-               Empty_flag=1;
+               Empty_flag=1;//set flag as 1
                break;
              }
-             Empty_flag=0;
+             Empty_flag=0;//set flag as 0
              i++;
            }
          }
-
+      
+       
       }
 
       confirm:
-      scrClr(0.5);
+      scrClr(0.5);//clear screen
       
-      ListOfAttendance(tempStorage,choice);
+      ListOfAttendance(tempStorage,choice);//list Attendance
       
-      command.clear();
+      command.clear();//variable clear
       
-      setCursorPos(4,17);
-      ConvertChoiceToINT = YesNoInput(" DO YOU CONFIRM THESE ROLL NO. ? ", command);
-      if(ConvertChoiceToINT == -1)
+      setCursorPos(4,17);//set cursor position
+      ConvertChoiceToINT = YesNoInput(" DO YOU CONFIRM THESE ROLL NO. ? ", command);//confirm msg
+      if(ConvertChoiceToINT == -1)//if choice is not yes or no
       {
-        InvalidInputErr();
-        goto confirm;
+        InvalidInputErr();//error
+        goto confirm;//re-confirm
       }
-      else if(ConvertChoiceToINT == 0)
+      else if(ConvertChoiceToINT == 0)//if choice is no than modify
       {
-        if(ModificationOfAttDATA(tempStorage,choice))
+        if(ModificationOfAttDATA(tempStorage,choice))//modifiction
         {
-        goto confirm;
+        goto confirm;//re-ask confirm
         }
         else
          flag=false;
       }
 
-      if(ConvertChoiceToINT == 1&&flag==true)
+      if(ConvertChoiceToINT == 1&&flag==true)//choice is yes
       {
-        submitAttendanceToDB(tempStorage);
+        submitAttendanceToDB(tempStorage);//submit
       }
 
       
-      return (ConvertChoiceToINT);
+      return (ConvertChoiceToINT);//return choice
     }
 
   public:
 
     MODULE_2()
     {
+      //clear variable for re-use
       command.clear();
       tempStorage.clear();
     }
@@ -2265,8 +2304,6 @@ private:
 
     int checkDB() //? functions for checking at least(1) database semster Records exists or not
     {
-        //tempStorage.clear();
-        //tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt"; // making path to AMS->OTHER->semsterRecord.txt
         
         if(!checkEmptyFile(AMS_Path + "\\OTHER\\semesterRecord.txt")) //check for proper file input
         {
@@ -2303,7 +2340,7 @@ private:
 
     void askSemsterChoice() //? take input choice of semester for attendance
     {
-      DisplayList_Input(sem, 1);
+      DisplayList_Input(sem, 1);// display list for taking input
 
       for(auto i = DATA.begin(); i != DATA.end(); ++i) // process to make list of subject in particular course & semester
       {
@@ -2319,15 +2356,9 @@ private:
 
     bool askSubjectChoice() //? take input choice of subject for attendance
     {
-      //tempStorage.cler();
       DisplayList_Input(subject_name);
       getFolderPath();
-      //command.clear();
-      //tempStorage.cler();
-      
-      // tempStorage =  // making path to access student-sem-?-.tx
-      //command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt"; // making path to access faculty-sem-?-.tx
-      
+
       if(checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt") && checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt") )
       {
         return true;
@@ -2335,7 +2366,7 @@ private:
       else
       {
         //error part
-        warnMsg(course_name +" SEM-" + sem + " " +subject_name,1,23," PLEASE DELETE & RE-CREATE IT",4,21);
+        warnMsg(course_name +" SEM-" + sem + " " +subject_name,1,28," HAS BEEN SCRAMBLED PLEASE DELETE & RE-CREATE IT",4,16);
         return false;
       }
       
@@ -2358,7 +2389,7 @@ private:
 
       setCursorPos(1, 7);
       buildVerticalWall(65);
-
+     //build UI BOX
       while(line < 13)
       {
         setCursorPos(1,7);
@@ -2399,7 +2430,7 @@ private:
       setCursorPos(1, 7);
       buildVerticalWall(65);
 
-      tempStorage.clear();
+      tempStorage.clear();//clear variable
 
       SetColor(1);
       setCursorPos(2, 23);
@@ -2428,21 +2459,24 @@ private:
 
       int i;
       ConvertChoiceToINT = 1; // re-used
-
+      //clear for re-use
       command.clear();
       tempStorage.clear();
 
-      command = SemPath + "\\DAILY-RECORD\\records.txt";
-      fstream fin(command.c_str(), ios::in);
+      command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command var
+      fstream fin(command.c_str(), ios::in);//file open
 
-      if(!fin.is_open())
+      if(!fin.is_open())//file is open
       {
-        cout << "FILE NOT NOT OPENED  ! ";
+        //TODO:@SANJAL DESAI , LIKE THAT I WAS SUGGESTING
+        cout << "DATA BASE-ERROR-403 ! ";//error
+        scrClr(2);
+        exit(1);
       }
       else
       {
         i = lastline().find("|");
-        tempStorage = lastline().substr(0, i - 1);
+        tempStorage = lastline().substr(0, i);
         if(tempStorage == CUR_DATE) // to avoid taking attendance for the same day
         {
           command.clear();
@@ -2465,9 +2499,9 @@ private:
           scrClr(2);
         }
       
-        fin.close();
+        fin.close();//file close
       }
-      return(ConvertChoiceToINT);
+      return(ConvertChoiceToINT);//return 
     }
 
     void AttendanceOptionWindow() //? to display window with 4 Options of attendance
@@ -2510,7 +2544,7 @@ private:
         goto reAskAtdM;
       }
 
-      AT_OPTION_CHOICE = ConvertChoiceToINT;
+      AT_OPTION_CHOICE = ConvertChoiceToINT;//string store in static variable
 
     }
 
@@ -2518,22 +2552,22 @@ private:
     {
       int process_flag = 0;
 
-      if(choice == 1 || choice == 2)
+      if(choice == 1 || choice == 2)//if choice is all present or all absent
       {
-        process_flag = MarkAP_A(choice);
+        process_flag = MarkAP_A(choice);//choice is stored in process flag
       }
       else if(choice == 3 || choice == 4)
       {
         process_flag = EnterPR_AR(choice);
       }
 
-      return (process_flag);
+      return (process_flag);//return flag
     }
     void AttendanceTakenSuccessfully() // module 2 successfully worked
     {
-      tempStorage.clear();
-      tempStorage = course_name + " SEM " + sem + " " + subject_name;
-      MSG("ATTENDANCE TAKEN OF ", tempStorage, 2, 0, 20);
+      tempStorage.clear();//clear variable for re-use
+      tempStorage = course_name + " SEM " + sem + " " + subject_name;//folder name stored in tempstorage
+      MSG("ATTENDANCE TAKEN OF ", tempStorage, 2, 0, 20);//print msg
     }
 
     protected:
@@ -2565,29 +2599,31 @@ private:
 
     while (loop)
     {
-      A.startApp();
-      A.scrClr();
-      A.setCursorPos(2, 10);
+      A.startApp();//strt app
+      A.scrClr();//clear screen
+      A.setCursorPos(2, 10);//set cursor position
 
       switch (APP::MODULE_CHOICE) // module choice asking
       {
         case 1:
         {
+            //modul 1
             MODULE_1 MD1;
-            MD1.askFacDetails();
-            MD1.askStudDetails();
-            MD1.SetUpSucceed();
+            MD1.askFacDetails();//ask faculty details
+            MD1.askStudDetails();//ask student details
+            MD1.SetUpSucceed();//succeed msg print
             break;
         }
         case 2:
         {
+            //module 2
             MODULE_2 MD2;
-            if(MD2.checkDB())
+            if(MD2.checkDB())//check database
             {
-              MD2.askCourseChoice();
-              MD2.askSemsterChoice();
+              MD2.askCourseChoice();//ask course 
+              MD2.askSemsterChoice();//ask semester
               
-              if(MD2.askSubjectChoice())
+              if(MD2.askSubjectChoice())//ask subject
               {
                     if(MD2.proceedForAttendance())
                     {
