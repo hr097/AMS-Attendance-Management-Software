@@ -527,7 +527,7 @@ protected:
     }
     else//if length is greater than 30 than print this msg
     {
-        setCursorPos(8,pos);
+        setCursorPos(9,pos);
         SetColor(color);
         ShowConsoleCursor(false);
         cout << msg; // mess 1 st
@@ -1451,7 +1451,7 @@ private:
       if(select==0)
         MSG("ROLL NO. IS ALREADY IN LIST !"," ",2,0,24);//print error msg
       else
-        MSG("ROLL NO. DOESN'T EXIST IN THE LIST !"," ",2,0,22);//else print doesn't exist
+        MSG("ROLL NO. DOESN'T EXIST IN THE LIST !"," ",4,0,22);//else print doesn't exist
       return true;
     }
     else
