@@ -35,7 +35,7 @@
   #include <wincon.h>
   #include <string>
 
-#endif  // user 1  DRASHTI
+//#endif  // user 1  DRASHTI
 
 typedef struct _CONSOLE_FONT_INFOEX
 {
@@ -56,7 +56,7 @@ extern "C"
 }
 #endif
 
-//#endif // user 2 HARSHIL
+#endif // user 2 HARSHIL
 
 using namespace std; // standard namespace for  resolving naming coflicts
 
@@ -244,6 +244,7 @@ public:
   }
 
 private:
+
   void initApp() //?setting up first time APP screen by making console in full screen
   {
 
