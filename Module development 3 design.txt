@@ -1,0 +1,117 @@
+//MAIN FUNCTION CALL
+case 3:
+{
+  MODULE_3 MD3;
+  if(MD3.checkDB())//check database
+  {
+    MD3.askCourseChoice();//ask course 
+    MD3.askSemsterChoice();//ask semester
+    if(MD3.askSubjectChoice())//ask subject
+    {
+      //TODO 1: SANJAL-SHIKHA CODE FUNCTION CALL
+                // STORE YOUR CHOICE 1/2 == CUS_REPORT_CHOICE
+                MD3.askReportChoice();
+      //TODO 2: CONFIRMATION BOX FOR EXIT
+      if(MD3.confirmation())
+      {
+           //TODO 3: DEPENDING UPON CUS_REPORT_CHOICE
+                  //EITHER HARSHIL'S OR DRASHTI'S CODE WILL WORK
+           
+           switch(MODULE_3::CUS_REPORT_CHOICE)
+           {
+             case 1:{ //DRASHTI'S CODE DATE WISE
+                      MD3.DateReport();
+                      break;
+                    }
+             case 2:{ // HARSHIL'S CODE STUDENT WISE
+                      MD3.studentReport();
+                      break;
+                    }
+             default:{break;}       
+           }   
+      }  
+      
+    }
+  }  
+  break;
+}
+
+// CLASS CODE
+class MODULE_3 : public MODULE_GENERAL //?module 3 class
+{
+
+    //*=============================DATA-MEMBERS================================//
+
+    private:
+    
+    //! vector<string> RECORD;   OR
+    //! string RECORD
+
+    // here you have two free storage vector buffer and LIST
+    // if you wish to declare vector <RECORD> string then it is fine to declare
+    // i'll suggest buffer and LIST re-using
+
+    //* MOST IMPORTENT  YOU ARE GETTING LOTS OF FREE VARIABLE FROM GENERAL MODULE
+    //* SO THINK THRICE BEFORE DECLARING NEW VARIABLE
+
+    string date;
+
+    public:
+
+    static int CUS_REPORT_CHOICE;
+
+    protected:
+
+  //*=============================DATA-MEMBERS-END================================//
+
+  //*=============================MEMBERS-FUNCTIONS===================================//
+
+  private:
+  
+  public:
+
+  MODULE_3()
+  {
+    tempStorage.clear();
+    command.clear();
+  }
+  int confirmation()
+  {
+    //TODO: AFTER THINKING A LOT I'LL SUGGEST SMALL CONFIRMATION BCZ WE HAVEN'T PUT BACK BUTTON IN OUR WHOLE APPLICATION
+  return(0);
+  }
+  void askReportChoice()
+  {
+    //TODO CODE: SANJAL-SHIKHAA-FENIL
+    //CUS_REPORT_CHOICE=INPUT;  DON'T FORGET
+  }
+
+  void DateReport()
+  {
+    //TODO CODE: DRASHTI NUPUR
+  }
+
+  void studentReport()
+  {
+    //TODO CODE: HARSHIL-VIRAJ-SHUBHAM
+  }
+
+  ~MODULE_3()
+  {
+    tempStorage.clear();
+    command.clear();
+  }
+  
+  protected:
+
+  void SetNoObj(){}
+
+  //*=============================MEMBERS-FUNCTIONS-END===================================//
+
+};
+
+//*---------------------------STATIC DEFINATIONS-MODULE-3------------------------------/
+
+int MODULE_3::CUS_REPORT_CHOICE;
+
+//-----------------------------------------------------------------------------------/
