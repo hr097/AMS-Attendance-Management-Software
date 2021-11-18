@@ -136,23 +136,8 @@ public:
 
     ss.str("");
 
-    CUR_TIME += (meridiem_Flag == 0) ? " AM" : " PM"; // AM and PM
+    CUR_TIME += (meridiem_Flag == 0) ? " PM" : " AM"; // AM and PM
     //*******************CURRENT-TIME*********************************//
-  }
-
-  void SetColor(int ForgC) //?for setting individual text color
-  {
-    WORD wColor;                                      // color specifier
-    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE); // create windows handle
-    CONSOLE_SCREEN_BUFFER_INFO csbi;                  // We use csbi for the wAttributes word.
-    
-    if(GetConsoleScreenBufferInfo(hStdOut, &csbi))
-    {
-      // Mask out all but the background attribute, and add in the forgournd color
-      wColor = (csbi.wAttributes & 0xF0) + (ForgC & 0x0F);
-      SetConsoleTextAttribute(hStdOut,wColor); // set console text color
-    }
-    
   }
 
   void setCursorPos(int x, int y = 0) //* cursor position set up IMPORTANT: relative postion is set
@@ -173,17 +158,6 @@ public:
     }
   }
 
-  void ShowConsoleCursor(bool showFlag)//? hiding or showing cursor
-  {
-    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE); // set handle
-
-    CONSOLE_CURSOR_INFO cursorInfo;
-
-    GetConsoleCursorInfo(out, &cursorInfo);
-    cursorInfo.bVisible = showFlag; // set the cursor visibility
-    SetConsoleCursorInfo(out, &cursorInfo);
-  }
-
   void scrClr(float i = 0.0) //?for clearing screen afer some time
   {
     // by default set to zero with default arguements
@@ -191,39 +165,6 @@ public:
     system("cls"); //  clear  the screen
   }
 
-  void buildVerticalWall(int briks) //? for making vertical side
-  {
-    cout<<"*";
-    while(briks > 0)
-    {
-      cout<< "-";
-      briks--;
-    }
-    cout<<"*";
-  }
-
-  void buildHorizontalWall(int endBrick, string tempStorage) //? for making horizontal side
-  {
-    cout<<"|";
-    int run = 1;
-    while(run < endBrick)
-    {
-
-      if (run == (endBrick / 6))
-      {
-        cout<<tempStorage;
-        run += (tempStorage.length() - 1);
-        cout<<" ";
-      }
-      else
-      {
-        cout<<" ";
-      }
-
-      run++;
-    }
-    cout<<"|";
-  }
 
   void startApp() //? start Application
   {
@@ -282,7 +223,7 @@ private:
   {
     int line;
 
-  gotoHomeScreen:
+    gotoHomeScreen:
 
     Date(1, 15); // current date print
     Time(0, 16); // current time print
@@ -408,6 +349,66 @@ protected:
   string CUR_DATE, CUR_TIME; //*CURRENT DATE TIME FOR APPLICATION
   int ConvertChoiceToINT;
 
+  void SetColor(int ForgC) //?for setting individual text color
+  {
+    WORD wColor;                                      // color specifier
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE); // create windows handle
+    CONSOLE_SCREEN_BUFFER_INFO csbi;                  // We use csbi for the wAttributes word.
+    
+    if(GetConsoleScreenBufferInfo(hStdOut, &csbi))
+    {
+      // Mask out all but the background attribute, and add in the forgournd color
+      wColor = (csbi.wAttributes & 0xF0) + (ForgC & 0x0F);
+      SetConsoleTextAttribute(hStdOut,wColor); // set console text color
+    }
+    
+  }
+  
+  void buildVerticalWall(int briks) //? for making vertical side
+  {
+    cout<<"*";
+    while(briks > 0)
+    {
+      cout<< "-";
+      briks--;
+    }
+    cout<<"*";
+  }
+
+  void buildHorizontalWall(int endBrick, string tempStorage) //? for making horizontal side
+  {
+    cout<<"|";
+    int run = 1;
+    while(run < endBrick)
+    {
+
+      if (run == (endBrick / 6))
+      {
+        cout<<tempStorage;
+        run += (tempStorage.length() - 1);
+        cout<<" ";
+      }
+      else
+      {
+        cout<<" ";
+      }
+
+      run++;
+    }
+    cout<<"|";
+  }
+
+  void ShowConsoleCursor(bool showFlag)//? hiding or showing cursor
+  {
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE); // set handle
+
+    CONSOLE_CURSOR_INFO cursorInfo;
+
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = showFlag; // set the cursor visibility
+    SetConsoleCursorInfo(out, &cursorInfo);
+  }
+
   void askChoice(int h, int v, string &input) //?general choice taking function
   {
     setCursorPos(h, v);      // set cursor position
@@ -527,7 +528,7 @@ protected:
     }
     else//if length is greater than 30 than print this msg
     {
-        setCursorPos(9,pos);
+        setCursorPos(8,pos);
         SetColor(color);
         ShowConsoleCursor(false);
         cout << msg; // mess 1 st
@@ -665,7 +666,10 @@ public:
     }
     else
     {
-      cout << "ERROR PATH NOT FOUND : " << result << "\n"; //*error
+      cout << "DATA BASE-ERROR-502! ";//error
+      scrClr(2);
+      exit(1);
+
     }
   }
   ~MODULE_GENERAL()
@@ -711,7 +715,9 @@ protected:
 
     if(!get.is_open())//if file is not open than print error
     {
-       cout<<endl<<"UNABLE TO OPEN THE FILE AT GIVEN PATH : "<<path<<endl;
+       cout << "DATA BASE-ERROR-404 ! ";//error
+       scrClr(2);
+       exit(1);
     }
     else//if file is open
     {
@@ -731,7 +737,9 @@ protected:
 
     if (!write.is_open())//if file is not open than print path error
     {
-      cout<<endl<<"UNABLE TO OPEN THE FILE AT GIVEN PATH : "<<path<< endl;
+      cout << "DATA BASE-ERROR-201-204! ";//error
+      scrClr(2);
+      exit(1);
     }
     else//if file is open than write data in file
     {
@@ -749,7 +757,7 @@ protected:
   void replaceWithHyphen(string &str) //? in given string special symbols should be replaced by hyphen and string will be convert into UPPERCASE
   {
     int i = 0, j = 0;
-    string list = "#%&{}\\/*>< $!:\'\"@+`|="; // need to be checked as thease are restricated symbols
+    string list = "#%&{}\\/*>< $!:\'\"@+`|="; // need to be checked as these are restricated symbols
 
     for (i = 0; i <= list.length(); i++)//check list condition
     {
@@ -761,15 +769,13 @@ protected:
         }
       }
     }
-    /* 
-        */
 
     transform(str.begin(), str.end(), str.begin(), ::toupper); // convert to uppercase
   }
 
   bool EmptyInput(string &input) //?checking if input is empty (e.g. : enter key)
   {
-    if (input.empty())//check empty condition
+    if(input.empty())//check empty condition
     {
       return true; // if emty then returns  true
     }
@@ -799,6 +805,12 @@ protected:
   int checkEmptyFile(string path)//?check empty file
   {
     ifstream read(path.c_str(),ios::binary);             // file opened
+    if(!read.is_open())
+    {
+      cout << "DATA BASE-ERROR-404! ";//error
+      scrClr(2);
+      exit(1);
+    }
     read.seekg(0,ios::end);
     int sz = read.tellg();
     read.close();
@@ -1006,11 +1018,11 @@ private:
 
     // BOX-UI FOR STUDENT INFO CONFIRM
     setCursorPos(5, 15);
-    cout << "STUDENT ROLL NO " << right << setw(4) << ": " << RoLLNo;
+    cout << "STUDENT ROLL NUMBER " << right << setw(4) << ": " << RoLLNo;
     setCursorPos(1, 15);
-    cout << "STUDENT NAME " << right << setw(7) << ": " << student_name;
+    cout << "STUDENT NAME " << right << setw(11) << ": " << student_name;
     setCursorPos(1, 15);
-    cout << "STUDENT E-MAIL " << right << setw(5) << ": " << student_email;
+    cout << "STUDENT E-MAIL " << right << setw(9) << ": " << student_email;
 
     ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
 
@@ -1187,7 +1199,7 @@ private:
     scrClr(0.5);              // clear screen
     ShowConsoleCursor(false); // hide cursor to stop flickring cursor
     setCursorPos(9, 27);
-    cout << " ROLL NO. : " << RollNo;
+    cout << " ROLL NUMBER : " << RollNo;
     scrClr(1); // user can read no. FOR 1 SECOND
   }
 
@@ -1418,7 +1430,7 @@ private:
       } 
       else if(flag == 0) //*IF flag=0 means input is invalid
       {
-        MSG(" ROLL NO. DOESN'T EXIST !"," ",4,1,25);
+        MSG(" ROLL NUMBER DOESN'T EXIST !"," ",4,1,23);
         return 0; //wait
  
       }
@@ -1449,9 +1461,9 @@ private:
     if(Attendance[(stoi(rl)-1)]==AT)//if user enter roll no is already exist in string than 
     {
       if(select==0)
-        MSG("ROLL NO. IS ALREADY IN LIST !"," ",2,0,24);//print error msg
+        MSG("ROLL NUMBER ALREADY EXISTS IN THE LIST!"," ",2,0,19);//print error msg
       else
-        MSG("ROLL NO. DOESN'T EXIST IN THE LIST !"," ",4,0,22);//else print doesn't exist
+        MSG("ROLL NUMBER DOESN'T EXIST IN THE LIST!"," ",2,0,20);//else print doesn't exist
       return true;
     }
     else
@@ -1622,7 +1634,9 @@ private:
 
     if(!fin.is_open()) // if not opened
     {
-      cout << " DATABASE-ERROR-404 !";
+      cout << "DATA BASE-ERROR-404! ";//error
+      scrClr(2);
+      exit(1);
     }
     else // if opened
     {
@@ -1686,6 +1700,13 @@ private:
     command.clear();
     command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command variable   //variable re-use
     std::ifstream inputStream(command.c_str());//read file
+    
+    if(!inputStream.is_open())
+    {
+      cout << "DATA BASE-ERROR-404! ";//error
+      scrClr(2);
+      exit(1);
+    }
 
     while(getline(inputStream, line))//read line from file
     {
@@ -1731,7 +1752,7 @@ private:
     if(choice == 3)//if user enterd choice is present
     {
       setCursorPos(2,24);
-      cout << "|| LIST OF PRESENT ROLL NO. ||" << endl; // present list
+      cout << "|| LIST OF PRESENT ROLL NUMBER ||" << endl; // present list
       setCursorPos(1,1);
       SetColor(1);//set color 
 
@@ -1777,7 +1798,7 @@ private:
     else if(choice == 4)
     {
       setCursorPos(2,24);
-      cout << "|| LIST OF ABSENT  ROLL NO. ||" << endl; // absent list
+      cout << "|| LIST OF ABSENT  ROLL NUMBER ||" << endl; // absent list
       setCursorPos(1,1);
       SetColor(4);
       
@@ -1843,17 +1864,17 @@ private:
  
            setCursorPos(1,26);
            SetColor(2);//set color is green
-           cout << "TYPE '*' WHEN YOU ARE DONE" ;
+           cout << "PRESS '*' TO PROCEED FURTHER" ;
            SetColor(0);//set color black
          
            ListOfAttendance(Attendance,choice);//show list of student
           
-           setCursorPos(2,13);//set cursor position
+           setCursorPos(2,10);//set cursor position
           //ask you want to modify
            if(choice == 3)
-              cout << " ENTER ROLL NO. THAT YOU WANT TO MARK AS ABSENT  : ";
+              cout << " ENTER ROLL NUMBER THAT YOU WANT TO MARK AS ABSENT  : ";
            else if(choice == 4)
-              cout << " ENTER ROLL NO. THAT YOU WANT TO MARK AS PRESENT : ";
+              cout << " ENTER ROLL NUMBER THAT YOU WANT TO MARK AS PRESENT : ";
          
            ShowConsoleCursor(true);//set console cursor
            fflush(stdin);//flushing standard input buffer
@@ -1938,11 +1959,27 @@ private:
     command = SemPath + "\\DAILY-RECORD\\records.txt"; // making path for file handling
 
     ifstream finin(command.c_str(), ios::binary);         // open file in append mode
+
+    if(!finin.is_open())
+    {
+      cout << "DATA BASE-ERROR-404! ";//error
+      scrClr(2);
+      exit(1);
+    }
+
     finin.seekg(0,ios::end);
     sz = finin.tellg();//check file size
     finin.close();//file close
 
     fstream finout(command.c_str(), ios::app);
+
+    if(!finout.is_open())
+    {
+      cout << "DATA BASE-ERROR-201-204! ";//error
+      scrClr(2);
+      exit(1);
+    }
+    
     if(!sz)
     {
       finout << CUR_DATE + "|" + CUR_TIME + "|" + Attendance;    // write data to file
@@ -1993,6 +2030,15 @@ private:
         getline(fin, lastLine); // Read the current line
         fin.close();//file close
 
+      }
+      else
+      {
+        if(!fin.is_open())
+        {
+          cout << "DATA BASE-ERROR-404! ";//error
+          scrClr(2);
+          exit(1);
+        }
       }
 
       return lastLine;//return value
@@ -2140,17 +2186,17 @@ private:
          
          setCursorPos(1,26);//set cursor
          SetColor(2);//set color as green
-         cout<<"TYPE '*' WHEN YOU ARE DONE";
+         cout<<"PRESS '*' TO PROCEED FURTHER";
          SetColor(0);         
 
          ListOfAttendance(tempStorage,choice);//show list of students
         
-         setCursorPos(2,26);
+         setCursorPos(2,25);
          
          if(choice == 3)
-            cout << "ENTER PRESENT ROLL NO. : ";
+            cout << "ENTER PRESENT ROLL NUMBER : ";
          else if(choice == 4)
-            cout << "ENTER ABSENT ROLL NO.  : ";
+            cout << "ENTER ABSENT ROLL NUMBER  : ";
          
          ShowConsoleCursor(true);//cursor show
          fflush(stdin);
@@ -2166,9 +2212,9 @@ private:
                if(choice == 3)//choice is present
                {
                 scrClr(0.5);
-                setCursorPos(9,24);//set cursor
+                setCursorPos(9,22);//set cursor
                 SetColor(1);
-                cout << "ADD ATLEAST 1 PRESENT ROLL NO. !"<< endl; //warn message
+                cout << "KINDLY ADD PRESENT ROLL NUMBERS IN LIST!"<< endl; //warn message
                 scrClr(1);
                 SetColor(0);
                 goto reInput; //re-ask roll no
@@ -2176,9 +2222,9 @@ private:
                else if(choice == 4)//if choice is absent
                {
                 scrClr(0.5);
-                setCursorPos(9,24); 
+                setCursorPos(9,22); 
                 SetColor(4);
-                cout << "ADD ATLEAST 1 ABSENT  ROLL NO. ! " << endl; //warn message
+                cout << "KINDLY ADD ABSENT  ROLL NUMBERS IN LIST! " << endl; //warn message
                 scrClr(1);
                 SetColor(0);
                 goto reInput;
@@ -2259,8 +2305,8 @@ private:
       
       command.clear();//variable clear
       
-      setCursorPos(4,17);//set cursor position
-      ConvertChoiceToINT = YesNoInput(" DO YOU CONFIRM THESE ROLL NO. ? ", command);//confirm msg
+      setCursorPos(4,14);//set cursor position
+      ConvertChoiceToINT = YesNoInput(" DO YOU CONFIRM THESE NUMBERS ? ", command);//confirm msg
       if(ConvertChoiceToINT == -1)//if choice is not yes or no
       {
         InvalidInputErr();//error
@@ -2296,7 +2342,7 @@ private:
 
     ~MODULE_2()
     {
-      buffer.clear(); // clearing buffer
+       buffer.clear(); // clearing buffer
       LIST.clear();   // clearing List
       command.clear();
       tempStorage.clear();
@@ -2307,7 +2353,7 @@ private:
         
         if(!checkEmptyFile(AMS_Path + "\\OTHER\\semesterRecord.txt")) //check for proper file input
         {
-          warnMsg("NO SETUP EXIST ! PLEASE ADD ATLEST 1 SETUP", 4, 19); // warn msg
+          warnMsg("NO SETUP EXISTS! KINDLY ADD ATLEST 1 SETUP", 4, 19); // warn msg
           return(false);
         }
         else
@@ -2366,7 +2412,7 @@ private:
       else
       {
         //error part
-        warnMsg(course_name +" SEM-" + sem + " " +subject_name,1,28," HAS BEEN SCRAMBLED PLEASE DELETE & RE-CREATE IT",4,16);
+        warnMsg(course_name +" SEM-" + sem + " " +subject_name,1,28," HAS PARTIAL CONTENT , PLEASE DELETE & RE-CREATE IT",4,15);
         return false;
       }
       
@@ -2467,9 +2513,8 @@ private:
       fstream fin(command.c_str(), ios::in);//file open
 
       if(!fin.is_open())//file is open
-      {
-        //TODO:@SANJAL DESAI , LIKE THAT I WAS SUGGESTING
-        cout << "DATA BASE-ERROR-403 ! ";//error
+      {  
+        cout << "DATA BASE-ERROR-403! ";//error
         scrClr(2);
         exit(1);
       }
@@ -2493,7 +2538,7 @@ private:
           SetColor(1);
           cout << CUR_DATE;
           SetColor(0);
-          cout << " IS ALREADY TAKEN !";
+          cout << " IS ALREADY TAKEN!";
           command.clear();
           ConvertChoiceToINT=0;
           scrClr(2);
@@ -2525,9 +2570,9 @@ private:
         else if (line == 3)
           buildHorizontalWall(43, "2) MARK ALL ABSENT ");
         else if (line == 5)
-          buildHorizontalWall(43, "3) ENTER PRESENT ROLL NO. ");
+          buildHorizontalWall(43, "3) ENTER PRESENT ROLL NUMBER ");
         else if (line == 7)
-          buildHorizontalWall(43, "4) ENTER ABSENT ROLL NO. ");
+          buildHorizontalWall(43, "4) ENTER ABSENT ROLL NUMBER ");
         else
           buildHorizontalWall(43, " ");
         line++;
@@ -2663,7 +2708,7 @@ private:
           break;
         }
 
-        default:{cout << endl<< "ERROR: APPLICATION CRASHED!!!" << endl;exit(1);break;} //* exceptional  case
+        default:{cout << endl<< "ERROR! APPLICATION CRASHED!!!" << endl;exit(1);break;} //* exceptional  case
       }
 
         A.scrClr(); // screen clear
