@@ -1,24 +1,23 @@
 NOTE: AA CLASS INHERITENCE NA CASE MA public + protected ma che e share krse
+//**************************************** DATA MEMBERS ********************************************//
 
-int ConvertChoiceToINT;
+Public:
 static int MODULE_CHOICE; // static main ma use thse module select krva
 
+protected:
+string CUR_DATE,CUR_TIME;
+int ConvertChoiceToINT;          //*variable for converting string input to integer
+
+//*************************************************************************************************//
+
+//**************************************** MEMBER FUNCTIONS *****************************************//
 public:
 
 APP()                                :string temp,int meridiem_Flag=0;
 
-void SetColor(int ForgC)
- 
 void setCursorPos(int x, int y=0)
 
-void ShowConsoleCursor(bool showFlag) 
-
 void scrClr(float i=0.0)
-
-void buildVerticalWall(int briks)
-
-void buildHorizontalWall(int endBrick,string data)   : int run;
-
 
 void startApp()
  
@@ -32,16 +31,16 @@ int HomeScreen()                 : string operationChoice,int line
 
 int GetDesktopResolution()       : int size,int horizontal,int vertical
 
-
 void setConsoleSize()
 
 
 protected:
 
-string CUR_DATE,CUR_TIME;
 
-int ConvertChoiceToINT;          //*variable for converting string input to integer
-
+void SetColor(int ForgC);
+void ShowConsoleCursor(bool showFlag) 
+void buildVerticalWall(int briks)
+void buildHorizontalWall(int endBrick,string data)   : int run;
 void askChoice(int h,int v,string &input)
 int YesNoInput(string inputAsk, string &in,string t="",int color=0,int color2=0)           :int line
 void InvalidInputErr()
@@ -49,11 +48,8 @@ void warnMsg(string err_msg, int color, int pos,string err_msg2=" ",int color2=0
 void MSG(string msg, string msg2, int color, int color2, int pos) 
 void Date(int v, int h)
 void Time(int v, int h)
-
 int validateString(string input,int start)    :int flag=0,tem=1;
-
 int validateString(string input) //OVRLD
-
 bool checkAlphaSpInput(string &input)          :string list,int i,j,bool flag;
 
 
