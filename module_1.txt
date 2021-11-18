@@ -1,6 +1,16 @@
 class MODULE_1:
 
-private:
+
+//********************************************************************************************************************//
+
+
+
+//**************************************** MEMBER FUNCTIONS WITH IT'S VARIABLE*****************************************//
+
+
+//---------private:---------//
+
+
 
 int createSemester()
 
@@ -27,7 +37,8 @@ void rollNo(int RollNo)
 void askNumberOfStudents()
 
 
-public:
+//---------public:---------//
+
 
 MODULE_1()//constructer
 ~MODULE_1()//destructer
@@ -37,6 +48,14 @@ void askStudDetails()             : int ROLLNO;
 
 void SetUpSucceed()
 
-protected:
+
+
+//---------protected:---------//
+
 
 void SetNoObj()
+
+
+
+
+//*******************************************************************************************************************//

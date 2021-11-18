@@ -1,17 +1,20 @@
 class MODULE_2 : 
 
-private:
+//**************************************** MEMBER FUNCTIONS WITH IT'S VARIABLE*****************************************//
+
+
+//---------private:---------//
 
 vector<string> buffer,LIST; 
 vector<tuple<string,string,string,string>> DATA;
 
-int validateRollNo(string input, int Bnd, int start)     :int flag,tem;
+int validateRollNo(string input, int Bnd, int start)        :int flag,tem;
 
 int checkDuplicateRecord(vector<string> vec,string search)
 
 bool checkExistRollNo(string &Attendance,string rl,char AT,int select=0)
 
-void DisplayList_Input(string &put,int select=0)      :int listFlag = 1, chFlag = 0, countFlag = 0, temp_flag = 1;
+void DisplayList_Input(string &put,int select=0)            :int listFlag = 1, chFlag = 0, countFlag = 0, temp_flag = 1;
 
 void getFolderPath()
 
@@ -21,24 +24,26 @@ void ExtractStringFromBuffer()
 
 void lastlineDlt()
 
-int ValidateAttendance(string &input)            :int i;
+int ValidateAttendance(string &input)                       :int i;
 
-void ListOfAttendance(string &Attendance, int choice)  :int i,spacing_flag=0,space=1
+void ListOfAttendance(string &Attendance, int choice)       :int i,spacing_flag=0,space=1
 
 bool ModificationOfAttDATA(string &Attendance,int choice)   :int Empty_flag=0,i;
-      bool return_flag=false;
+                                                             bool return_flag=false;
 
-void submitAttendanceToDB(string & Attendance)        :int sz;
+void submitAttendanceToDB(string & Attendance)              :int sz;
 
-string lastline()                                 :string lastLine;
+string lastline()                                           :string lastLine;
 
-int MarkAP_A(int choice)                         :int i
-
-int EnterPR_AR(int choice)                       :int i,Empty_flag=0,count=1;
+int MarkAP_A(int choice)                                    :int i
+ 
+int EnterPR_AR(int choice)                                  :int i,Empty_flag=0,count=1;
       bool flag=true;
       bool CC_flag=true,string MCH;
 
-public :
+
+//---------public :---------//
+
 
 MODULE_2()
 
@@ -62,6 +67,11 @@ int takeAttendance(int choice)                :int process_flag = 0;
 
 void AttendanceTakenSuccessfully()
 
-protected:
+
+//---------protected:---------//
 
 void SetNoObj()
+
+
+
+//*******************************************************************************************************************//

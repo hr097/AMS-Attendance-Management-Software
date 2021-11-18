@@ -7,11 +7,15 @@ NOTE:->INHERITED PROPERTIES OF APP CLASS
 
 ---------------------------------------------------------------------
 
-public:
 
-private:
+//**************************************** DATA MEMBERS ********************************************//
 
-protected:
+
+//---------public:---------//
+
+//---------private:---------//
+
+//---------protected:---------//
 
   string AMS_Path;
   string command;
@@ -31,18 +35,25 @@ protected:
 
 virtual void SetNoObj()=0; //*for disable object creation of  MODULE_GENERAL
 
+//*********************************************************************************************************************//
 
+
+
+//**************************************** MEMBER FUNCTIONS WITH IT'S VARIABLE*****************************************//
+
+
+//---------protected:---------//
 
 
 void getDataFromFile(string path,string &FcName,int lineNo)   : int FileLine=1;
 
 void writeDataToFile(string path,string &FcName)
 
-string convertIntToString(int &in)            : string str;
+string convertIntToString(int &in)                            : string str;
 
 string convertArrayTostring(char* arg)
 
-void replaceWithHyphen(string &str)           :  int i,j,string list;
+void replaceWithHyphen(string &str)                           :  int i,j,string list;
 
 
 bool EmptyInput(string &input)
@@ -52,6 +63,10 @@ int dirExists(const char *path)
 bool validateEmail(string email)
 
 int checkEmptyFile(string path)
+
+
+
+//*******************************************************************************************************************//
 
 
 
