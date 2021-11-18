@@ -136,7 +136,8 @@ public:
 
     ss.str("");
 
-    CUR_TIME += (meridiem_Flag == 0) ? " PM" : " AM"; // AM and PM
+    CUR_TIME += (meridiem_Flag == 0) ? " AM" : " PM"; // AM and PM
+
     //*******************CURRENT-TIME*********************************//
   }
 
@@ -651,6 +652,7 @@ class MODULE_GENERAL : public APP
 private:
 
 public:
+
   MODULE_GENERAL() //?Getting Project path for each module Variable used AMS_Path for storing path
   {
     //* AMS DATABASE PATH WILL BE ACCESSED IN ANY SYSTEM via this function
@@ -671,6 +673,67 @@ public:
       exit(1);
 
     }
+  }
+
+  int checkDB() //? functions for checking at least(1) database semster Records exists or not
+  {
+      
+      if(!checkEmptyFile(AMS_Path + "\\OTHER\\semesterRecord.txt")) //check for proper file input
+      {
+        warnMsg("NO SETUP EXISTS! KINDLY ADD ATLEST 1 SETUP", 4, 19); // warn msg
+        return(false);
+      }
+      else
+      {
+        getSemesterRecordFile();
+        ExtractStringFromBuffer();
+        return (true);
+      }
+  }
+
+    void askCourseChoice() //? take input choice of course for attendance
+  {
+    DisplayList_Input(course_name); // display list for taking input
+    for(auto i = DATA.begin(); i != DATA.end(); ++i) // process to make list of semester in particular course
+    {
+      if(course_name == get<0>((*i)))
+      {
+        if(checkDuplicateRecord(LIST, get<1>((*i)))) // cheking if any duplicate records
+        {
+          LIST.push_back(get<1>((*i))); // making distinguished list
+        }
+      }
+    }
+  }
+  void askSemsterChoice() //? take input choice of semester for attendance
+  {
+    DisplayList_Input(sem, 1);// display list for taking input
+    for(auto i = DATA.begin(); i != DATA.end(); ++i) // process to make list of subject in particular course & semester
+    {
+      if(course_name == get<0>((*i)) && sem == get<1>((*i)))
+      {
+        if(checkDuplicateRecord(LIST, get<2>((*i))))
+        {
+          LIST.push_back(get<2>((*i)));
+        }
+      }
+    }
+  }
+  bool askSubjectChoice() //? take input choice of subject for attendance
+  {
+    DisplayList_Input(subject_name);
+    getFolderPath();
+    if(checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt") && checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt") )
+    {
+      return true;
+    }
+    else
+    {
+      //error part
+      warnMsg(course_name +" SEM-" + sem + " " +subject_name,1,28," HAS PARTIAL CONTENT , PLEASE DELETE & RE-CREATE IT",4,15);
+      return false;
+    }
+    
   }
   ~MODULE_GENERAL()
   {
@@ -706,6 +769,14 @@ protected:
   string student_email;
   string RoLLNo;
   string numberOfstudents;
+
+  /*******************************/
+
+
+  //********MODULE-2-3************/ 
+
+  vector<string> buffer, LIST;                        // vector buffer for file handling data receiver
+  vector< tuple < string,string,string,string > > DATA; // search-access vector-tuple 
 
   /*******************************/
 
@@ -816,6 +887,244 @@ protected:
     read.close();
     return sz;//return size
   }
+  int checkDuplicateRecord(vector<string> vec, string search) //?for cheking if duplicate records found in vector_storage
+  {
+    vector<string>::iterator it; // iterator
+
+    it = find(vec.begin(), vec.end(), search); // finding elemnt in vector
+
+    if (it != vec.end())
+    {
+      return 0; // if found then return 0
+    }
+    else
+    {
+      return 1; // if not found then return 1
+    }
+  }
+    void DisplayList_Input(string &put, int select = 0) //? display the list and take appropriate input of corse/sem/subject
+  {
+    int listFlag = 1, chFlag = 0, countFlag = 0, temp_flag = 1;
+    auto i = LIST.begin();
+
+    (LIST.size() > 6) ? setCursorPos(0, 10) : setCursorPos(1, 20); // set box-view for list >5 and less than 5
+    buildVerticalWall(35);
+    setCursorPos(1, 20);
+    buildHorizontalWall(35, " ");
+
+    while (i != LIST.end()) // dynamic list loop for sem course subject input choice
+    {
+
+      displayAgain:
+      chFlag = 0;
+      setCursorPos(1, 20);
+      if (select == 0)
+        buildHorizontalWall(35, to_string(5 * countFlag + listFlag) + ") " + (*i));
+      else
+        buildHorizontalWall(35, to_string(5 * countFlag + listFlag) + ") " + "Sem-" + (*i));
+        
+      setCursorPos(1, 20);
+      buildHorizontalWall(35, " ");
+      listFlag++;
+      i++;
+
+      if (listFlag > 5 && i != LIST.end())
+      {
+
+        chFlag = 1;
+        countFlag++;
+        setCursorPos(1, 20);
+        buildHorizontalWall(35, "TYPE '+' FOR EXTENDED LIST");
+        setCursorPos(1, 20);
+        buildHorizontalWall(35, " ");
+        setCursorPos(1, 20);
+        buildVerticalWall(35);
+        askChoice(2, 34, tempStorage);//ask choice
+        scrClr(0.5);
+        if(tempStorage == "+")//if uesr press +
+        {
+           setCursorPos(2, 20);
+           buildVerticalWall(35);
+           listFlag = 1;//list flag =1 
+           chFlag = 0;
+           setCursorPos(1, 20);
+           buildHorizontalWall(35, " ");
+           goto displayAgain;//again display screen
+        }
+        else
+        {
+          ConvertChoiceToINT = validateString(tempStorage, countFlag * 5, (countFlag - 1) * 5);//validatestring 
+          
+          if(ConvertChoiceToINT == 0)
+          {
+            while (temp_flag != (listFlag))
+            {
+              i--;
+              temp_flag++;
+            }
+            
+            temp_flag = 1;
+            countFlag--;
+            listFlag = 1;
+            
+            setCursorPos(2, 20);
+            buildVerticalWall(35);
+
+            chFlag = 0;
+
+            setCursorPos(1, 20);
+            buildHorizontalWall(35, " ");
+            
+            goto displayAgain;
+          }
+          else
+          {
+            break;
+          }
+        }
+      }
+    }
+
+    if(chFlag == 0)
+    {
+      setCursorPos(1, 20);
+      buildVerticalWall(35);
+      askChoice(2, 30, tempStorage);
+
+      if(tempStorage == "+")
+      {
+        InvalidInputErr();
+        while(temp_flag != (listFlag))
+        {
+          i--;
+          temp_flag++;
+        }
+        temp_flag = 1;
+        listFlag = 1;
+
+        setCursorPos(2, 20);
+        buildVerticalWall(35);
+        setCursorPos(1, 20);
+        buildHorizontalWall(35, " ");
+
+        goto displayAgain;
+      }
+      ConvertChoiceToINT = validateString(tempStorage, (((countFlag)*5 + listFlag - 1)), ((countFlag)*5));
+      
+      if(ConvertChoiceToINT == 0)
+      {
+        while(temp_flag != (listFlag))
+        {
+          i--;
+          temp_flag++;
+        }
+
+        temp_flag = 1;
+        listFlag = 1;
+
+        setCursorPos(2, 20);
+        buildVerticalWall(35);
+        setCursorPos(1, 20);
+        buildHorizontalWall(35, " ");
+
+        goto displayAgain;
+      }
+      scrClr(0.5);
+    }
+    for(i = LIST.begin(), countFlag = 1; i != LIST.end(); ++i, countFlag++) // set data to string for searching
+    {
+      if(countFlag == ConvertChoiceToINT)
+      {
+        put = (*i);
+      }
+    }
+
+    LIST.clear();        // flush vector data for re-using
+    tempStorage.clear(); // flush string for re-using
+  }
+
+  void getFolderPath() //? based on input choice of course->sem-subject we find correct folder and save path  to Sem_path
+  {
+    for(auto i = DATA.begin(); i != DATA.end(); ++i) // process to find folder path using vector tuple we have 3 input parameter coursename , sem , subject name
+    {
+
+      if(course_name == get<0>((*i)))
+        if(sem == get<1>((*i)))
+          if(subject_name == get<2>((*i)))
+            SemPath = get<3>((*i));
+    }
+
+    SemPath = AMS_Path + "\\" + SemPath; // assigning searched path to SemPath and concate AMS_Path
+
+  }
+
+  void getSemesterRecordFile() //? get data of course-semester-sub-path records
+  {
+    tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt"; // making path to AMS->OTHER->semsterRecord.txt
+    fstream fin(tempStorage.c_str(), ios::in);              // file opened in reading mode
+
+    if(!fin.is_open()) // if not opened
+    {
+      cout << "DATA BASE-ERROR-404! ";//error
+      scrClr(2);
+      exit(1);
+    }
+    else // if opened
+    {
+      tempStorage.clear();       // clear for re-using
+      getline(fin, tempStorage); // tempStorage used as temporary storage
+
+      while(!fin.eof()) // data receive until file ends
+      {
+        buffer.push_back(tempStorage); // save that string(data) in vector
+        getline(fin, tempStorage);     // fetch again from file
+      }
+      fin.close(); // file close
+    }
+
+    sort(buffer.begin(), buffer.end()); // sort file data in vector in Dictionary order
+    tempStorage.clear();
+  }
+
+  void ExtractStringFromBuffer() //? extracting main string into substring like course - sem - sub - path
+  {
+    for(auto i = buffer.begin(); i != buffer.end(); ++i) // insert in to vector-tuple from vector buffer with extracting string
+    {
+      tempStorage = (*i);      // temp variable for moving vector tempStorage to string
+      int found_pos, temp_pos; // temp variable for position storing
+
+      found_pos = tempStorage.find("|");                // find the first occurance of '|'
+      course_name = tempStorage.substr(0, (found_pos)); // get proper course name from string and save it to course_name
+      temp_pos = (found_pos + 1);                       // making next finding position
+
+      if(checkDuplicateRecord(LIST, course_name)) // checking if any duplicate course exists
+      {
+        LIST.push_back(course_name); // making list for input of UI screen of course select
+      }
+
+      found_pos = tempStorage.find("|", temp_pos);                // finds string till 1st pipe i.e coursename
+      sem = tempStorage.substr(temp_pos, (found_pos - temp_pos)); // stores the string in TEMP_STR
+      temp_pos = (found_pos + 1);                                 // searching next position
+
+      found_pos = tempStorage.find("|", temp_pos);                         // finds string till 2nd pipe i.e. semester
+      subject_name = tempStorage.substr(temp_pos, (found_pos - temp_pos)); // stores the string in TEMP_STR
+      temp_pos = (found_pos + 1);                                          // searching next position
+
+      found_pos = tempStorage.find("|", temp_pos); // finds string till 3rd pipe i.e. subjectname
+      SemPath = tempStorage.substr(temp_pos);      // stores the string in TEMP_STR
+
+      DATA.push_back(make_tuple(course_name, sem, subject_name, SemPath)); // makes a final string to display
+    }
+
+    //*clearing for reusing
+
+    tempStorage.clear();
+    course_name.clear();
+    sem.clear();
+    subject_name.clear();
+    SemPath.clear();
+  }
+  
 };
 
 class MODULE_1 : public MODULE_GENERAL //?module 1 class
@@ -828,7 +1137,6 @@ private:
 public:
 
 protected:
-
 
   //*=============================DATA-MEMBERS-END================================//
 
@@ -1228,14 +1536,13 @@ private:
 
   MODULE_1()//constructer
   {
-   command.clear();//command clear
-   tempStorage.clear();//tempStorage clear
+   command.clear();//command clear for re use 
+   tempStorage.clear();//tempStorage clear for re use
   }
   ~MODULE_1()//destructer
   {
-    command.clear();//command clear
-    tempStorage.clear();//tempStorage clear
-    
+    command.clear();//command clear for re use
+    tempStorage.clear();//tempStorage clear for re use
   }
 
   void askFacDetails() //?asking faculty details
@@ -1392,8 +1699,6 @@ class MODULE_2 : public MODULE_GENERAL //?module 2 class
 
 private:
 
-  vector<string> buffer, LIST;                        // vector buffer for file handling data receiver
-  vector<tuple<string, string, string, string>> DATA; // search-access vector-tuple
 
 public:
 
@@ -1441,21 +1746,6 @@ private:
      
     }
 
-  int checkDuplicateRecord(vector<string> vec, string search) //?for cheking if duplicate records found in vector_storage
-  {
-    vector<string>::iterator it; // iterator
-
-    it = find(vec.begin(), vec.end(), search); // finding elemnt in vector
-
-    if (it != vec.end())
-    {
-      return 0; // if found then return 0
-    }
-    else
-    {
-      return 1; // if not found then return 1
-    }
-  }
   bool checkExistRollNo(string &Attendance,string rl,char AT,int select=0)//?if same roll no is exist than print error
   {
     if(Attendance[(stoi(rl)-1)]==AT)//if user enter roll no is already exist in string than 
@@ -1471,225 +1761,49 @@ private:
       return false;
     }
   } 
-  void DisplayList_Input(string &put, int select = 0) //? display the list and take appropriate input of corse/sem/subject
+
+  string lastline()
   {
-    int listFlag = 1, chFlag = 0, countFlag = 0, temp_flag = 1;
-    auto i = LIST.begin();
-
-    (LIST.size() > 6) ? setCursorPos(0, 10) : setCursorPos(1, 20); // set box-view for list >5 and less than 5
-    buildVerticalWall(35);
-    setCursorPos(1, 20);
-    buildHorizontalWall(35, " ");
-
-    while (i != LIST.end()) // dynamic list loop for sem course subject input choice
+    ifstream fin;//create file object
+    string lastLine;
+    command.clear();//variable clear for re-use
+    command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command variable
+    fin.open(command.c_str());//file open in reading mode
+    if(fin.is_open())//file is open
     {
-
-      displayAgain:
-      chFlag = 0;
-      setCursorPos(1, 20);
-      if (select == 0)
-        buildHorizontalWall(35, to_string(5 * countFlag + listFlag) + ") " + (*i));
-      else
-        buildHorizontalWall(35, to_string(5 * countFlag + listFlag) + ") " + "Sem-" + (*i));
-        
-      setCursorPos(1, 20);
-      buildHorizontalWall(35, " ");
-      listFlag++;
-      i++;
-
-      if (listFlag > 5 && i != LIST.end())
+      fin.seekg(-1, ios_base::end); // go to one position before the EOF
+      bool keepLooping = true;
+      while(keepLooping)
       {
-
-        chFlag = 1;
-        countFlag++;
-        setCursorPos(1, 20);
-        buildHorizontalWall(35, "TYPE '+' FOR EXTENDED LIST");
-        setCursorPos(1, 20);
-        buildHorizontalWall(35, " ");
-        setCursorPos(1, 20);
-        buildVerticalWall(35);
-        askChoice(2, 34, tempStorage);//ask choice
-        scrClr(0.5);
-        if(tempStorage == "+")//if uesr press +
-        {
-           setCursorPos(2, 20);
-           buildVerticalWall(35);
-           listFlag = 1;//list flag =1 
-           chFlag = 0;
-           setCursorPos(1, 20);
-           buildHorizontalWall(35, " ");
-           goto displayAgain;//again display screen
+        char ch;
+        fin.get(ch); // Get current byte's data
+        if((int)fin.tellg() <= 1)
+        {                      // If the data was at or before the 0th byte
+          fin.seekg(0);        // The first line is the last line
+          keepLooping = false; // So stop there
+        }
+        else if (ch == '\n')
+        {                      // If the data was a newline
+          keepLooping = false; // Stop at the current position.
         }
         else
-        {
-          ConvertChoiceToINT = validateString(tempStorage, countFlag * 5, (countFlag - 1) * 5);//validatestring 
-          
-          if(ConvertChoiceToINT == 0)
-          {
-            while (temp_flag != (listFlag))
-            {
-              i--;
-              temp_flag++;
-            }
-            
-            temp_flag = 1;
-            countFlag--;
-            listFlag = 1;
-            
-            setCursorPos(2, 20);
-            buildVerticalWall(35);
-
-            chFlag = 0;
-
-            setCursorPos(1, 20);
-            buildHorizontalWall(35, " ");
-            
-            goto displayAgain;
-          }
-          else
-          {
-            break;
-          }
+        {                               // If the data was neither a newline nor at the 0 byte
+          fin.seekg(-2, ios_base::cur); // Move to the front of that data, then to the front of the previous data
         }
       }
+      getline(fin, lastLine); // Read the current line
+      fin.close();//file close
     }
-
-    if(chFlag == 0)
+    else
     {
-      setCursorPos(1, 20);
-      buildVerticalWall(35);
-      askChoice(2, 30, tempStorage);
-
-      if(tempStorage == "+")
+      if(!fin.is_open())
       {
-        InvalidInputErr();
-        while(temp_flag != (listFlag))
-        {
-          i--;
-          temp_flag++;
-        }
-        temp_flag = 1;
-        listFlag = 1;
-
-        setCursorPos(2, 20);
-        buildVerticalWall(35);
-        setCursorPos(1, 20);
-        buildHorizontalWall(35, " ");
-
-        goto displayAgain;
-      }
-      ConvertChoiceToINT = validateString(tempStorage, (((countFlag)*5 + listFlag - 1)), ((countFlag)*5));
-      
-      if(ConvertChoiceToINT == 0)
-      {
-        while(temp_flag != (listFlag))
-        {
-          i--;
-          temp_flag++;
-        }
-
-        temp_flag = 1;
-        listFlag = 1;
-
-        setCursorPos(2, 20);
-        buildVerticalWall(35);
-        setCursorPos(1, 20);
-        buildHorizontalWall(35, " ");
-
-        goto displayAgain;
-      }
-      scrClr(0.5);
-    }
-    for(i = LIST.begin(), countFlag = 1; i != LIST.end(); ++i, countFlag++) // set data to string for searching
-    {
-      if(countFlag == ConvertChoiceToINT)
-      {
-        put = (*i);
+        cout << "DATA BASE-ERROR-404! ";//error
+        scrClr(2);
+        exit(1);
       }
     }
-
-    LIST.clear();        // flush vector data for re-using
-    tempStorage.clear(); // flush string for re-using
-  }
-
-  void getFolderPath() //? based on input choice of course->sem-subject we find correct folder and save path  to Sem_path
-  {
-    for(auto i = DATA.begin(); i != DATA.end(); ++i) // process to find folder path using vector tuple we have 3 input parameter coursename , sem , subject name
-    {
-
-      if(course_name == get<0>((*i)))
-        if(sem == get<1>((*i)))
-          if(subject_name == get<2>((*i)))
-            SemPath = get<3>((*i));
-    }
-
-    SemPath = AMS_Path + "\\" + SemPath; // assigning searched path to SemPath and concate AMS_Path
-
-  }
-
-  void getSemesterRecordFile() //? get data of course-semester-sub-path records
-  {
-    tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt"; // making path to AMS->OTHER->semsterRecord.txt
-    fstream fin(tempStorage.c_str(), ios::in);              // file opened in reading mode
-
-    if(!fin.is_open()) // if not opened
-    {
-      cout << "DATA BASE-ERROR-404! ";//error
-      scrClr(2);
-      exit(1);
-    }
-    else // if opened
-    {
-      tempStorage.clear();       // clear for re-using
-      getline(fin, tempStorage); // tempStorage used as temporary storage
-
-      while(!fin.eof()) // data receive until file ends
-      {
-        buffer.push_back(tempStorage); // save that string(data) in vector
-        getline(fin, tempStorage);     // fetch again from file
-      }
-      fin.close(); // file close
-    }
-
-    sort(buffer.begin(), buffer.end()); // sort file data in vector in Dictionary order
-    tempStorage.clear();
-  }
-
-  void ExtractStringFromBuffer() //? extracting main string into substring like course - sem - sub - path
-  {
-    for(auto i = buffer.begin(); i != buffer.end(); ++i) // insert in to vector-tuple from vector buffer with extracting string
-    {
-      tempStorage = (*i);      // temp variable for moving vector tempStorage to string
-      int found_pos, temp_pos; // temp variable for position storing
-
-      found_pos = tempStorage.find("|");                // find the first occurance of '|'
-      course_name = tempStorage.substr(0, (found_pos)); // get proper course name from string and save it to course_name
-      temp_pos = (found_pos + 1);                       // making next finding position
-
-      if(checkDuplicateRecord(LIST, course_name)) // checking if any duplicate course exists
-      {
-        LIST.push_back(course_name); // making list for input of UI screen of course select
-      }
-
-      found_pos = tempStorage.find("|", temp_pos);                // finds string till 1st pipe i.e coursename
-      sem = tempStorage.substr(temp_pos, (found_pos - temp_pos)); // stores the string in TEMP_STR
-      temp_pos = (found_pos + 1);                                 // searching next position
-
-      found_pos = tempStorage.find("|", temp_pos);                         // finds string till 2nd pipe i.e. semester
-      subject_name = tempStorage.substr(temp_pos, (found_pos - temp_pos)); // stores the string in TEMP_STR
-      temp_pos = (found_pos + 1);                                          // searching next position
-
-      found_pos = tempStorage.find("|", temp_pos); // finds string till 3rd pipe i.e. subjectname
-      SemPath = tempStorage.substr(temp_pos);      // stores the string in TEMP_STR
-
-      DATA.push_back(make_tuple(course_name, sem, subject_name, SemPath)); // makes a final string to display
-    }
-    //*clearing for reusing
-    tempStorage.clear();
-    course_name.clear();
-    sem.clear();
-    subject_name.clear();
-    SemPath.clear();
+    return lastLine;//return value
   }
 
   void lastlineDlt()
@@ -1992,57 +2106,6 @@ private:
      finout.close();                                    // file close
   }
 
-  string lastline()
-  {
-      ifstream fin;//create file object
-      string lastLine;
-
-      command.clear();//variable clear for re-use
-      command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command variable
-
-      fin.open(command.c_str());//file open in reading mode
-      if(fin.is_open())//file is open
-      {
-        fin.seekg(-1, ios_base::end); // go to one position before the EOF
-
-        bool keepLooping = true;
-
-        while(keepLooping)
-        {
-          char ch;
-          fin.get(ch); // Get current byte's data
-
-          if((int)fin.tellg() <= 1)
-          {                      // If the data was at or before the 0th byte
-            fin.seekg(0);        // The first line is the last line
-            keepLooping = false; // So stop there
-          }
-          else if (ch == '\n')
-          {                      // If the data was a newline
-            keepLooping = false; // Stop at the current position.
-          }
-          else
-          {                               // If the data was neither a newline nor at the 0 byte
-            fin.seekg(-2, ios_base::cur); // Move to the front of that data, then to the front of the previous data
-          }
-        }
-
-        getline(fin, lastLine); // Read the current line
-        fin.close();//file close
-
-      }
-      else
-      {
-        if(!fin.is_open())
-        {
-          cout << "DATA BASE-ERROR-404! ";//error
-          scrClr(2);
-          exit(1);
-        }
-      }
-
-      return lastLine;//return value
-    }
 
     int MarkAP_A(int choice) //? function to mark all students present/absent at once
     {
@@ -2342,80 +2405,10 @@ private:
 
     ~MODULE_2()
     {
-       buffer.clear(); // clearing buffer
+      buffer.clear(); // clearing buffer
       LIST.clear();   // clearing List
       command.clear();
       tempStorage.clear();
-    }
-
-    int checkDB() //? functions for checking at least(1) database semster Records exists or not
-    {
-        
-        if(!checkEmptyFile(AMS_Path + "\\OTHER\\semesterRecord.txt")) //check for proper file input
-        {
-          warnMsg("NO SETUP EXISTS! KINDLY ADD ATLEST 1 SETUP", 4, 19); // warn msg
-          return(false);
-        }
-        else
-        {
-          getSemesterRecordFile();
-          ExtractStringFromBuffer();
-          return (true);
-        }
-  
-        //tempStorage.clear();
-        
-    }
-
-    void askCourseChoice() //? take input choice of course for attendance
-    {
-      DisplayList_Input(course_name); // display list for taking input
-
-      for(auto i = DATA.begin(); i != DATA.end(); ++i) // process to make list of semester in particular course
-      {
-
-        if(course_name == get<0>((*i)))
-        {
-          if(checkDuplicateRecord(LIST, get<1>((*i)))) // cheking if any duplicate records
-          {
-            LIST.push_back(get<1>((*i))); // making distinguished list
-          }
-        }
-      }
-    }
-
-    void askSemsterChoice() //? take input choice of semester for attendance
-    {
-      DisplayList_Input(sem, 1);// display list for taking input
-
-      for(auto i = DATA.begin(); i != DATA.end(); ++i) // process to make list of subject in particular course & semester
-      {
-        if(course_name == get<0>((*i)) && sem == get<1>((*i)))
-        {
-          if(checkDuplicateRecord(LIST, get<2>((*i))))
-          {
-            LIST.push_back(get<2>((*i)));
-          }
-        }
-      }
-    }
-
-    bool askSubjectChoice() //? take input choice of subject for attendance
-    {
-      DisplayList_Input(subject_name);
-      getFolderPath();
-
-      if(checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt") && checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt") )
-      {
-        return true;
-      }
-      else
-      {
-        //error part
-        warnMsg(course_name +" SEM-" + sem + " " +subject_name,1,28," HAS PARTIAL CONTENT , PLEASE DELETE & RE-CREATE IT",4,15);
-        return false;
-      }
-      
     }
 
     int proceedForAttendance() //? functions for reconfirming to proceed for attendance
@@ -2435,7 +2428,7 @@ private:
 
       setCursorPos(1, 7);
       buildVerticalWall(65);
-     //build UI BOX
+      //build UI BOX
       while(line < 13)
       {
         setCursorPos(1,7);
@@ -2624,11 +2617,89 @@ private:
     //************************************************************************************/
   };
 
-  //*---------------------------STATIC DEFINATIONS-MODULE-2------------------------------/
+//*---------------------------STATIC DEFINATIONS-MODULE-2------------------------------/
+int MODULE_2::AT_OPTION_CHOICE;
+//-----------------------------------------------------------------------------------/
 
-  int MODULE_2::AT_OPTION_CHOICE;
+class MODULE_3 : public MODULE_GENERAL //?module 3 class
+{
 
-  //-----------------------------------------------------------------------------------/
+    //*=============================DATA-MEMBERS================================//
+
+    private:
+    
+    //! vector<string> RECORD;   OR
+    //! string RECORD
+
+    // here you have two free storage vector buffer and LIST
+    // if you wish to declare vector <RECORD> string then it is fine to declare
+    // i'll suggest buffer and LIST re-using
+
+    //* MOST IMPORTENT  YOU ARE GETTING LOTS OF FREE VARIABLE FROM GENERAL MODULE
+    //* SO THINK THRICE BEFORE DECLARING NEW VARIABLE
+
+    string date;
+
+    public:
+
+    static int CUS_REPORT_CHOICE;
+
+    protected:
+
+  //*=============================DATA-MEMBERS-END================================//
+
+  //*=============================MEMBERS-FUNCTIONS===================================//
+
+  private:
+  
+  public:
+
+  MODULE_3()
+  {
+    tempStorage.clear();
+    command.clear();
+  }
+  int confirmation()
+  {
+    //TODO: AFTER THINKING A LOT I'LL SUGGEST SMALL CONFIRMATION BCZ WE HAVEN'T PUT BACK BUTTON IN OUR WHOLE APPLICATION
+  return(0);
+  }
+  void askReportChoice()
+  {
+    //TODO CODE: SANJAL-SHIKHAA-FENIL
+    //CUS_REPORT_CHOICE=INPUT;  DON'T FORGET
+  }
+
+  void DateReport()
+  {
+    //TODO CODE: DRASHTI NUPUR
+  }
+
+  void studentReport()
+  {
+    //TODO CODE: HARSHIL-VIRAJ-SHUBHAM
+  }
+
+  ~MODULE_3()
+  {
+    tempStorage.clear();
+    command.clear();
+  }
+  
+  protected:
+
+  void SetNoObj(){}
+
+  //*=============================MEMBERS-FUNCTIONS-END===================================//
+
+};
+
+//*---------------------------STATIC DEFINATIONS-MODULE-3------------------------------/
+
+int MODULE_3::CUS_REPORT_CHOICE;
+
+//-----------------------------------------------------------------------------------/
+
 
   /**************************************   MODULES-END   ***************************************************/
 
@@ -2670,17 +2741,17 @@ private:
               
               if(MD2.askSubjectChoice())//ask subject
               {
-                    if(MD2.proceedForAttendance())
+                    if(MD2.proceedForAttendance()) //confirmation for right choice
                     {
-                      if(MD2.condfirmTodayAttendance())
+                      if(MD2.condfirmTodayAttendance()) //check if already taken for today
                       {
                            reask:
                            
-                           MD2.AttendanceOptionWindow();
+                           MD2.AttendanceOptionWindow(); //ask easy option for attendance taking method
                   
-                           if(MD2.takeAttendance(MODULE_2::AT_OPTION_CHOICE))
+                           if(MD2.takeAttendance(MODULE_2::AT_OPTION_CHOICE)) //take attendance
                            {
-                             MD2.AttendanceTakenSuccessfully();
+                             MD2.AttendanceTakenSuccessfully(); //finally taken
                            }
                            else
                            {
@@ -2696,6 +2767,44 @@ private:
         }
         case 3:
         {
+          MODULE_3 MD3;
+          if(MD3.checkDB())//check database
+          {
+            MD3.askCourseChoice();//ask course 
+            MD3.askSemsterChoice();//ask semester
+
+            if(MD3.askSubjectChoice())//ask subject
+            {
+              //TODO 1: SANJAL-SHIKHA CODE FUNCTION CALL
+                        // STORE YOUR CHOICE 1/2 == CUS_REPORT_CHOICE
+                        MD3.askReportChoice();
+
+
+              //TODO 2: CONFIRMATION BOX FOR EXIT
+              if(MD3.confirmation())
+              {
+
+                   //TODO 3: DEPENDING UPON CUS_REPORT_CHOICE
+                          //EITHER HARSHIL'S OR DRASHTI'S CODE WILL WORK
+                   
+                   switch(MODULE_3::CUS_REPORT_CHOICE)
+                   {
+                     case 1:{ //DRASHTI'S CODE DATE WISE
+                              MD3.DateReport();
+                              break;
+                            }
+                     case 2:{ // HARSHIL'S CODE STUDENT WISE
+                              MD3.studentReport();
+                              break;
+                            }
+                     default:{break;}       
+                   }   
+              }  
+              
+            }
+
+          }  
+
           break;
         }
         case 4:
