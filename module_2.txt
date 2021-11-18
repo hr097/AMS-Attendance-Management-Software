@@ -2,23 +2,65 @@ class MODULE_2 :
 
 private:
 
-vector<string> buffer,LIST; //vector buffer for file handling data receiver
-string *SCLT_ch;  //! DRASHTI USE
+vector<string> buffer,LIST; 
 vector<tuple<string,string,string,string>> DATA;
 
+int validateRollNo(string input, int Bnd, int start)     :int flag,tem;
+
 int checkDuplicateRecord(vector<string> vec,string search)
-void DisplayList_Input(string &put,int select=0)      :int listFlag = 1,chFlag=0,countFlag=0,temp=1;
+
+bool checkExistRollNo(string &Attendance,string rl,char AT,int select=0)
+
+void DisplayList_Input(string &put,int select=0)      :int listFlag = 1, chFlag = 0, countFlag = 0, temp_flag = 1;
+
 void getFolderPath()
+
 void getSemesterRecordFile()
+
 void ExtractStringFromBuffer()
-void ModificationOfAttDATA(string & Attendance,int choice)
+
+void lastlineDlt()
+
+int ValidateAttendance(string &input)            :int i;
+
+void ListOfAttendance(string &Attendance, int choice)  :int i,spacing_flag=0,space=1
+
+bool ModificationOfAttDATA(string &Attendance,int choice)   :int Empty_flag=0,i;
+      bool return_flag=false;
+
+void submitAttendanceToDB(string & Attendance)        :int sz;
+
+string lastline()                                 :string lastLine;
+
+int MarkAP_A(int choice)                         :int i
+
+int EnterPR_AR(int choice)                       :int i,Empty_flag=0,count=1;
+      bool flag=true;
+      bool CC_flag=true,string MCH;
 
 public :
 
-bool checkDB()                   :bool isEmpty;
-void askCourseChoice()           :int line;
+MODULE_2()
+
+~MODULE_2()
+
+int checkDB()
+
+void askCourseChoice()
+        
 void askSemsterChoice()
+
 void askSubjectChoice()
+
+int proceedForAttendance()                    :int line
+
+int condfirmTodayAttendance()                 :int i;
+
+void AttendanceOptionWindow()                 :int line;
+
+int takeAttendance(int choice)                :int process_flag = 0;
+
+void AttendanceTakenSuccessfully()
 
 protected:
 

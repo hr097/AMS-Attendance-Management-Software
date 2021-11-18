@@ -9,13 +9,13 @@ Memory used : based on requirement(no extra variable are declared)
 Date:27/10/2021
 file        : index.cpp
 Bugs        : bugs have found and it is fixed(conflict of input of choice like 1.45,1.abc,etc)
-Memory used :  based on requirement(no extra variable are declared)
+Memory used : based on requirement(no extra variable are declared)
 
 
 Date:28/10/2021
 file        :index.cpp
 Bugs        :no bugs
-Memory used : 1 same variable that is "int line" is declared in two functions so we can declare globally one time
+Memory used :1 same variable that is "int line" is declared in two functions so we can declare globally one time
 
 
 Date:29/10/2021
@@ -41,6 +41,33 @@ Date:13/11/2021
 file        :index.cpp
 Bugs        :No bugs found
 Memory used :based on requirement(no extra variable are declared)
+
+Date:17/11/2021
+file        :index.cpp
+Bugs        :No Bugs found
+Memory used :  
+
+int flag,tem     : class APP            ->int validateString(string input,int start)
+                 : class MODULE_2       ->int validateRollNo(string input, int Bnd, int start)
+
+string list      : class APP            ->bool checkAlphaSpInput(string &input)
+                   class MODULE_GENERAL ->void replaceWithHyphen(string &str)
+
+bool flag        : class APP            ->bool checkAlphaSpInput(string &input)
+                   class MODULE_2       ->int EnterPR_AR(int choice)
+
+bool Empty_flag   : class MODULE_2      ->int EnterPR_AR(int choice)
+                                        ->bool ModificationOfAttDATA(string &Attendance,int choice) 
+
+int i,j           : class APP           ->bool checkAlphaSpInput(string &input)
+                    class MODULE_GENERAL->void replaceWithHyphen(string &str)
+                    class MODULE_2      -> int ValidateAttendance(string &input)
+                                        -> void ListOfAttendance(string &Attendance, int choice)  
+                                        -> bool ModificationOfAttDATA(string &Attendance,int choice)
+                                        -> int MarkAP_A(int choice)
+                                        -> int EnterPR_AR(int choice)
+                                        -> int condfirmTodayAttendance()
+
 
 
 

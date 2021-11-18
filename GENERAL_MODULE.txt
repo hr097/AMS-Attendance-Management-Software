@@ -32,7 +32,7 @@ protected:
 virtual void SetNoObj()=0; //*for disable object creation of  MODULE_GENERAL
 
 
-void AppPath(string &path)
+
 
 void getDataFromFile(string path,string &FcName,int lineNo)   : int FileLine=1;
 
@@ -50,6 +50,8 @@ bool EmptyInput(string &input)
 int dirExists(const char *path)
 
 bool validateEmail(string email)
+
+int checkEmptyFile(string path)
 
 
 

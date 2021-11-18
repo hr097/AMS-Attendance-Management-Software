@@ -3,20 +3,34 @@ class MODULE_1:
 private:
 
 int createSemester()
+
 int confirmation()                : int line;
+
 int InfoModification()            : int line;
+
 int studConfirmation()            : int line;
+
 int InfoStudModification()        : int line;
+
 void UpdateName(string &input)
+
 void UpdateEmail(string &input)
+
 void EnterCourseName()
+
 void EnterSem()
-void EnterSubject() 
+
+void EnterSubject()
+ 
 void rollNo(int RollNo)
+
 void askNumberOfStudents()
 
 
 public:
+
+MODULE_1()//constructer
+~MODULE_1()//destructer
 
 void askFacDetails()
 void askStudDetails()             : int ROLLNO;
