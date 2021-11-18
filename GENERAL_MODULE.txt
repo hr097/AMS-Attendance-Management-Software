@@ -1,11 +1,11 @@
 
-NOTE:->INHERITED PROPERTIES OF APP CLASS
-
- 
-		              PUBLIC->PUBLIC OF MODULE_GENERAL
-		               PROTECTED->PROTECTED OF MODULE_GENERAL
-
----------------------------------------------------------------------
+NOTE:
+  ->INHERITED PROPERTIES OF APP CLASS 
+ +
+  PUBLIC->PUBLIC OF MODULE_GENERAL
+  PROTECTED->PROTECTED OF MODULE_GENERAL
+== WILL GET INDIVIDUAL MODULE
+----------------------------------------------------------------------------------------
 
 
 //**************************************** DATA MEMBERS ********************************************//
