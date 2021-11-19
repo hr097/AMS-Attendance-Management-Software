@@ -2667,10 +2667,10 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     temp_pos = (found_pos + 1);
     found_pos = date.find("/",temp_pos);
     y = date.substr(temp_pos);
-    cout << "date : " << d << endl;
-    cout << "month : " << m << endl;
-    cout << "year : " << y;
-    getch();
+    // cout << "date : " << d << endl;
+    // cout << "month : " << m << endl;
+    // cout << "year : " << y;
+    // getch();
 
     
 
@@ -2780,6 +2780,8 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     }
     else
     {
+      scrClr(0.5);
+      warnMsg("ENTERED DATE IS INVALID!",4,20);
       goto reAskDate;
     }
 
