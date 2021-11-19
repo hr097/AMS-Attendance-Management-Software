@@ -720,7 +720,7 @@ public:
     }
   }
   bool askSubjectChoice() //? take input choice of subject for attendance
-  {
+  { 
     DisplayList_Input(subject_name);
     getFolderPath();
     if(checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt") && checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt") )
@@ -902,7 +902,8 @@ protected:
       return 1; // if not found then return 1
     }
   }
-    void DisplayList_Input(string &put, int select = 0) //? display the list and take appropriate input of corse/sem/subject
+
+  void DisplayList_Input(string &put, int select = 0) //? display the list and take appropriate input of corse/sem/subject
   {
     int listFlag = 1, chFlag = 0, countFlag = 0, temp_flag = 1;
     auto i = LIST.begin();
@@ -2651,6 +2652,18 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
   //*=============================MEMBERS-FUNCTIONS===================================//
 
   private:
+
+  int validateDate(string &date)
+  {
+
+    // int d,m,y,found_pos;
+
+    // found_pos = date.find("/");
+    // d = d.substr(0,found_pos));
+
+  //  return 0;
+    
+  }
   
   public:
 
@@ -2662,17 +2675,72 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
   int confirmation()
   {
     //TODO: AFTER THINKING A LOT I'LL SUGGEST SMALL CONFIRMATION BCZ WE HAVEN'T PUT BACK BUTTON IN OUR WHOLE APPLICATION
-  return(0);
-  }
-  void askReportChoice()
-  {
-    //TODO CODE: SANJAL-SHIKHAA-FENIL
-    //CUS_REPORT_CHOICE=INPUT;  DON'T FORGET
+  return(1);
   }
 
-  void DateReport()
+  void askReportChoice()
+  {
+    int line = 0;
+
+    reask_report:
+    
+
+    scrClr(0.5);
+    setCursorPos(3);
+    cout<<setw(64)<<" WHICH TYPE OF REPORT DO YOU WANT TO GENERATE ? "<<endl;
+
+    setCursorPos(2,23);
+    buildVerticalWall(30);
+    
+    line=0;
+
+        while(line<5)
+        {
+            setCursorPos(1,23);
+            if(line == 1)
+            {
+                buildHorizontalWall(30,"1) DATE-WISE REPORT ");
+            }
+            else if(line == 3)
+            {
+                buildHorizontalWall(30, "2) STUDENT REPORT ");
+            }
+            else
+                buildHorizontalWall(30, " ");
+            line++;
+        }
+        setCursorPos(1,23);
+        buildVerticalWall(30);
+  
+        askChoice(3,33,tempStorage);
+
+        if(!cin)
+        {
+            cin.clear();
+            cin.ignore(80,'\n');
+        }
+        ConvertChoiceToINT = validateString(tempStorage,2,1);
+
+        if(ConvertChoiceToINT == 0)
+        {
+            goto reask_report;
+        }
+        else
+        {
+          CUS_REPORT_CHOICE=(ConvertChoiceToINT);
+        }
+  }
+  
+  void DateInput()
   {
     //TODO CODE: DRASHTI NUPUR
+    fflush(stdin);
+    setCursorPos(10,22);
+    cout << "Enter Date (DD/MM/YYYY) : ";
+    SetColor(1);
+    getline(cin,date);
+    validateDate(date);
+
   }
 
   void studentReport()
@@ -2723,7 +2791,7 @@ int MODULE_3::CUS_REPORT_CHOICE;
       {
         case 1:
         {
-            //modul 1
+            //module 1
             MODULE_1 MD1;
             MD1.askFacDetails();//ask faculty details
             MD1.askStudDetails();//ask student details
@@ -2774,27 +2842,20 @@ int MODULE_3::CUS_REPORT_CHOICE;
             MD3.askSemsterChoice();//ask semester
 
             if(MD3.askSubjectChoice())//ask subject
-            {
-              //TODO 1: SANJAL-SHIKHA CODE FUNCTION CALL
-                        // STORE YOUR CHOICE 1/2 == CUS_REPORT_CHOICE
-                        MD3.askReportChoice();
-
-
-              //TODO 2: CONFIRMATION BOX FOR EXIT
+            { 
+              MD3.askReportChoice();
+            
               if(MD3.confirmation())
               {
-
-                   //TODO 3: DEPENDING UPON CUS_REPORT_CHOICE
-                          //EITHER HARSHIL'S OR DRASHTI'S CODE WILL WORK
                    
                    switch(MODULE_3::CUS_REPORT_CHOICE)
                    {
-                     case 1:{ //DRASHTI'S CODE DATE WISE
-                              MD3.DateReport();
+                     case 1:{ 
+                              //MD3.DateInput();
                               break;
                             }
-                     case 2:{ // HARSHIL'S CODE STUDENT WISE
-                              MD3.studentReport();
+                     case 2:{ 
+                              //MD3.studentReport();
                               break;
                             }
                      default:{break;}       
