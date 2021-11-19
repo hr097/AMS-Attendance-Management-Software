@@ -75,6 +75,14 @@ int i,j           : class APP           ->bool checkAlphaSpInput(string &input)
                                         -> int condfirmTodayAttendance()
 
 
+Date:19/11/2021
+file        :index.cpp
+Bugs        :BUG_1 ---> "DO YOU CONFIRM THESE ROLL NUMBER" this message should be much right side in the wall
+            :BUG_2 ---> in "DO YOU CONFIRM THESE ROLL NUMBER" this message "NUMBERS" instead of "NUMBER" --   it's my suggestion
+            :BUG_3 ---> "TYPE '+' FOR EXTENDED LIST" same as we shoulb put "TYPE '-' FOR PREVIOUS LIST" at last of extended list
+Memory used :based on requirement(no extra variable are declared)
+
+
 
 
 
