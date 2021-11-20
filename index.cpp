@@ -2719,7 +2719,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     {
       //fflush(stdin);
       command.clear();
-      getline(fin, command); // tempStorage used as temporary storage
+      getline(fin, command);
       buffer.push_back(command);
       while(!fin.eof()) // data receive until file ends
       {
@@ -2746,7 +2746,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
         DATA.push_back(make_tuple(date,time,attendance,blank));
         
       }
-      for(auto i = DATA.begin(); i != DATA.end(); ++i) // process to make list of semester in particular cours
+      for(auto i = DATA.begin(); i != DATA.end(); ++i) 
       {
         if(input == get<0>((*i)))
         {
