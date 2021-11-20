@@ -691,7 +691,7 @@ public:
       }
   }
 
-    void askCourseChoice() //? take input choice of course for attendance
+  void askCourseChoice() //? take input choice of course for attendance
   {
     DisplayList_Input(course_name); // display list for taking input
     for(auto i = DATA.begin(); i != DATA.end(); ++i) // process to make list of semester in particular course
@@ -2657,10 +2657,11 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
   {
 
     string d,m,y;
+    int found_pos,temp_pos;
 
-    int found_pos = date.find("/");
+    found_pos = date.find("/");
     d = date.substr(0,found_pos);
-    int temp_pos = (found_pos + 1);
+    temp_pos = (found_pos + 1);
     found_pos = date.find("/",temp_pos);
     m= date.substr(temp_pos,(found_pos-temp_pos));
 
@@ -2693,6 +2694,74 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
     //return 0;
     
+  }
+
+  void DateReport(string input)
+  {
+    command.clear();
+    tempStorage.clear();
+    buffer.clear();
+    LIST.clear();
+
+    int found_pos,temp_pos;
+    string time,attendance,blank="";
+
+    command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command var
+    ifstream fin(command.c_str(), ios::in);//file open
+
+    if(!fin.is_open())//file is open
+    {  
+      cout << "DATA BASE-ERROR-403! ";//error
+      scrClr(2);
+      exit(1);
+    }
+    else
+    {
+      //fflush(stdin);
+      command.clear();
+      getline(fin, command); // tempStorage used as temporary storage
+      buffer.push_back(command);
+      while(!fin.eof()) // data receive until file ends
+      {
+        getline(fin, command);     // fetch again from file
+        buffer.push_back(command); // save that string(data) in vector
+      }
+
+      command.clear();
+      for(auto i = buffer.begin(); i != buffer.end(); ++i)
+      {
+        tempStorage = (*i);
+        found_pos = tempStorage.find("|");
+        
+        command = tempStorage.substr(0,found_pos);
+        temp_pos = (found_pos+1);
+
+        found_pos = tempStorage.find("|", temp_pos);
+        time = tempStorage.substr(temp_pos,(found_pos-temp_pos));
+        temp_pos = (found_pos+1);
+
+        found_pos = tempStorage.find("|", temp_pos);
+        attendance = tempStorage.substr(temp_pos);
+
+        DATA.push_back(make_tuple(date,time,attendance,blank));
+        
+      }
+      for(auto i = DATA.begin(); i != DATA.end(); ++i) // process to make list of semester in particular cours
+      {
+        if(input == get<0>((*i)))
+        {
+          command = get<0>((*i));
+          time = get<1>((*i));
+          attendance = get<2>((*i));
+          break;
+        }
+      }
+
+      // cout << "date : " << command << endl;
+      // cout << "time : " << time << endl;
+      // cout << "attendance : " << attendance << endl;
+
+    }
   }
   
   public:
@@ -2771,17 +2840,25 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     cout << "Enter Date (DD/MM/YYYY) : ";
     SetColor(1);
     getline(cin,date);
+    SetColor(0);
     
+    if(EmptyInput(date))
+    {
+      scrClr(0.5);
+      InvalidInputErr();
+      goto reAskDate;
+    }
 
     if(validateDate(date))
     {
-      cout<< endl << "Date : " << date;
+      //cout<< endl << "Date : " << date;
+      DateReport(date);
       scrClr(5);
     }
     else
     {
       scrClr(0.5);
-      warnMsg("ENTERED DATE IS INVALID!",4,20);
+      warnMsg("ENTERED DATE IS INVALID!",4,25);
       goto reAskDate;
     }
 
