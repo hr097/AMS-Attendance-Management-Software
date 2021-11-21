@@ -2641,21 +2641,26 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
   private:
 
-  int validateDate(string &date)
+  bool validateDate(string input)
   {
+    command.clear();
+    tempStorage.clear();
+    buffer.clear();
+    DATA.clear();
 
     string d,m,y;
     int found_pos,temp_pos;
+    bool flag;
 
-    found_pos = date.find("/");
-    d = date.substr(0,found_pos);
+    found_pos = input.find("/");
+    d = input.substr(0,found_pos);
     temp_pos = (found_pos + 1);
-    found_pos = date.find("/",temp_pos);
-    m= date.substr(temp_pos,(found_pos-temp_pos));
+    found_pos = input.find("/",temp_pos);
+    m= input.substr(temp_pos,(found_pos-temp_pos));
 
     temp_pos = (found_pos + 1);
-    found_pos = date.find("/",temp_pos);
-    y = date.substr(temp_pos);
+    found_pos = input.find("/",temp_pos);
+    y = input.substr(temp_pos);
     // cout << "date : " << d << endl;
     // cout << "month : " << m << endl;
     // cout << "year : " << y;
@@ -2665,34 +2670,75 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
     if(stoi(d)<=0 || stoi(m)<=0 || stoi(m)>12 || stoi(y)<1000 || stoi(y)>9999)
     {
-        return 0;
+        flag = false;
     }
     else if(((stoi(d)>31)&&(stoi(m)==1||stoi(m)==3||stoi(m)==5||stoi(m)==7||stoi(m)==8||stoi(m)==10||stoi(m)==12)) || ((stoi(d)>30)&&(stoi(m)==4||stoi(m)==6||stoi(m)==9||stoi(m)==11)))
     {
-        return 0;
+        flag = false;
     }
     else if(((stoi(d)>28) && (stoi(m)==2) && (stoi(y)%4!=0||(stoi(y)%400!=0 && stoi(y)%100==0))) || ((stoi(d)>29 && stoi(m)==2) && (stoi(y)%4==0||(stoi(y)%400==0 && stoi(y)%100!=0))))
     {
-        return 0;
+        flag = false;
     }
     else
     {
-    	return 1;
+    	//return 1;
+      command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command var
+      ifstream fin(command.c_str(), ios::in);//file open
+      if(!fin.is_open())//file is open
+      {  
+        cout << "DATA BASE-ERROR-403! ";//error
+        scrClr(2);
+        exit(1);
+      }
+      else
+      {
+        //fflush(stdin);
+        command.clear();
+        getline(fin, command);
+        buffer.push_back(command);
+        while(!fin.eof()) // data receive until file ends
+        {
+          getline(fin, command);     // fetch again from file
+          buffer.push_back(command); // save that string(data) in vector
+        }
+        command.clear();
+        for(auto i = buffer.begin(); i != buffer.end(); ++i)
+        {
+          tempStorage = (*i);
+          found_pos = tempStorage.find("|");
+          
+          date = tempStorage.substr(0,found_pos);
+
+          DATA.push_back(make_tuple(date,"","",""));
+        }
+
+        for(auto i = DATA.begin(); i != DATA.end(); i++) 
+        {
+          
+          if(input == get<0>((*i)))
+          {
+            date = get<0>((*i));
+            flag = true;
+            break;
+          } 
+        }
+      }
     }
 
-    //return 0;
+    return (flag);
     
   }
 
-  bool DateReport(string input)
+  void DateReport(string input)
   {
     command.clear();
     tempStorage.clear();
     buffer.clear();
-    LIST.clear();
+    DATA.clear();
 
     int found_pos,temp_pos;
-    string time,attendance,blank="";
+    string time,attendance;
 
     command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command var
     ifstream fin(command.c_str(), ios::in);//file open
@@ -2731,16 +2777,17 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
         found_pos = tempStorage.find("|", temp_pos);
         attendance = tempStorage.substr(temp_pos);
 
-        DATA.push_back(make_tuple(date,time,attendance,blank));
+        DATA.push_back(make_tuple(date,time,attendance,""));
         
       }
+
+      fin.close();
       
       
       for(auto i = DATA.begin(); i != DATA.end(); i++) 
       {
         if(input == get<0>((*i)))
         {
-          cout << get<0>((*i)) << endl;
           date = get<0>((*i));
           time = get<1>((*i));
           attendance = get<2>((*i));
@@ -2749,15 +2796,20 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
         }
       }
       
-      setCursorPos(5,20);
+      setCursorPos(5,22);
 
       cout << "date : " << date << endl;
+
+      setCursorPos(1,22);
       cout << "time : " << time << endl;
+
+      setCursorPos(1,22);
       cout << "attendance : " << attendance << endl;
-      return true;
+      scrClr(5);
+      //return true;
 
     }
-    fin.close();
+    
   }
 
   int studentConfirmation(string input)
@@ -2961,16 +3013,23 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
       goto reAskDate;
     }
 
-    if(validateDate(date))
-    {
-      //cout<< endl << "Date : " << date;
-      DateReport(date);
-    }
-    else
+    if(checkAlphaSpInput(date))
     {
       scrClr(0.5);
       warnMsg("ENTERED DATE IS INVALID!",4,25);
       goto reAskDate;
+    }
+
+    if(!validateDate(date))
+    {
+      scrClr(0.5);
+      warnMsg("ENTERED DATE IS INVALID!",4,25);
+      goto reAskDate;
+      //cout<< endl << "Date : " << date;
+    }
+    else
+    {
+      DateReport(date); 
     }
 
   }
