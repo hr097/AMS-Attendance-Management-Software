@@ -2641,14 +2641,14 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
   private:
 
-  bool validateDate(string input)
+  bool validateDateAndReportGen(string input)
   {
     command.clear();
     tempStorage.clear();
     buffer.clear();
     DATA.clear();
 
-    string d,m,y;
+    string d,m,y,time,attendance;
     int found_pos,temp_pos;
     bool flag;
 
@@ -2709,19 +2709,46 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
           found_pos = tempStorage.find("|");
           
           date = tempStorage.substr(0,found_pos);
+          temp_pos = (found_pos+1);
 
-          DATA.push_back(make_tuple(date,"","",""));
+          found_pos = tempStorage.find("|", temp_pos);
+          time = tempStorage.substr(temp_pos,(found_pos-temp_pos));
+          temp_pos = (found_pos+1);
+  
+          found_pos = tempStorage.find("|", temp_pos);
+          attendance = tempStorage.substr(temp_pos);
+  
+          DATA.push_back(make_tuple(date,time,attendance,""));
         }
-
+        
+        fin.close();
+        
+        
         for(auto i = DATA.begin(); i != DATA.end(); i++) 
         {
-          
           if(input == get<0>((*i)))
           {
             date = get<0>((*i));
+            time = get<1>((*i));
+            attendance = get<2>((*i));
             flag = true;
             break;
-          } 
+          }
+          flag = false;
+        }
+      
+        if(flag)
+        {
+          setCursorPos(5,22);
+    
+          cout << "date : " << date << endl;
+    
+          setCursorPos(1,22);
+          cout << "time : " << time << endl;
+    
+          setCursorPos(1,22);
+          cout << "attendance : " << attendance << endl;
+          scrClr(5);
         }
       }
     }
@@ -2730,7 +2757,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     
   }
 
-  void DateReport(string input)
+  /*void DateReport(string input)
   {
     command.clear();
     tempStorage.clear();
@@ -2810,7 +2837,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
     }
     
-  }
+  }*/
 
   int studentConfirmation(string input)
   {
@@ -3019,16 +3046,12 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
       goto reAskDate;
     }
 
-    if(!validateDate(date))
+    if(!validateDateAndReportGen(date))
     {
       scrClr(0.5);
       warnMsg("ENTERED DATE IS INVALID!",4,25);
       goto reAskDate;
       //cout<< endl << "Date : " << date;
-    }
-    else
-    {
-      DateReport(date); 
     }
 
   }
