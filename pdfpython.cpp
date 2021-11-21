@@ -2,14 +2,11 @@
 #include<fstream>
 #include<conio.h>
 #include<vector>
-#include<algorithm>
+
 
 using namespace std;
 
 
-//! need to set AMS DATABASE path be we can't directly create file in program *86 file
-//! later on after shubham's review we will change the path according to him
-//! PYCACHE FOLDER will be automatically created so need to discuss on that
 
    int countLinesOfFile(string FilePath) //? function for counting lines in text file
    {   
@@ -50,8 +47,8 @@ using namespace std;
     if (!write.is_open())//if file is not open than print path error
     {
       cout << "DATA BASE-ERROR-201-204! ";//error
-      // scrClr(2);
-      //exit(1);
+       //scrClr(2);
+       //exit(1);
     }
     else//if file is open than write data in file
     {
@@ -119,7 +116,15 @@ int makePdf(string atachmentPath,string pdfName) //? making pdf
     {   
         command.clear();
 
-        command ="from fpdf import FPDF\npdf = FPDF()\npdf.add_page()\npdf.set_font(\"Arial\", size = 15)\npdf.cell(200, 10, txt = \"Fedingo.com\", ln = 1, align = 'C')\npdf.cell(200, 10, txt = \"Useful tech articles\", ln = 2, align = 'C')\n";
+        command ="from fpdf import FPDF\npdf = FPDF()\npdf.add_page()\npdf.set_font(\"Arial\", size = 15)\n";
+        
+        int line=0;
+        for(auto k=LIST.begin();k!=LIST.end();++k)
+        {
+          line++;
+          command = command + "pdf.cell(200, 10, txt = \"" + (*k) + "\"" +", ln =" + to_string(line) + ", align = 'L')\n";
+        }
+        
         command = command + "pdf.output(\"" + pdfName + "\")";
 
         write<<command; //WRITE TO PY PDF CODE FILE
@@ -142,7 +147,7 @@ int makePdf(string atachmentPath,string pdfName) //? making pdf
 int main()
 {
 
-   makePdf("C:\\Users\\DELL\\OneDrive\\Desktop\\userdetails.txt","userdetails.pdf");
+   makePdf("C:\\Users\\DELL\\OneDrive\\Desktop\\AMS\\APP_class.txt","APP_class.pdf");
 
    return 0;
 }
