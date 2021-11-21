@@ -2996,7 +2996,6 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
   
   void DateInput()
   {
-    //TODO CODE: DRASHTI NUPUR
     reAskDate:
     scrClr(0.5);
     fflush(stdin);
@@ -3036,7 +3035,6 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
   void studentReport()
   {
-    //TODO CODE: HARSHIL-VIRAJ-SHUBHAM
     scrClr(0.5);
     RoLLNo.clear();
     up:
