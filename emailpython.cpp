@@ -60,7 +60,7 @@ using namespace std;
 int main()
 {
 
-   sendToEmail("ams.software.team@gmail.com","Amsisrich@45","harshilramani9777@gmail.com","TESTING","HELLO IS THAT SUCCESSFULL","C:\\Users\\DELL\\OneDrive\\Desktop\\cashback 3000\\NOC_w.pdf","happy.pdf");
+   sendToEmail("xyz@gmail.com","password","harshilramani9777@gmail.com","TESTING","HELLO IS THAT SUCCESSFULL","C:\\Users\\DELL\\OneDrive\\Desktop\\cashback 3000\\NOC_w.pdf","happy.pdf");
 
     return 0;
 }
