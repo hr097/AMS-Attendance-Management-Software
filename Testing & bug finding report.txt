@@ -83,6 +83,16 @@ Bugs        :BUG_1 ---> "DO YOU CONFIRM THESE ROLL NUMBER" this message should b
 Memory used :based on requirement(no extra variable are declared)
 
 
+Date:30/11/2021
+file        :index.cpp
+Bugs        :No bugs found
+Memory used :
+
+int found_pos,temp_pos   -->bool IfDateExistThenGetData(string dt)
+                         -->void makeDateReport()
+                         -->void getStudentData()
+
+
 
 
 
