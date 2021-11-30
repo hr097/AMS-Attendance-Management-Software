@@ -2,14 +2,47 @@
 #include<fstream>
 #include<conio.h>
 #include<stdbool.h> // * boolean operation
+#include<thread> //* for therading
+
 
 //*NOTE THAT : ACCORDING TO REQUIREMENT sendToEmail() can be changed and you must have only python installed on your system in order to send email and run this function
+
+//* THIS IS JUST A LOGIC MAY BE ACCORDING TO YOUR  APPLICATION REQUIREMENT YOUR CODE CAN BE DIFFERENT
+
+//for more help : harshilramani9777@gmail.com / harshilramani.mscit20@vnsgu.ac.in
+
+
 bool email_flag;
 bool process_flag;
 
 using namespace std;
 
-   void sendToEmail(string SenderAddress,string password,string RecepientAddress,string Subject,string Msg,string AttachmentPath,string fileName) //? sending email to user
+  void LoadingProcess()
+  {
+    tempStorage.clear();
+    tempStorage = "WORKING ON IT";
+    do
+    {
+    scrClr(0.5);
+    setCursorPos(9,26);
+    SetColor(2);
+    ShowConsoleCursor(false);
+    cout << tempStorage ;
+    scrClr(1);
+    tempStorage = tempStorage + ".";
+ 
+    if(process_flag)
+    {
+      break;
+    }
+
+    }while(true);
+    
+    tempStorage.clear();
+    SetColor(0);
+  }
+
+  void sendToEmail(string SenderAddress,string password,string RecepientAddress,string Subject,string Msg,string AttachmentPath,string fileName) //? sending email to user
   {   
       command.clear(); // clear for re-using
   
@@ -29,7 +62,7 @@ using namespace std;
   
           //* make python code for email
   
-          command ="import smtplib\nfrom email.mime.multipart import MIMEMultipart\nfrom email.mime.text import MIMEText\nfrom email.mime.base import MIMEBase\nfrom email import encoders\nimport sys\nclass DevNull:\n    def write(self, msg):\n        pass\n\nsys.stderr = DevNull()\nfromaddr = \"";
+          command ="import smtplib\nfrom email.mime.multipart import MIMEMultipart\nfrom email.mime.text import MIMEText\nfrom email.mime.base import MIMEBase\nfrom email import encoders\n\nfromaddr = \"";
           command = command + SenderAddress + "\"\ntoaddr = \"" + RecepientAddress + "\"\n"; 
           command = command + "msg = MIMEMultipart()\nmsg['From'] = fromaddr\nmsg['To'] = toaddr\nmsg['Subject'] = \"";
           command = command + Subject +"\"\nbody = \"\"\"" + Msg + "\"\"\"\nmsg.attach(MIMEText(body, 'plain'))\n";
@@ -43,15 +76,22 @@ using namespace std;
           write.close();// file closed
           
           command.clear();
-          command = "python "+AMS_Path + "\\OTHER\\mail.py "; 
+          command = "python "+AMS_Path + "\\OTHER\\mail.py " + "1> " + AMS_Path + "\\OTHER\\output.txt 2>&1"; 
   
-          int err = system(command.c_str()); //* FILE SENDING TO EMAIL USING PYTHON CODE
-  
+          system(command.c_str()); //* FILE SENDING TO EMAIL USING PYTHON CODE
+          
+          command.clear(); 
+          command = AMS_Path + + "\\OTHER\\output.txt";
+
+          int err = checkEmptyFile(command);
+          remove(command.c_str()); // delete output/error file
+
           command.clear(); 
           command = AMS_Path + "\\OTHER\\mail.py"; 
   
           remove(command.c_str()); //delete py file
           remove(AttachmentPath.c_str()); //delete attachment file
+
           
           process_flag=true;
 
@@ -59,12 +99,30 @@ using namespace std;
           email_flag=false;
           else
           email_flag=true;
-
+          
       }
 
-     
-      
   }
+
+//*threading used for  processing email part  
+      MODULE_3 MD3;
+      thread t1(&sendToEmail,MD3,"ams.software.team@gmail.com","Amsisrich@45",FacultyEmail,"CUSTOMIZE-ATTENDANCE-REPORT","Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your Customized Attendance Report.\n\nThank You.\n\n",SemPath+"\\DAILY-RECORD\\052_Harshil_Ramani_PA04.pdf","AMS_REPORT_BSCIT_SEM_3_OOP.pdf"); 
+      thread t2(&LoadingProcess,MD3);
+
+      t1.join();
+      t2.join();
+
+      scrClr();
+      
+      if(process_flag && email_flag)
+      {
+        reportSentSuccessfully();
+      }
+      else
+      {
+        warnMsg("REPORT COULDN'T BE SENT !",4,26,"ERROR CODE : 503/599/408/424/444",1,22);
+      }     
+      
 
 
 
