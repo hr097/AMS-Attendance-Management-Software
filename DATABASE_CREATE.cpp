@@ -58,7 +58,7 @@ int main()
 
         string AMS_Path=pathDocument; // take original documents path into string
 
-        AMS_Path =  AMS_Path + "\\AMS"; //making AMS folder path
+        AMS_Path =  AMS_Path + "\\{JSN-1008-JSK-22-10-2021}"; //making AMS folder path
         ApplicationPath = AMS_Path; //backup for getting ROOT-OF-AMS  path
 
 
@@ -105,7 +105,7 @@ int main()
         }
         else 
         {
-          //cout<<endl<<"\nDirectory Already Exist\n";
+          cout<<endl<<"\nDirectory Already Exist\n";
         }
 
     }
