@@ -1,23 +1,23 @@
+#include <algorithm> // * for transform function access
+#include <conio.h>   // * console input output
+#include <ctime>     // * for getting current date and time
+#include <cwchar>    // * for console font purpose
+#include <fstream>   // * file handling functions access
 #include <iostream>  // * c++ code style use
+#include <iomanip>   // * for manipulator
+#include <math.h>    // * math operations
+#include <regex>     // * for email validation
+#include <string.h>  // * C style string related functions access
+#include <string>    // * C++ STL( string library) function access
+#include <stdbool.h> // * boolean operation
+#include <sstream>   // * for conversion to string
 #include <stdio.h>   // * for c style code use
 #include <stdlib.h>  // * standard library like dynamic memory allocation and exit macros and other..
-#include <conio.h>   // * console input output
-#include <windows.h> // * windows console related functions handle
-#include <unistd.h>  // * for sleep function
-#include <iomanip>   // * for manipulator
-#include <cwchar>    // * for console font purpose
-#include <string.h>  // * C style string related functions access
-#include <stdbool.h> // * boolean operation
-#include <math.h>    // * math operations
-#include <fstream>   // * file handling functions access
-#include <string>    // * C++ STL( string library) function access
-#include <regex>     // * for email validation
-#include <algorithm> // * for transform function access
-#include <ctime>     // * for getting current date and time
-#include <sstream>   // * for conversion to string
-#include <vector>    // * STL DYNAMIC ARRAY used
 #include <tuple>     // * for using tuples 
 #include <thread>    // * using multi threading
+#include <unistd.h>  // * for sleep function
+#include <vector>    // * STL DYNAMIC ARRAY used
+#include <windows.h> // * windows console related functions handle
 
 
 //--------FOR-DOCUMENT PATH GETTING------/
@@ -68,6 +68,10 @@ using namespace std; // standard namespace for  resolving naming coflicts
 //***************************** APP-CLASS ***********************************/
 
 void Debug(string t) //! EOP() seek.edit(*required) :ALL AMS TEAM
+{
+  cout<<endl<<t<<getch();
+}
+void Debug(int t) //! EOP() seek.edit(*required) :ALL AMS TEAM
 {
   cout<<endl<<t<<getch();
 }
@@ -290,19 +294,19 @@ private:
     Time(0,16); // current time print
 
     setCursorPos(2);
-    cout << setw(55) << " || ATTENDANCE MANAGEMENT SYSTEM ||" << endl; // TITLE OF APP
+    cout << setw(57) << " || ATTENDANCE MANAGEMENT SYSTEM ||" << endl; // TITLE OF APP
 
     string operationChoice;
    
     //build UI-Box screen of HOME SCREEN
-    setCursorPos(1,15);//set cursor position
+    setCursorPos(1,17);//set cursor position
     buildVerticalWall(43);
 
     line = 0;
  
     while (line < 11) 
     {
-      setCursorPos(1, 15);
+      setCursorPos(1, 17);
       if (line == 1)
         buildHorizontalWall(43, "1) NEW SETUP FOR SEMESTER");
       else if (line == 3)
@@ -318,10 +322,10 @@ private:
       line++;
     }
 
-    setCursorPos(1,15);
+    setCursorPos(1,17);
     buildVerticalWall(43);
 
-    askChoice(2,30,operationChoice);
+    askChoice(2,32,operationChoice);
     
     //! EOP() seek.edit(*required) :  NUPUR KUKADIYA
     if(!cin) // new line(enter key input ignoring) // not necessary bcz it is set as invalid input error
@@ -415,7 +419,7 @@ protected:
   string tempStorage;        //* TEMPORARY STORAGE FOR APPLICATION VARIABLE
   string command;            //* COMMAND VARIABLE FOR SYSTEM()
 
-  void SetColor(int ForgC) //?for setting individual text color
+  void SetColor(int color) //?for setting individual text color
   {
     WORD wColor;                                      // color specifier
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE); // create windows handle
@@ -424,7 +428,7 @@ protected:
     if(GetConsoleScreenBufferInfo(hStdOut, &csbi))
     {
       // Mask out all but the background attribute, and add in the forgournd color
-      wColor = (csbi.wAttributes & 0xF0) + (ForgC & 0x0F);
+      wColor = (csbi.wAttributes & 0xF0) + (color & 0x0F);
       SetConsoleTextAttribute(hStdOut,wColor); // set console text color
     }
     
@@ -736,6 +740,33 @@ protected:
     cout << CUR_TIME;
     SetColor(0);//set color black
   }
+  
+  int countLinesOfFile(string FilePath) //? function for counting lines in text file
+  {   
+      string data; // store data temp variable
+      int lines=0; // to store the lines
+      ifstream read(FilePath.c_str(),ios::in); // reading mode file opened
+      if(!read.is_open()) 
+      {   
+          scrClr();
+          setCursorPos(9,28);
+          cout << "DATABASE-ERROR : 404 ";//error
+          scrClr(2);
+          exit(1);
+      } 
+      else
+      {   
+          getline(read,data); // take first line
+          while(!read.eof())
+          {
+              lines++;
+              getline(read,data);
+          }
+          lines++;
+          read.close();
+      }
+      return(lines);
+  }
 
   int checkEmptyFile(string path)//?check empty file
   {
@@ -913,7 +944,7 @@ protected:
           system(command.c_str()); //* FILE SENDING TO EMAIL USING PYTHON CODE
           
           command.clear(); 
-          command = AMS_Path + + "\\OTHER\\output.txt";
+          command = AMS_Path + "\\OTHER\\output.txt";
 
           int err = checkEmptyFile(command);
           remove(command.c_str()); // delete output/error file
@@ -965,6 +996,17 @@ protected:
        return tem; //returns converted string.to_int(INT)
      }
   
+  }
+
+  string DoubleBackslashPath(string path)//?insering backslash in path for paython file
+  {
+      int found = path.find("\\",0);           //find backslash
+      while(found<path.length())               //check whether the backslash index no. out of range or not
+      {
+          path.insert(found,"\\");            //insert one backslash
+          found = path.find("\\",found+2);    //found backslash again from (found+2)
+      }
+      return path;      //return path
   }
 
 };
@@ -1424,26 +1466,38 @@ protected:
   virtual int studConfirmation() //?basic confirmation message for user
   {
     int line;
-
     reConfirm:
     scrClr(0.5);
-
     // BOX-UI FOR STUDENT INFO CONFIRM
     setCursorPos(5, 15);
     cout << "STUDENT ROLL NUMBER " << right << setw(4) << ": " << RoLLNo;
     setCursorPos(1, 15);
     cout << "STUDENT NAME " << right << setw(11) << ": " << student_name;
     setCursorPos(1, 15);
-    cout << "STUDENT E-MAIL " << right << setw(9) << ": " << student_email;
+    if(student_email.length()<=35)
+    {cout << "STUDENT E-MAIL " << right << setw(9) << ": " << student_email;}
+    else
+    {
+      int l=0;
+      cout << "STUDENT E-MAIL " << right << setw(9) << ": ";
+      while(l<student_email.length())
+      {
+        if(l==35)
+        {
+          setCursorPos(1,39);
+        }
+        cout<<student_email[l];
+        l++;
+        
+      }
+    }
 
-    ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
-
+    ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking 
     if (ConvertChoiceToINT == -1) // validate input
     {
       InvalidInputErr(); // error message
       goto reConfirm;
     }
-
     return (ConvertChoiceToINT); // returns confirmation value yes=1 / no=0
   }
 
@@ -1497,7 +1551,7 @@ private:
 
       system(command.c_str()); // creating FAC&STUD_DETAILS directory by CMD
 
-      command = "mkdir " + SemPath + "\\MONTHLY-REPORTS"; // making COMMAND FOR MONTHLY_REPORTS folder
+      command = "mkdir " + SemPath + "\\REPORTS"; // making COMMAND FOR MONTHLY_REPORTS folder
 
       system(command.c_str()); // creating MONTHLY_REPORTS directory by CMD
 
@@ -1734,7 +1788,7 @@ private:
     
     transform(input.begin(), input.end(), input.begin(), ::tolower); // convert to uppercase
 
-    if(!LengthValidation(input,29))
+    if(!LengthValidation(input,58)) // check email input length
     {
       goto reinputOfEmail;//re-ask student email as length exceed
     }
@@ -2049,7 +2103,7 @@ private:
     }
   } 
 
-  string lastlineOfATTRecords() //? get last line of file  for attendance proccedure
+  /*string lastlineOfATTRecords() //? get last line of file  for attendance proccedure
   {
     ifstream fin;//create file object
     string lastLine;
@@ -2094,6 +2148,7 @@ private:
     }
     return lastLine;//return value
   }
+  */
 
   /*  //! EOP() seek.review(*required) there is no use of it : ALL AMS TEAM
   void lastlineDlt() //? delete the last line of file 
@@ -2255,12 +2310,68 @@ private:
 
   }
 
+  int ModifyChoice(int choice)
+  {  
+      int line = 0;
+      command.clear();
+      reAskModify:
+  
+      scrClr(0.5);
+      setCursorPos(3,21);
+      cout << " HOW DO YOU WANT TO MODIFY THE LIST ? "<<endl;
+      setCursorPos(2,21);
+      buildVerticalWall(35);
+          
+      line=0;
+  
+          while(line<5)
+          {
+              setCursorPos(1,21);
+              if(line == 1)
+              {
+                  if(choice == 3)
+                    buildHorizontalWall(35,"1) REMOVE PRESENT ROLL NUMBER ");
+                  else
+                    buildHorizontalWall(35,"1) REMOVE ABSENT ROLL NUMBER ");
+              }
+              else if(line == 3)
+              {
+                  if(choice == 3)
+                    buildHorizontalWall(35, "2) ADD PRESENT ROLL NUMBER  ");
+                  else
+                    buildHorizontalWall(35, "2) ADD ABSENT ROLL NUMBER ");
+              }
+              else
+                  buildHorizontalWall(35, " ");
+              line++;
+          }
+          setCursorPos(1,21);
+          buildVerticalWall(35);
+      
+          askChoice(3,33,command);
+          if(EmptyInput(command))
+          {
+              InvalidInputErr();
+              goto reAskModify;
+          }
+  
+          ConvertChoiceToINT = validateString(command,2,1);
+  
+          if(ConvertChoiceToINT == 0)
+          {
+              InvalidInputErr();
+              goto reAskModify;
+          }
+          return(ConvertChoiceToINT);
+  }
+
   bool ModificationOfAttDATA(string &Attendance,int choice) // ? modify the attendance data
   {    
-      int Empty_flag=0,i;
+      int Empty_flag=0,i,temp;
       bool return_flag=false;
    
       command.clear(); 
+      temp = ModifyChoice(choice);
 
 
       while(true)
@@ -2277,9 +2388,9 @@ private:
           
            setCursorPos(2,10);
            //ask if you want to modify
-           if(choice == 3)
+           if((choice == 3 && temp == 1) || (choice == 4 && temp == 2))
               cout << " ENTER ROLL NUMBER THAT YOU WANT TO MARK AS ABSENT  : ";
-           else if(choice == 4)
+           else if((choice == 4 && temp == 1) || (choice == 3 && temp == 2))
               cout << " ENTER ROLL NUMBER THAT YOU WANT TO MARK AS PRESENT : ";
          
            ShowConsoleCursor(true);
@@ -2296,21 +2407,41 @@ private:
            
            if(ConvertChoiceToINT)
            {
-             if(choice == 3)//if choice is prasent
+             if((choice == 3 && temp == 1) || (choice == 4 && temp == 2))//if choice is prasent
              {
-               if(checkExistRollNo(Attendance,command,'A',1))//check roll no is already exist then print error
-               goto MDAgain;//go to list shown again
+               if(temp == 1)
+               {
+                 if(checkExistRollNo(Attendance,command,'A',1))//check roll no is already exist then print error
+                    goto MDAgain;//go to list shown again
+                 else
+                    Attendance.replace((ConvertChoiceToINT - 1), 1, "A"); // modify for first time according to choice
+               }
                else
-               Attendance.replace((ConvertChoiceToINT - 1), 1, "A"); // modify for first time according to choice
-             }
-             else if(choice == 4)//if choice is absent
+               {
+                 if(checkExistRollNo(Attendance,command,'A',0))//check roll no is already exist then print error
+                    goto MDAgain;//go to list shown again
+                 else
+                    Attendance.replace((ConvertChoiceToINT - 1), 1, "A"); // modify for first time according to choice
+               }
+             }                              
+             else if((choice == 4 && temp == 1) || (choice == 3 && temp == 2))//if choice is absent
              {
-               if(checkExistRollNo(Attendance,command,'P',1))//check roll no is aleady exist then print error
-               goto MDAgain;//go to list shown again
+               if(temp == 1)
+               {
+                 if(checkExistRollNo(Attendance,command,'P',1))//check roll no is aleady exist then print error
+                    goto MDAgain;//go to list shown again
+                 else
+                    Attendance.replace((ConvertChoiceToINT - 1), 1, "P"); // modify for first time according to choice
+               }
                else
-               Attendance.replace((ConvertChoiceToINT - 1), 1, "P"); // modify for first time according to choice
+               {
+                 if(checkExistRollNo(Attendance,command,'P',0))//check roll no is aleady exist then print error
+                    goto MDAgain;//go to list shown again
+                 else
+                    Attendance.replace((ConvertChoiceToINT - 1), 1, "P"); // modify for first time according to choice
+               } 
              }
-           }
+            }
 
            Empty_flag=0;//flag set as 0
            i=0;//i  set as 0
@@ -2360,31 +2491,32 @@ private:
 
   void submitAttendanceToDB(string & Attendance) // ? Finally data sent to database
   {
-    int sz;
+    //int sz;
     command.clear();
     command = SemPath + "\\DAILY-RECORD\\records.txt"; // making path for file handling
+    string temp; 
     
-    //! RIGHT.NOW() seek.edit(*required) @DRASHTI DHOLA
+    //! EOP() seek.edit(*required) @DRASHTI DHOLA 
 
      /* FOR BELOW MENTIONED CODE PART WE HAVE READYMATE FUNCTION AVAILABLE 
      checkEmptyFile()  */
      //?can we use it 
 
     //!-----------------------------------------------------------/
-    ifstream finin(command.c_str(), ios::binary);         // FILE OPENED
+    //ifstream finin(command.c_str(), ios::binary);         // FILE OPENED
 
-    if(!finin.is_open())
-    { 
-      scrClr();
-      setCursorPos(9,28);
-      cout << "DATA BASE-ERROR : 404 ";//error
-      scrClr(2);
-      exit(1);
-    }
+   // if(!finin.is_open())
+    //{ 
+    //  scrClr();
+    //  setCursorPos(9,28);
+    //  cout << "DATA BASE-ERROR : 404 ";//error
+    //  scrClr(2);
+    //  exit(1);
+    //}
 
-    finin.seekg(0,ios::end);
-    sz = finin.tellg();//check file size
-    finin.close();//file closed
+   // finin.seekg(0,ios::end);
+   // sz = finin.tellg();//check file size
+   // finin.close();//file closed
 
     //!-----------------------------------------------------------/
 
@@ -2393,27 +2525,30 @@ private:
     which opens file in append mode so why not to use that */
     //? review it
     //!-----------------------------------------------------------/
-    fstream finout(command.c_str(), ios::app);
+   // fstream finout(command.c_str(), ios::app);
 
-    if(!finout.is_open())
-    { 
-      scrClr();
-      setCursorPos(9,26);
-      cout << "DATA BASE-ERROR : 203/204 ";
-      scrClr(2);
-      exit(1);
-    }
+    // if(!finout.is_open())
+    // { 
+      // scrClr();
+      // setCursorPos(9,26);
+      // cout << "DATA BASE-ERROR : 203/204 ";
+      // scrClr(2);
+      // exit(1);
+    // }
     //!-----------------------------------------------------------/
-    if(!sz) // first time write data into database for each course-sem-semester
-    {
-      finout << CUR_DATE + "|" + CUR_TIME + "|" + Attendance;    // write data to file
-    }
-    else
-    {
-       finout <<"\n" + CUR_DATE + "|" + CUR_TIME + "|" + Attendance;
-    }
-     
-     finout.close();  // file closed
+    temp = CUR_DATE + "|" + CUR_TIME + "|" + Attendance;
+    writeDataToFile(command,temp);
+
+    // if(!checkEmptyFile(command)) // first time write data into database for each course-sem-semester
+    // {
+      // finout << CUR_DATE + "|" + CUR_TIME + "|" + Attendance;    // write data to file
+    // }
+    // else
+    // {
+      //  finout <<"\n" + CUR_DATE + "|" + CUR_TIME + "|" + Attendance;
+    // }
+    
+     //finout.close();  // file closed
   }
 
 
@@ -2563,12 +2698,12 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
 
          ListOfAttendance(tempStorage,choice);//show list of students
         
-         setCursorPos(2,25);
+         setCursorPos(2,26);
          
          if(choice == 3)
             cout << "ENTER PRESENT ROLL NUMBER : ";
          else if(choice == 4)
-            cout << "ENTER ABSENT ROLL NUMBER  : ";
+            cout << "ENTER ABSENT ROLL NUMBER : ";
          
          ShowConsoleCursor(true);
          fflush(stdin);
@@ -2685,7 +2820,7 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
         goto confirm;//re-confirm
       }
       else if(ConvertChoiceToINT == 0)//if choice is no than modify
-      {
+      {  
         if(ModificationOfAttDATA(tempStorage,choice))//modifiction
         {
         goto confirm;//re-ask confirm
@@ -2727,30 +2862,33 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
     int condfirmTodayAttendance()
     {
 
-      int i;
+      //int i;
       ConvertChoiceToINT = 1; // re-used
   
       command.clear();
       tempStorage.clear();
 
       command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command var
-      fstream fin(command.c_str(), ios::in);//file opened
-      
+      //fstream fin(command.c_str(), ios::in);//file opened
+      getDataFromFile(command,tempStorage,(countLinesOfFile(command)-1));
+
       //! EOP() seek.edit(*required) : DRASHTI DHOLA 
       /*can we use getDataFromFile() here insted of your file opening code*/
       //? just asking for review
-      if(!fin.is_open())
-      {  
-        scrClr();
-        setCursorPos(9,28);
-        cout << "DATA BASE-ERROR : 404 ";//error
-        scrClr(2);
-        exit(1);
-      }
-      else
-      {
-        i = lastlineOfATTRecords().find("|"); 
-        tempStorage = lastlineOfATTRecords().substr(0, i);
+      // if(!fin.is_open())
+      // {  
+        // scrClr();
+        // setCursorPos(9,28);
+        // cout << "DATA BASE-ERROR : 404 ";//error
+        // scrClr(2);
+        // exit(1);
+      // }
+      //else
+      //{
+        //i = lastlineOfATTRecords().find("|"); 
+
+        tempStorage = tempStorage.substr(0,tempStorage.find("|"));
+
         if(tempStorage == CUR_DATE) // to avoid taking attendance for the same day
         {
           command.clear();
@@ -2773,8 +2911,9 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
           scrClr(2);
         }
       
-        fin.close();//file close
-      }
+        //fin.close();//file close
+      //}
+
       return(ConvertChoiceToINT);//return 
     }
 
@@ -2883,6 +3022,92 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
   //*=============================MEMBERS-FUNCTIONS===================================//
 
   private:
+
+  bool createDateWiseReportPDF(string fac_data,string stud_name,string stud_att,string pdf_name)//?Date Vise Report Generate PDF(If overloding posssible then must overload  GeneratePDF function)
+  {   
+      tempStorage.clear(); 
+      command.clear();
+      string temp;
+      bool flag;
+
+      command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
+      command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
+      getDataFromFile(fac_data,tempStorage,1);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Attendance take on : date & time
+      tempStorage.clear();
+      getDataFromFile(fac_data,tempStorage,2);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
+      tempStorage.clear();
+      getDataFromFile(fac_data,tempStorage,3);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course Name
+      tempStorage.clear();
+      getDataFromFile(fac_data,tempStorage,4);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
+      tempStorage.clear();
+      getDataFromFile(fac_data,tempStorage,5);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Subject Name
+      tempStorage.clear();
+      getDataFromFile(fac_data,tempStorage,6);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='C')\npdf.ln(0.3)\n";//Attendance Data Title
+      
+      /*Making 2D array for tabuler Data*/
+      
+      command += "data = [['ROLL NO.','NAME','ATTENDANCE']";
+      getDataFromFile(stud_att,temp,1);
+      temp = temp.substr(20);
+          
+      for(int i=1;i<=stoi(numberOfstudents);i++)
+      {
+          command += ",['" + to_string(i) + "',"; 
+          tempStorage.clear();
+          getDataFromFile(stud_name,tempStorage,i);
+          command += "'" + tempStorage + "',";
+          if(temp[i-1] == 'P')
+              command += "'Present'";
+          else
+              command += "'Absent'";
+          command+= "]";
+      }
+      command += "]\n";
+  
+      /*2D Array Done*/
+      command += "pdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\nth = pdf.font_size\ncol_width = (epw-4)/2\npdf.ln(0.2)\n";
+      command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\n";
+      command += "pdf.ln(2)\n";
+      command += "pdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0, '_______________________________________________________________________________', align='L')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0, '_______________________________________________________________________________', align='L')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('" +DoubleBackslashPath(SemPath) + "\\\\REPORTS\\\\";
+      command +=  pdf_name + "','F')\n";
+      
+      temp.clear();
+      temp = AMS_Path+"\\OTHER\\DWR.py"; // make python path
+      writeDataToFile(temp,command);  // write all data in python file
+      
+      command.clear();
+      command = "python " + AMS_Path+"\\OTHER\\DWR.py"  + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";  
+      system(command.c_str());        //run python file
+
+      command.clear(); 
+      command = AMS_Path + "\\OTHER\\output.txt";
+      int err = checkEmptyFile(command);
+      if(err)
+      flag=false;
+      else
+      flag=true;
+
+      remove(command.c_str()); // delete output/error file 
+
+      command.clear(); 
+      command = AMS_Path+"\\OTHER\\DWR.py"; 
+      remove(command.c_str());        //delete python file
+         
+      remove(fac_data.c_str());     //delete fac_data file
+      remove(stud_name.c_str());    //delete stud_name file
+      remove(stud_att.c_str());     //delete stud_att file
+  
+      tempStorage.clear(); //clear for re-using
+      command.clear();
+
+      return (flag); 
+  }
 
   bool dateValidation(string date) //?  date validation
   {
@@ -3088,9 +3313,9 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
        int j=1,found_pos,temp_pos;
       
-       command = SemPath + "\\DAILY-RECORD\\fac_data.txt";
+       command = SemPath + "\\REPORTS\\fac_data.txt";
       
-       tempStorage = "[Attendance taken on] : [ " + date + " ] [ " + time + " ] ";
+       tempStorage = "ATTENDANCE TAKEN ON DATE : " + date + " TIME : " + time ;
        writeDataToFile(command,tempStorage);
        
        tempStorage = "1) FACULTY NAME : " + FacultyName;
@@ -3105,7 +3330,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
        tempStorage = "4) SUBJECT NAME : " + subject_name;
        writeDataToFile(command,tempStorage);
          
-       tempStorage = "[Attendance Data] : ";
+       tempStorage = "-: [ ATTENDANCE DATA ] :- ";
        writeDataToFile(command,tempStorage);  
       
       
@@ -3114,27 +3339,25 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
         tempStorage.clear();
         found_pos=temp_pos=0;
         command.clear();
-        time.clear();
+        student_name.clear();
 
         command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
         getDataFromFile(command,tempStorage,j);
-
+        
         found_pos = tempStorage.find("|");
-        time = tempStorage.substr((found_pos+1),(tempStorage.find("|",(found_pos+1))-2)); //time re used as student name
-    
-        command = SemPath + "\\DAILY-RECORD\\stud_name.txt";
-        writeDataToFile(command,time);
+        scrClr();
+       
+        student_name = tempStorage.substr((found_pos+1),(tempStorage.find("|",(found_pos+1))-(found_pos+1))); //time re used as student name
+        
+        command = SemPath + "\\REPORTS\\stud_name.txt";
+        writeDataToFile(command,student_name);
 
-        time.clear(); 
-        command.clear();
-        command = SemPath + "\\DAILY-RECORD\\stud_att"+".txt";
-
-        if(attendance[j-1]=='P')
-        {writeDataToFile(command,"Present");}
-        else
-        {writeDataToFile(command,"Absent");}
         j++;
       }
+
+      command.clear();
+      command = SemPath + "\\REPORTS\\stud_att"+".txt";
+      writeDataToFile(command,date+"|"+time+"|"+attendance);
 
   }
 
@@ -3207,15 +3430,15 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
                   
         if(line == 1)
         {
-            buildHorizontalWall(65, "STUDENT ROLL NUMBER     :  " + RoLLNo);
+            buildHorizontalWall(65, "STUDENT ROLL NUMBER   :  " + RoLLNo);
         }
         else if(line == 3)
         {  
-            buildHorizontalWall(65, "STUDENT NAME            :  " + student_name);
+            buildHorizontalWall(65, "STUDENT NAME          :  " + student_name);
         }
         else if(line == 5)
         {
-            buildHorizontalWall(65, "STUDENT EMAIL           :  " + student_email);
+            buildHorizontalWall(65, "STUDENT EMAIL         :  " + student_email);
         }
         else
             buildHorizontalWall(65, " ");
@@ -3253,32 +3476,67 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     }
   
   }
+    
+  int studConfirmation(int argc) //? overloaded version basic confirmation message for user
+  {
+    int line;
 
+    reConfirm:
+    scrClr(0.5);
+
+    // BOX-UI FOR STUDENT INFO CONFIRM
+    setCursorPos(5, 15);
+    cout << "STUDENT ROLL NUMBER " << right << setw(4) << ": " << RoLLNo;
+    setCursorPos(1, 15);
+    cout << "STUDENT NAME " << right << setw(11) << ": " << student_name;
+    setCursorPos(1, 15);
+    if(student_email.length()<=35)
+    {cout << "STUDENT E-MAIL " << right << setw(9) << ": " << student_email;}
+    else
+    {
+      int l=0;
+      cout << "STUDENT E-MAIL " << right << setw(9) << ": ";
+      while(l<student_email.length())
+      {
+        if(l==35)
+        {
+          setCursorPos(1,39);
+        }
+        cout<<student_email[l];
+        l++;
+        
+      }
+    }
+    ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
+
+    if (ConvertChoiceToINT == -1) // validate input
+    {
+      InvalidInputErr(); // error message
+      goto reConfirm;
+    }
+
+    return (ConvertChoiceToINT); // returns confirmation value yes=1 / no=0
+  }
 
   void makeStudReport()
   {
    //nupur student report code 
   }
 
-  void reportSentSuccessfully()
+  void reportSentSuccessfully(string pdf_name)
   {
     scrClr(0.5);
-    command.clear();
 
-    //! EOP() seek.edit(*required) : DATE FORMET ADD AT LAST DD-MM-YYYY e.g.OOP_DD-MM-YYYY
-    pdfName = "AMS_REPORT_BSCIT_SEM_3_OOP.pdf";//! need to be removed as pdf function provide value   
-    command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt";
-    
-    setCursorPos(6,25);
+    setCursorPos(6,19);
     SetColor(2);
-    cout<<pdfName;
-    setCursorPos(2,35);
+    cout<<pdf_name;
+    setCursorPos(2,34);
     SetColor(1);
     cout<<CUR_DATE;
-    setCursorPos(2,22);
+    setCursorPos(2,21);
     SetColor(0);
     cout<<"REPORT HAS BEEN SENT SUCCESSFULLY TO ";
-    setCursorPos(2,25);
+    setCursorPos(2,24);
     SetColor(1);
     cout<<FacultyEmail;
     scrClr(3);
@@ -3427,25 +3685,36 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     {
 
       makeDateReport(); // make Report of that date
-        
-      //*threading used for  processing email part 
-      //! EOP() seek.edit(*required) ->attachmentpath ->pdf name  : HARSHIL RAMANI ,SHUBHAM KHUNT
-      MODULE_3 MD3;
-      thread t1(&sendToEmail,MD3,"ams.software.team@gmail.com","Amsisrich@45",FacultyEmail,"CUSTOMIZE-ATTENDANCE-REPORT","Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your Customized Attendance Report.\n\nThank You.\n\n",SemPath+"\\DAILY-RECORD\\052_Harshil_Ramani_PA04.pdf","AMS_REPORT_BSCIT_SEM_3_OOP.pdf"); 
-      thread t2(&LoadingProcess,MD3);
+      pdfName += "AMS_REPORT_" + course_name + "_SEM_" +sem + "_" + subject_name + "_" + date; 
+      replaceWithHyphen(pdfName);
+      pdfName += ".pdf";
+    
+      if(createDateWiseReportPDF(SemPath+"\\REPORTS\\fac_data.txt",SemPath+"\\REPORTS\\stud_name.txt",SemPath+"\\REPORTS\\stud_att.txt",pdfName))
+      { 
+          //*threading used for  processing email part 
+          //! EOP() seek.edit(*required) ->attachmentpath ->pdf name  : HARSHIL RAMANI ,SHUBHAM KHUNT
+          MODULE_3 MD3;
+          thread t1(&sendToEmail,MD3,"ams.software.team@gmail.com","Amsisrich@45",FacultyEmail,"CUSTOMIZE-ATTENDANCE-REPORT","Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your Customized Attendance Report.\n\nThank You.\n\n",SemPath+"\\REPORTS\\"+pdfName,pdfName); 
+          thread t2(&LoadingProcess,MD3);
+    
+          t1.join(); // join the thread
+          t2.join(); // join the thread
+    
+          scrClr(); //by clearing screen it resolves flickring error of screen...
+          
+          if(process_flag && email_flag)
+          { 
+            reportSentSuccessfully(pdfName); //sent email successfully with attachment
+          }
+          else
+          {
+            warnMsg("REPORT COULDN'T BE SENT !",4,26,"ERROR CODE : 404/444/599 ",1,26); // error while sending email
+          }
 
-      t1.join(); // join the thread
-      t2.join(); // join the thread
-
-      scrClr(); //by clearing screen it resolves flickring error of screen...
-      
-      if(process_flag && email_flag)
-      {
-        reportSentSuccessfully(); //sent email successfully
       }
       else
       {
-        warnMsg("REPORT COULDN'T BE SENT !",4,26,"ERROR CODE : 404/444/599 ",1,26); // error while sending email
+            warnMsg("PDF REPORT COULDN'T BE GENERATED !",4,22,"ERROR CODE : 404/417/424 ",1,26); // error while sending email
       }
       
     }
@@ -3457,12 +3726,25 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
   {
     if(RollNoInput()) 
     {  
-
-      if(studConfirmation())
+      if(student_email.length()>29)
       {
-         makeStudReport(); // make Report of that date
-         //makePdf(); // make Report into Pdf
-         //sendEmail(); // send report email to AMS user 
+
+        if(studConfirmation(1))
+        {
+           makeStudReport(); // make Report of that date
+           //makePdf(); // make Report into Pdf
+           //sendEmail(); // send report email to AMS user 
+        }
+
+      }
+      else
+      {
+          if(studConfirmation())
+          {
+             makeStudReport(); // make Report of that date
+             //makePdf(); // make Report into Pdf
+             //sendEmail(); // send report email to AMS user 
+          }
       }
     }
     
