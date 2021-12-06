@@ -765,7 +765,7 @@ protected:
           lines++;
           read.close();
       }
-      return(lines);
+      return(lines-1); 
   }
 
   int checkEmptyFile(string path)//?check empty file
@@ -882,9 +882,10 @@ protected:
   {
     tempStorage.clear();
     tempStorage = "WORKING ON IT";
+    int i=1;
     do
     {
-    scrClr(0.5);
+    scrClr(); 
     setCursorPos(9,26);
     SetColor(2);
     ShowConsoleCursor(false);
@@ -892,10 +893,11 @@ protected:
     scrClr(1);
     tempStorage = tempStorage + ".";
  
-    if(process_flag)
+    if(process_flag||i==15)
     {
       break;
     }
+    i++;
 
     }while(true);
     
@@ -933,7 +935,7 @@ protected:
           command = command + "attachment = open(filename,\"rb\")" + "\n";
           command = command + "part = MIMEBase('application', 'octet-stream')\npart.set_payload((attachment).read())\nencoders.encode_base64(part)\npart.add_header('Content-Disposition', \"attachment; filename= \%s\" \% \" " + fileName + "\")\nmsg.attach(part)\nserver = smtplib.SMTP('smtp.gmail.com', 587)\nserver.starttls() \n";
           command = command +"server.login(fromaddr, \""+ password + "\")\n";
-          command = command +"text = msg.as_string()\nserver.sendmail(fromaddr, toaddr, text)\nserver.quit()\n";              
+          command = command +"text = msg.as_string()\nserver.sendmail(fromaddr, toaddr.split(\",\"), text)\nserver.quit()\n";              
   
           write<<command; // data write to file
           write.close();// file closed
@@ -942,7 +944,7 @@ protected:
           command = "python "+AMS_Path + "\\OTHER\\mail.py " + "1> " + AMS_Path + "\\OTHER\\output.txt 2>&1"; 
   
           system(command.c_str()); //* FILE SENDING TO EMAIL USING PYTHON CODE
-          
+
           command.clear(); 
           command = AMS_Path + "\\OTHER\\output.txt";
 
@@ -1089,15 +1091,16 @@ public:
     
     //* below is for checking database scrambling
 
-    if(checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt") && checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt") )
+    if((!checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt")) || (!checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt")) )
     {
-      return true;
+      //error part
+      warnMsg(course_name +" SEM-" + sem + " " +subject_name,1,24," ERROR CODE: 206-400-412 , PLEASE DELETE & RE-CREATE IT ",4,12);
+      return false;
+      
     }
     else
     {
-      //error part
-      warnMsg(course_name +" SEM-" + sem + " " +subject_name,1,28," ERROR CODE: 206-400-412 , PLEASE DELETE & RE-CREATE IT ",4,12);
-      return false;
+      return true;
     }
     
   }
@@ -1909,12 +1912,16 @@ private:
 
   MODULE_1()
   {
+   buffer.clear();
+   LIST.clear();
    command.clear();//command clear for re-use 
    tempStorage.clear();//tempStorage clear for re-use
   }
 
   ~MODULE_1()
-  {
+  { 
+    buffer.clear();
+    LIST.clear();
     command.clear();
     tempStorage.clear();
   }
@@ -1944,16 +1951,23 @@ private:
 
     if(confirmation()) // basic confirmation dialog if yes then semester folder create
     {
-      command = SemPath + "\\FAC-STUD-DETAILS\\faculty" + "-sem-" + sem + ".txt"; // path making for writting into file
+      
 
-      // writting faculty data to files
+     // writing faculty data to files
 
-      writeDataToFile(command, FacultyName);
-      writeDataToFile(command, FacultyEmail);
-      writeDataToFile(command, course_name);
-      writeDataToFile(command, sem);
-      writeDataToFile(command, subject_name);
-      writeDataToFile(command, numberOfstudents);
+     buffer.push_back(FacultyName);
+     buffer.push_back(FacultyEmail);
+     buffer.push_back(course_name);
+     buffer.push_back(sem);
+     buffer.push_back(subject_name);
+     buffer.push_back(numberOfstudents);
+     
+     // writeDataToFile(command, FacultyName);
+     // writeDataToFile(command, FacultyEmail);
+     // writeDataToFile(command, course_name);
+     // writeDataToFile(command, sem);
+     // writeDataToFile(command, subject_name);
+     // writeDataToFile(command, numberOfstudents);
     }
     else
     {
@@ -2004,6 +2018,7 @@ private:
 
   void askStudDetails() //? asking students details
   {
+
     int ROLLNO = 0;
     while (ROLLNO < stoi(numberOfstudents)) // functions for taking student data input roll no wise
     {
@@ -2018,10 +2033,11 @@ private:
 
       if (studConfirmation()) // basic confirmation dialog if yes then semester folder create
       {
-        command = SemPath + "\\FAC-STUD-DETAILS\\student" + "-sem-" + sem + ".txt"; // path making for writing into file
-        RoLLNo = to_string(ROLLNO);                                                 // rollNo Int to string
-        tempStorage = RoLLNo + "|" + student_name + "|" + student_email;            // folder name
-        writeDataToFile(command, tempStorage);                                      // writing data to files
+         tempStorage.clear(); 
+         RoLLNo = to_string(ROLLNO);                                                 // rollNo Int to string
+         tempStorage = RoLLNo + "|" + student_name + "|" + student_email;            // folder name
+        // writeDataToFile(command, tempStorage);                                      // writing data to files
+         LIST.push_back(tempStorage);
       }
       else
       {
@@ -2051,7 +2067,23 @@ private:
   }
 
   void SetUpSucceed() // module 1 successfully worked
-  {
+  { 
+    command.clear();
+    command = SemPath + "\\FAC-STUD-DETAILS\\student" + "-sem-" + sem + ".txt"; // path making for writing into file
+
+    for(auto i=LIST.begin(); i!=LIST.end();i++) //at last we are writing student data to database file
+    {
+      writeDataToFile(command,(*i));
+    }
+
+    command.clear();
+    command = SemPath + "\\FAC-STUD-DETAILS\\faculty" + "-sem-" + sem + ".txt"; // path making for writting into file
+    
+    for(auto i=buffer.begin(); i!=buffer.end();i++) //at last we are writing faculty data to database file
+    {
+      writeDataToFile(command,(*i));
+    }
+
     tempStorage = course_name + " SEM " + sem + " " + subject_name;
     MSG(tempStorage," SET UP SUCCESSFUL ", 2, 0, 20);// succeed msg
   }
@@ -3023,92 +3055,6 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
   private:
 
-  bool createDateWiseReportPDF(string fac_data,string stud_name,string stud_att,string pdf_name)//?Date Vise Report Generate PDF(If overloding posssible then must overload  GeneratePDF function)
-  {   
-      tempStorage.clear(); 
-      command.clear();
-      string temp;
-      bool flag;
-
-      command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
-      command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
-      getDataFromFile(fac_data,tempStorage,1);
-      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Attendance take on : date & time
-      tempStorage.clear();
-      getDataFromFile(fac_data,tempStorage,2);
-      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
-      tempStorage.clear();
-      getDataFromFile(fac_data,tempStorage,3);
-      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course Name
-      tempStorage.clear();
-      getDataFromFile(fac_data,tempStorage,4);
-      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
-      tempStorage.clear();
-      getDataFromFile(fac_data,tempStorage,5);
-      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Subject Name
-      tempStorage.clear();
-      getDataFromFile(fac_data,tempStorage,6);
-      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='C')\npdf.ln(0.3)\n";//Attendance Data Title
-      
-      /*Making 2D array for tabuler Data*/
-      
-      command += "data = [['ROLL NO.','NAME','ATTENDANCE']";
-      getDataFromFile(stud_att,temp,1);
-      temp = temp.substr(20);
-          
-      for(int i=1;i<=stoi(numberOfstudents);i++)
-      {
-          command += ",['" + to_string(i) + "',"; 
-          tempStorage.clear();
-          getDataFromFile(stud_name,tempStorage,i);
-          command += "'" + tempStorage + "',";
-          if(temp[i-1] == 'P')
-              command += "'Present'";
-          else
-              command += "'Absent'";
-          command+= "]";
-      }
-      command += "]\n";
-  
-      /*2D Array Done*/
-      command += "pdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\nth = pdf.font_size\ncol_width = (epw-4)/2\npdf.ln(0.2)\n";
-      command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\n";
-      command += "pdf.ln(2)\n";
-      command += "pdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0, '_______________________________________________________________________________', align='L')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0, '_______________________________________________________________________________', align='L')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('" +DoubleBackslashPath(SemPath) + "\\\\REPORTS\\\\";
-      command +=  pdf_name + "','F')\n";
-      
-      temp.clear();
-      temp = AMS_Path+"\\OTHER\\DWR.py"; // make python path
-      writeDataToFile(temp,command);  // write all data in python file
-      
-      command.clear();
-      command = "python " + AMS_Path+"\\OTHER\\DWR.py"  + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";  
-      system(command.c_str());        //run python file
-
-      command.clear(); 
-      command = AMS_Path + "\\OTHER\\output.txt";
-      int err = checkEmptyFile(command);
-      if(err)
-      flag=false;
-      else
-      flag=true;
-
-      remove(command.c_str()); // delete output/error file 
-
-      command.clear(); 
-      command = AMS_Path+"\\OTHER\\DWR.py"; 
-      remove(command.c_str());        //delete python file
-         
-      remove(fac_data.c_str());     //delete fac_data file
-      remove(stud_name.c_str());    //delete stud_name file
-      remove(stud_att.c_str());     //delete stud_att file
-  
-      tempStorage.clear(); //clear for re-using
-      command.clear();
-
-      return (flag); 
-  }
-
   bool dateValidation(string date) //?  date validation
   {
        match_results<string::const_iterator> m;
@@ -3122,6 +3068,34 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
          return(false); // if not then return false
        }
   }
+
+  bool MailToStudent()
+  {
+    ReAskChoice:
+    
+    tempStorage.clear();
+    scrClr(0.5);
+    setCursorPos(6,14);
+    cout << "WOULD YOU LIKE TO SEND THIS REPORT TO STUDENT ALSO ? ";
+    fflush(stdin);
+
+    ConvertChoiceToINT = YesNoInput("   Type [Yes/No] as follows ",tempStorage); 
+
+    if (ConvertChoiceToINT == -1) 
+    {
+      InvalidInputErr();
+      goto ReAskChoice;
+    }
+    else if(ConvertChoiceToINT == 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+    tempStorage.clear();
+}
 
   bool DateInput() //? taking date input
   {
@@ -3330,7 +3304,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
        tempStorage = "4) SUBJECT NAME : " + subject_name;
        writeDataToFile(command,tempStorage);
          
-       tempStorage = "-: [ ATTENDANCE DATA ] :- ";
+       tempStorage = "-: [ Attendance Data ] :- ";
        writeDataToFile(command,tempStorage);  
       
       
@@ -3361,6 +3335,91 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
   }
 
+  bool createDateWiseReportPDF(string fac_data,string stud_name,string stud_att,string pdf_name)//?Date Vise Report Generate PDF(If overloding posssible then must overload  GeneratePDF function)
+  {   
+      tempStorage.clear(); 
+      command.clear();
+      string temp;
+      bool flag;
+
+      command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
+      command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
+      getDataFromFile(fac_data,tempStorage,1);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Attendance take on : date & time
+      tempStorage.clear();
+      getDataFromFile(fac_data,tempStorage,2);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
+      tempStorage.clear();
+      getDataFromFile(fac_data,tempStorage,3);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course Name
+      tempStorage.clear();
+      getDataFromFile(fac_data,tempStorage,4);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
+      tempStorage.clear();
+      getDataFromFile(fac_data,tempStorage,5);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.5)\n";//Subject Name
+      tempStorage.clear();
+      getDataFromFile(fac_data,tempStorage,6);
+      command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='C')\n";//Attendance Data Title
+      
+      /*Making 2D array for tabuler Data*/
+      
+      command += "data = [['ROLL NO.','NAME','ATTENDANCE']";
+      getDataFromFile(stud_att,temp,1);
+      temp = temp.substr(20);
+          
+      for(int i=1;i<=stoi(numberOfstudents);i++)
+      {
+          command += ",['" + to_string(i) + "',"; 
+          tempStorage.clear();
+          getDataFromFile(stud_name,tempStorage,i);
+          command += "'" + tempStorage + "',";
+          if(temp[i-1] == 'P')
+              command += "'Present'";
+          else
+              command += "'Absent'";
+          command+= "]";
+      }
+      command += "]\n";
+  
+      /*2D Array Done*/
+
+      command += "pdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\nth = pdf.font_size\ncol_width = (epw-4)/2\npdf.ln(0.3)\n";
+      command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\n";
+      command += "pdf.ln(2)\n";
+      command += "pdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0, '_______________________________________________________________________________', align='L')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0, '_______________________________________________________________________________', align='L')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('" +DoubleBackslashPath(SemPath) + "\\\\REPORTS\\\\";
+      command +=  pdf_name + "','F')\n";
+      
+      temp.clear();
+      temp = AMS_Path+"\\OTHER\\DWR.py"; // make python path
+      writeDataToFile(temp,command);  // write all data in python file
+      
+      command.clear();
+      command = "python " + AMS_Path+"\\OTHER\\DWR.py"  + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";  
+      system(command.c_str());        //run python file
+
+      command.clear(); 
+      command = AMS_Path + "\\OTHER\\output.txt";
+      int err = checkEmptyFile(command);
+      if(err)
+      flag=false;
+      else
+      flag=true;
+      remove(command.c_str()); // delete output/error file 
+
+      command.clear(); 
+      command = AMS_Path+"\\OTHER\\DWR.py"; 
+      remove(command.c_str());        //delete python file
+         
+      remove(fac_data.c_str());     //delete fac_data file
+      remove(stud_name.c_str());    //delete stud_name file
+      remove(stud_att.c_str());     //delete stud_att file
+  
+      tempStorage.clear(); //clear for re-using
+      command.clear();
+
+      return (flag); 
+  }
   bool RollNoInput() //? take roll number input
   {
     rollNoReInput:
@@ -3518,16 +3577,196 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     return (ConvertChoiceToINT); // returns confirmation value yes=1 / no=0
   }
 
-  void makeStudReport()
+  void makeStudentReport()
   {
-   //nupur student report code 
+      command.clear();
+      tempStorage.clear();
+     
+      command = SemPath + "\\DAILY-RECORD";
+      double count=0,totalDay=countLinesOfFile(command+"\\records.txt");
+      
+      double per;
+
+      for(int i=1;i<=totalDay;i++)
+      {
+          tempStorage.clear(); //used as whole string of single day record
+          command = SemPath + "\\DAILY-RECORD";
+          getDataFromFile(command+"\\records.txt",tempStorage,i);
+
+          command.clear();
+          command = SemPath + "\\REPORTS";
+
+          date.clear(); //clear for re-us
+          date = tempStorage.substr(0,10);
+          writeDataToFile(command+"\\stud_date.txt",date);
+          
+          time.clear();
+          time = tempStorage.substr(11,8);
+          writeDataToFile(command+"\\stud_time.txt",time);
+
+          attendance.clear();
+          attendance = tempStorage.substr(20);
+          
+          if(attendance[stoi(RoLLNo)-1] == 'P')
+          {
+             writeDataToFile(command+"\\stud_att.txt","Present");
+             count++;
+          }
+          else
+          {
+             writeDataToFile(command+"\\stud_att.txt","Absent");
+          }
+      }
+      tempStorage.clear();
+
+      command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt";
+      getDataFromFile(command,FacultyName,1);
+
+      command.clear();
+      command = SemPath + "\\REPORTS\\stud_data.txt";
+      
+      tempStorage.clear();
+      tempStorage = "1) STUDENT ROLL NUMBER : " + RoLLNo;
+      writeDataToFile(command,tempStorage);
+      
+      tempStorage.clear();
+      tempStorage = "2) STUDENT NAME : " + student_name;
+      writeDataToFile(command,tempStorage);
+      
+      tempStorage.clear();
+      tempStorage = "3) STUDENT EMAIL  : " + student_email;
+      writeDataToFile(command,tempStorage);
+      
+      tempStorage.clear();
+      tempStorage = "4) FACULTY NAME  : " + FacultyName;
+      writeDataToFile(command,tempStorage);
+      
+      tempStorage.clear();
+      tempStorage = "5) COURSE NAME  : " + course_name;
+      writeDataToFile(command,tempStorage);
+      
+      tempStorage.clear();
+      tempStorage = "6) SEMSTER : " + sem;
+      writeDataToFile(command,tempStorage);
+      
+      tempStorage.clear();
+      tempStorage = "7) SUBJECT NAME : " + subject_name;
+      writeDataToFile(command,tempStorage);
+    
+      if(totalDay>=count) //double ensurity
+      per = double((count*100)/totalDay);
+      else
+      per = 0.00;
+
+      stringstream stream;
+      stream << fixed << setprecision(2) << per;
+      string temp = stream.str();
+
+      tempStorage.clear();
+      tempStorage = "8) CURRENT ATTENDANCE PERCENTAGE : " + temp + " %";
+      writeDataToFile(command,tempStorage);
+      
+      tempStorage = " -: [Attendance Data] :- ";
+      writeDataToFile(command,tempStorage);  
   }
 
-  void reportSentSuccessfully(string pdf_name)
+  bool createStudentWiseReportPDF(string stud_data,string stud_date,string stud_time,string stud_att,string pdfname)//?Student Wise Report Generate PDF 
+  {
+      
+          tempStorage.clear(); 
+          command.clear();
+          string temp;
+          bool flag;
+
+          command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
+          command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
+          tempStorage.clear();
+          getDataFromFile(stud_data,tempStorage,1);
+          command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Roll No
+          tempStorage.clear();
+          getDataFromFile(stud_data,tempStorage,2);
+          command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Student Name
+          tempStorage.clear();
+          getDataFromFile(stud_data,tempStorage,3);
+          command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Student Email
+          tempStorage.clear();
+          getDataFromFile(stud_data,tempStorage,4);
+          command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
+          tempStorage.clear();
+          getDataFromFile(stud_data,tempStorage,5);
+          command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course Name
+          tempStorage.clear();
+          getDataFromFile(stud_data,tempStorage,6);
+          command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
+          tempStorage.clear();
+          getDataFromFile(stud_data,tempStorage,7);
+          command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";             //Subject name
+          tempStorage.clear();
+          getDataFromFile(stud_data,tempStorage,8);
+          command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.5)\n\n";             //current attendance percentage
+          tempStorage.clear();
+          getDataFromFile(stud_data,tempStorage,9);
+          command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='C')\n";             //-:Attendace data :-         
+          
+          /*Making 2D array of tabuler data*/
+          command += "data = [['DATE','TIME','ATTENDANCE']";
+          for(int i=1;i<=countLinesOfFile(stud_date);i++)
+          {
+              tempStorage.clear();
+              getDataFromFile(stud_date,tempStorage,i);
+              command += ",['"+tempStorage+"',";
+              tempStorage.clear();
+              getDataFromFile(stud_time,tempStorage,i);
+              command += "'"+tempStorage+"',";
+              tempStorage.clear();
+              getDataFromFile(stud_att,tempStorage,i);
+              command += "'"+tempStorage+"']";
+          }
+          command += "]\n";
+
+          /*2D array done*/
+          command += "pdf.set_font('Arial','B',12.0)\npdf.set_text_color(43, 153, 213)\nth = pdf.font_size\ncol_width = epw/3\npdf.ln(0.3)\nfor row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\n\npdf.ln(2)\n";
+          command += "pdf.set_font('Arial','B',12.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0, '_______________________________________________________________________________', align='L')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0, '_______________________________________________________________________________', align='L')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('"+DoubleBackslashPath(SemPath) +"\\\\REPORTS\\\\";
+          command += pdfname +"','F')\n";
+          
+          tempStorage.clear();
+          tempStorage = AMS_Path+"\\OTHER\\SWR.py"; // make python File
+          writeDataToFile(tempStorage,command);
+         
+          command.clear();
+          command = "python " + AMS_Path + "\\OTHER\\SWR.py" + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";  ; 
+          
+          system(command.c_str());         //run python file
+         
+          command = AMS_Path+"\\OTHER\\SWR.py"; 
+          remove(command.c_str());        //delete python file
+          
+
+          command.clear(); 
+          command = AMS_Path + "\\OTHER\\output.txt"; //error file size get
+        
+          int err = checkEmptyFile(command);
+          if(err)
+          flag=false;
+          else
+          flag=true;
+
+          remove(command.c_str());        //delete output/error file 
+
+          remove(stud_data.c_str());      //delete stud_data file
+          remove(stud_date.c_str());      //delete stud_date file
+          remove(stud_time.c_str());      //delete stud_time file
+          remove(stud_att.c_str());       //delete stud_att file
+          tempStorage.clear();
+          command.clear();
+    return(flag);
+  }
+
+  void reportSentSuccessfully(string pdf_name,string stud_email="")
   {
     scrClr(0.5);
 
-    setCursorPos(6,19);
+    setCursorPos(6,18);
     SetColor(2);
     cout<<pdf_name;
     setCursorPos(2,34);
@@ -3535,10 +3774,17 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     cout<<CUR_DATE;
     setCursorPos(2,21);
     SetColor(0);
-    cout<<"REPORT HAS BEEN SENT SUCCESSFULLY TO ";
+    cout<<"REPORT HAS BEEN SENT SUCCESSFULLY TO :";
     setCursorPos(2,24);
     SetColor(1);
     cout<<FacultyEmail;
+    if(!stud_email.empty())
+    {
+      cout<<" & ";
+      setCursorPos(2,24);
+      SetColor(1);
+      cout<<stud_email;
+    }
     scrClr(3);
     SetColor(0);
     
@@ -3663,7 +3909,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     
         askChoice(3,33,tempStorage);
 
-        if(!cin)
+        if(!cin) //! EOP() seek.edit(*required) NUPUR KUKADIYA
         {
             cin.clear();
             cin.ignore(80,'\n');
@@ -3678,7 +3924,8 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
           CUS_REPORT_CHOICE=(ConvertChoiceToINT);
         }
   }
-
+ 
+ //! student also  send the email report
   void DateWiseReport() //? DateWise report create method
   {
     if(DateInput()) 
@@ -3692,7 +3939,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
       if(createDateWiseReportPDF(SemPath+"\\REPORTS\\fac_data.txt",SemPath+"\\REPORTS\\stud_name.txt",SemPath+"\\REPORTS\\stud_att.txt",pdfName))
       { 
           //*threading used for  processing email part 
-          //! EOP() seek.edit(*required) ->attachmentpath ->pdf name  : HARSHIL RAMANI ,SHUBHAM KHUNT
+        
           MODULE_3 MD3;
           thread t1(&sendToEmail,MD3,"ams.software.team@gmail.com","Amsisrich@45",FacultyEmail,"CUSTOMIZE-ATTENDANCE-REPORT","Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your Customized Attendance Report.\n\nThank You.\n\n",SemPath+"\\REPORTS\\"+pdfName,pdfName); 
           thread t2(&LoadingProcess,MD3);
@@ -3724,30 +3971,123 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
   
   void studentReport()
   {
-    if(RollNoInput()) 
-    {  
-      if(student_email.length()>29)
-      {
+    if(checkEmptyFile(SemPath+"\\DAILY-RECORD\\records.txt"))
+    {
+       if(RollNoInput()) 
+       {  
+            if(student_email.length()>29)
+            {
+              if(studConfirmation(1))
+              {
+                    makeStudentReport(); // make Report of that date
+                    
+                    pdfName += "AMS_REPORT_" + course_name + "_SEM_" +sem + "_" + subject_name + "_Roll_No_" + RoLLNo; 
+                    replaceWithHyphen(pdfName);
+                    pdfName += ".pdf";
+                    
+                    if(createStudentWiseReportPDF(SemPath+"\\REPORTS\\stud_data.txt",SemPath+"\\REPORTS\\stud_date.txt",SemPath+"\\REPORTS\\stud_time.txt",SemPath+"\\REPORTS\\stud_att.txt",pdfName))
+                    {   
+                       tempStorage.clear();
+                       if(MailToStudent())
+                       {
+                        tempStorage = FacultyEmail + ",";
+                        tempStorage += student_email;
+                       }
+                       else
+                       { 
+                         tempStorage = FacultyEmail;
+                         student_email.clear();
+                       }
+                       //*threading used for  processing email part 
+                       
+                       MODULE_3 MD3;
+                       thread t1(&sendToEmail,MD3,"ams.software.team@gmail.com","Amsisrich@45",tempStorage,"CUSTOMIZE-ATTENDANCE-REPORT","Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your Customized Attendance Report.\n\nThank You.\n\n",SemPath+"\\REPORTS\\"+pdfName,pdfName); 
+                       thread t2(&LoadingProcess,MD3);
+          
+                       t1.join(); // join the thread
+                       t2.join(); // join the thread
+          
+                       scrClr(); //by clearing screen it resolves flickring error of screen...
+                       
+                       if(process_flag && email_flag)
+                       { 
+                         reportSentSuccessfully(pdfName,student_email); //sent email successfully with attachment
+                       }
+                       else
+                       {
+                          warnMsg("REPORT COULDN'T BE SENT !",4,26,"ERROR CODE : 404/444/599 ",1,26); // error while sending email
+                       }
+   
+                     }
+                     else
+                     {
+                          warnMsg("PDF REPORT COULDN'T BE GENERATED !",4,22,"ERROR CODE : 404/417/424 ",1,26); // error while sending email
+                     }
+            
+               }
+            }
+            else
+            {
+                 if(studConfirmation())
+                 {   
+                     makeStudentReport(); // make Report of that date
+                      
+                     pdfName += "AMS_REPORT_" + course_name + "_SEM_" +sem + "_" + subject_name + "_Roll_No_" + RoLLNo; 
+                     replaceWithHyphen(pdfName);
+                     pdfName += ".pdf";
+                    
+                     if(createStudentWiseReportPDF(SemPath+"\\REPORTS\\stud_data.txt",SemPath+"\\REPORTS\\stud_date.txt",SemPath+"\\REPORTS\\stud_time.txt",SemPath+"\\REPORTS\\stud_att.txt",pdfName))
+                     { 
+                         tempStorage.clear();
 
-        if(studConfirmation(1))
-        {
-           makeStudReport(); // make Report of that date
-           //makePdf(); // make Report into Pdf
-           //sendEmail(); // send report email to AMS user 
+                         if(MailToStudent())
+                         {
+                          tempStorage = FacultyEmail + ",";
+                          tempStorage += student_email;
+                         }
+                         else
+                         {
+                            tempStorage = FacultyEmail;
+                            student_email.clear();
+                         }
+                         //*threading used for  processing email part 
+                         
+                         MODULE_3 MD3;
+                         thread t1(&sendToEmail,MD3,"ams.software.team@gmail.com","Amsisrich@45",tempStorage,"CUSTOMIZE-ATTENDANCE-REPORT","Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your Customized Attendance Report.\n\nThank You.\n\n",SemPath+"\\REPORTS\\"+pdfName,pdfName); 
+                         thread t2(&LoadingProcess,MD3);
+            
+                         t1.join(); // join the thread
+                         t2.join(); // join the thread
+            
+                         scrClr(); //by clearing screen it resolves flickring error of screen...
+                         
+                         if(process_flag && email_flag)
+                         { 
+                           reportSentSuccessfully(pdfName,student_email); //sent email successfully with attachment
+                         }
+                         else
+                         {
+                           warnMsg("REPORT COULDN'T BE SENT !",4,26,"ERROR CODE : 404/444/599 ",1,26); // error while sending email
+                         }
+   
+                     }
+                     else
+                     {
+                           warnMsg("PDF REPORT COULDN'T BE GENERATED !",4,22,"ERROR CODE : 404/417/424 ",1,26); // error while sending email
+                     }
+            
+                 }
+   
+            }
+
         }
-
-      }
-      else
-      {
-          if(studConfirmation())
-          {
-             makeStudReport(); // make Report of that date
-             //makePdf(); // make Report into Pdf
-             //sendEmail(); // send report email to AMS user 
-          }
-      }
-    }
     
+    }
+    else
+    {
+      warnMsg("NO RECORDS EXISTS ! KINDLY TAKE ATTENDANCE FIRST", 2, 19); // warn msg
+    }
+
   }
 
   ~MODULE_3()
@@ -3901,3 +4241,5 @@ int main()
  
     return EXIT_SUCCESS;
   }
+
+
