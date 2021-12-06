@@ -3289,7 +3289,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
       
        command = SemPath + "\\REPORTS\\fac_data.txt";
       
-       tempStorage = "ATTENDANCE TAKEN ON DATE : " + date + " TIME : " + time ;
+       tempStorage = "ATTENDANCE DATE : " + date + " TIME : " + time ;
        writeDataToFile(command,tempStorage);
        
        tempStorage = "1) FACULTY NAME : " + FacultyName;
