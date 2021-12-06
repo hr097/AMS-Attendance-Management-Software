@@ -92,7 +92,16 @@ int found_pos,temp_pos   -->bool IfDateExistThenGetData(string dt)
                          -->void makeDateReport()
                          -->void getStudentData()
 
+Date:06/12/2021
+file        :index.cpp
+Bugs        :No bugs found
+Memory used :
 
+   
+string temp;
+bool flag;
+int i,err;           : class MODULE_3   -> bool createDateWiseReportPDF(string fac_data,string stud_name,string stud_att,string                                                    pdf_name)
+                                        -> bool createStudentWiseReportPDF(string stud_data,string stud_date,string stud_time,string                                               stud_att,string pdfname)
 
 
 

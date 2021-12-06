@@ -1,10 +1,9 @@
-class MODULE_2 : 
+class MODULE_3 : 
 
 //**************************************** MEMBER VARIABLE***********************************************************//
 
 //---------public:---------//
 
-string date;
 static int CUS_REPORT_CHOICE;
 
 
@@ -23,6 +22,8 @@ string pdfName;
 
 bool dateValidation(string date)  
 
+bool MailToStudent()
+
 bool DateInput()
 
 bool IfDateExistThenGetData(string dt)     :string d,m,y , 
@@ -31,13 +32,21 @@ bool IfDateExistThenGetData(string dt)     :string d,m,y ,
 
 void makeDateReport()                      :int j=1,found_pos,temp_pos
 
+bool createDateWiseReportPDF(string fac_data,string stud_name,string stud_att,string pdf_name) 
+                                           :string temp;bool flag;int i,err;
+
 bool RollNoInput()
 
 void getStudentData()                      : int found_pos,temp_pos;
 
 int studConfirmation()                     : int line;
 
-void makeStudReport()
+int studConfirmation(int argc)             : int line,l;
+
+void makeStudReport()                      : double per,count,totalDay  ; int i
+
+bool createStudentWiseReportPDF(string stud_data,string stud_date,string stud_time,string stud_att,string pdfname)  
+                                           : string temp ; bool flag; int i,err
 
 void reportSentSuccessfully()
          
@@ -54,7 +63,7 @@ MODULE_3()
     DATA.clear();
 }
 
-int proceedFurther()                      : int line;
+int proceedFurther()                       : int line;
 
 void askReportChoice()                     : int line
 
