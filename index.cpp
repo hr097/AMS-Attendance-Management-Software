@@ -81,6 +81,7 @@ void Debug(int t) //! EOP() seek.edit(*required) :ALL AMS TEAM
 bool process_flag=false;
 bool email_flag=false;
 
+
 /****************************************/
 
 class APP 
@@ -116,8 +117,9 @@ public:
 
     ss<<(t.tm_mon + 1);       // pass months
     temp = ss.str();            // returns month
+    cur_month = stoi(temp);  // store current month
     CUR_DATE = CUR_DATE + "/";  // add slash  for formet dd/mm/yy
-
+    
     if(stoi(temp) < 10) // if date-month is between 1 to 9 the like 09 ,01 ...put zero before digit
     {
       temp = "0" + temp;
@@ -418,7 +420,8 @@ protected:
   string AMS_Path;           //* DATABASE PATH
   string tempStorage;        //* TEMPORARY STORAGE FOR APPLICATION VARIABLE
   string command;            //* COMMAND VARIABLE FOR SYSTEM()
-
+  int cur_month;            //* CURRENT MONTH STORE FOR MONTHLY REPORT
+  string pdfName;
   void SetColor(int color) //?for setting individual text color
   {
     WORD wColor;                                      // color specifier
@@ -967,7 +970,7 @@ protected:
       }
 
   }
-  
+
   int validateRollNo(string input, int Bnd, int start) //? string input validate as integer
   {
      int flag = 0, tem = 1;
@@ -1026,7 +1029,7 @@ class MODULE_GENERAL : public APP
 {
 
 private:
-
+  
 public:
 
   MODULE_GENERAL() 
@@ -1190,7 +1193,7 @@ protected:
   //********** MODULE_GENERAL *************/
   
   string SemPath;
-
+ 
   /********************************************/
 
   //********** FACULTY *************/
@@ -1217,6 +1220,9 @@ protected:
 
   vector<string> buffer,LIST;                           // vector buffer for file handling data receiver  LIST FOR STORE LIST CONTENT
   vector< tuple < string,string,string,string > > DATA; // search-key-value-access vector-tuple 
+  string date;
+  string time;
+  
 
   /*******************************/
 
@@ -1224,6 +1230,33 @@ protected:
 
   //*************************  MODULE 2-3 **********************************//
 
+  void reportSentSuccessfully(string pdf_name,string stud_email="")
+  {
+    scrClr(0.5);
+
+    setCursorPos(7,18);
+    SetColor(2);
+    cout<<pdf_name;
+    // setCursorPos(2,34);
+    // SetColor(1);
+    // cout<<CUR_DATE;
+    setCursorPos(2,21);
+    SetColor(0);
+    cout<<"REPORT HAS BEEN SENT SUCCESSFULLY TO :";
+    setCursorPos(2,24);
+    SetColor(1);
+    cout<<FacultyEmail;
+    if(!stud_email.empty())
+    {
+      cout<<" & ";
+      setCursorPos(2,24);
+      SetColor(1);
+      cout<<stud_email;
+    }
+    scrClr(3);
+    SetColor(0);
+    
+  }
 
   int checkDuplicateRecord(vector<string> vec, string search) //?for cheking if duplicate records found in vector_storage
   {
@@ -1514,7 +1547,7 @@ class MODULE_1 : public MODULE_GENERAL //?module 1 class
   //*=============================DATA-MEMBERS================================//
 
 private:
-
+  
 public:
 
 protected:
@@ -2105,6 +2138,8 @@ class MODULE_2 : public MODULE_GENERAL //?module 2 class
 
 private:
 
+ bool month_report_flag; 
+ int file_month;
 
 public:
 
@@ -2118,6 +2153,223 @@ protected:
 
 private:
 
+  void makeMonthReport()
+  {
+      buffer.clear();
+      LIST.clear();
+      DATA.clear();
+      
+      tempStorage.clear();
+  
+      string temp,attendance;
+
+      command.clear();
+      command = SemPath + "\\REPORTS\\fac_data.txt";
+      tempStorage = "1) FACULTY NAME : " + FacultyName;
+      writeDataToFile(command,tempStorage);
+
+      command.clear();
+      command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt";
+      getDataFromFile(command,FacultyEmail,2);
+      
+      command.clear();
+      command = SemPath + "\\REPORTS\\fac_data.txt";
+      tempStorage = "2) FACULTY EMAIL : " + FacultyEmail;
+      writeDataToFile(command,tempStorage);
+
+      tempStorage.clear();
+      tempStorage = "3) COURSE NAME  : " + course_name;
+      writeDataToFile(command,tempStorage);
+             
+      tempStorage.clear();       
+      tempStorage = "4) SEMSTER : " + sem;
+      writeDataToFile(command,tempStorage);
+
+      tempStorage.clear();           
+      tempStorage = "5) SUBJECT NAME : " + subject_name;
+      writeDataToFile(command,tempStorage);
+        
+      tempStorage.clear();      
+      tempStorage = "-: [ Attendance Data ] :- ";
+      writeDataToFile(command,tempStorage);  
+      
+      command.clear();
+      command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
+      int j=1,found_pos,temp_pos,line = countLinesOfFile(command);
+
+      while(j<=line)
+      { 
+        tempStorage.clear();
+        found_pos=temp_pos=0;
+        
+        command.clear();
+        command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
+        getDataFromFile(command,tempStorage,j);
+        
+        found_pos = tempStorage.find("|");
+        student_name.clear();
+        student_name = tempStorage.substr((found_pos+1),(tempStorage.find("|",(found_pos+1))-(found_pos+1))); //time re used as student name
+        
+        command.clear();
+        command = SemPath + "\\REPORTS\\stud_name.txt";
+        writeDataToFile(command,student_name);
+        j++;
+      }
+     
+      tempStorage.clear();
+      j = 1;
+      command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command var
+      line = countLinesOfFile(command);
+      while(j<=line)
+      {
+        tempStorage.clear();
+        getDataFromFile(command,tempStorage,j);
+        buffer.push_back(tempStorage);
+        j++;
+      }
+  
+      for(auto i = buffer.begin(); i != buffer.end(); ++i)
+      { 
+        tempStorage.clear(); 
+        tempStorage = (*i);
+        found_pos = tempStorage.find("|");
+        
+        date = tempStorage.substr(0,found_pos);
+        temp_pos = (found_pos+1);
+        found_pos = tempStorage.find("|", temp_pos);
+        time = tempStorage.substr(temp_pos,(found_pos-temp_pos));
+        temp_pos = (found_pos+1);
+        found_pos = tempStorage.find("|", temp_pos);
+        attendance = tempStorage.substr(temp_pos);
+        DATA.push_back(make_tuple(date,time,attendance,""));
+      }
+  
+       cur_month = 11;
+       auto i = DATA.begin();
+       auto x=buffer.begin();
+       for(; i != DATA.end() && x!=buffer.end() ; ++i,++x) 
+       { 
+           tempStorage.clear();
+           tempStorage = get<0>((*i));
+           date.clear();
+         
+           if(cur_month <= 9)
+             date = tempStorage.substr(4,1);
+           else
+             date = tempStorage.substr(3,2);
+             
+           if(date == to_string(cur_month))
+           { 
+               temp.clear();
+               temp = (*x);
+               command.clear();
+               command = SemPath + "\\REPORTS\\stud_att.txt";
+               writeDataToFile(command,temp);
+           }
+       }
+  
+  }
+
+  bool createMonthlyReportPDF(string fac_data,string stud_name,string stud_att,string pdf_name)
+  {  
+    tempStorage.clear(); 
+    command.clear();
+    bool flag;
+    command = "from fpdf import FPDF\npagesize = ("+to_string(10+countLinesOfFile(stud_att))+",12)\npdf=FPDF(format=pagesize, unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
+    command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,pdf.w-pdf.l_margin,1.90)\npdf.line(0.4,1.97,pdf.w-pdf.l_margin,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\npdf.ln(0.5)\n";
+    getDataFromFile(fac_data,tempStorage,1);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
+    tempStorage.clear();
+    getDataFromFile(fac_data,tempStorage,2);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Email
+    tempStorage.clear();
+    getDataFromFile(fac_data,tempStorage,3);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course Name
+    tempStorage.clear();
+    getDataFromFile(fac_data,tempStorage,4);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
+    tempStorage.clear();
+    getDataFromFile(fac_data,tempStorage,5);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.5)\n";//Subject Name
+    tempStorage.clear();
+    getDataFromFile(fac_data,tempStorage,6);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='C')\n";//Attendance Data Title
+
+    /*Making 2D array for tabuler Data*/
+    command += "data = [['ROLL NO.','NAME'";
+    for(int i=1;i<=(countLinesOfFile(stud_name)+1);i++)
+    {
+        if(i!=1)
+            command += ",[";
+        for(int j=1;j<=(countLinesOfFile(stud_att)+2);j++)
+        {
+            if(i==1 && j>2)//Dates (Column wise)
+            {
+                tempStorage.clear();
+                getDataFromFile(stud_att,tempStorage,j-2);
+                command += ",'"+tempStorage.substr(0,10)+"'";
+            }
+            if(i>1 && j==1)//Roll Number(Row wise)
+            {
+                command += "'"+to_string(i-1)+"',";
+            }
+            if(i>1 && j==2)//Name (Row wise)
+            {
+                tempStorage.clear();
+                getDataFromFile(stud_name,tempStorage,i-1);
+                command+= "'"+tempStorage+"'";
+            }
+            if(i>1 && j>2)//Attendance
+            {
+                tempStorage.clear();
+                getDataFromFile(stud_att,tempStorage,j-2);
+                if(tempStorage[19+i-1] == 'P')
+                    command += ",'Present'";
+                else
+                    command += ",'Absent'";
+            }
+        }
+        command += "]";
+    }
+    command += "]\n";
+    command += "th = pdf.font_size\ncol_width = (epw-4)/"+to_string(countLinesOfFile(stud_att)+1)+"\npdf.ln(0.3)\n";
+    command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\npdf.ln(2)";
+    command += "\nLine = \"_\"\nfor i in range(int(pdf.w-pdf.l_margin)):\n\tfor j in range(10):\n\t\tLine+=\"_\" ";
+    command += "\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line, align='C')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line,align='C')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('"+DoubleBackslashPath(SemPath) +"\\\\REPORTS\\\\";
+    command +=  pdf_name + "','F')\n";
+
+    tempStorage.clear();
+    tempStorage = AMS_Path+"\\OTHER\\MWR.py";   // make python File
+    writeDataToFile(tempStorage,command);
+    
+    command.clear();
+    command = "python " + AMS_Path + "\\OTHER\\MWR.py" + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";
+
+    system(command.c_str());    //run python file
+
+
+    command.clear();
+    command = AMS_Path + "\\OTHER\\output.txt"; //error file size get
+        
+    int err = checkEmptyFile(command);
+    if(err)
+    flag=false;
+    else
+    flag=true;
+    remove(command.c_str()); // delete output/error file 
+
+    command = AMS_Path+"\\OTHER\\MWR.py"; 
+    remove(command.c_str());    //delete python file
+
+    remove(fac_data.c_str());     //delete fac_data file
+    remove(stud_name.c_str());    //delete stud_name file
+    remove(stud_att.c_str());     //delete stud_att file
+  
+    tempStorage.clear(); //clear for re-using
+    command.clear();
+    return (flag); 
+  
+  }
 
   bool checkExistRollNo(string &Attendance,string rl,char AT,int select=0)//?checking if same roll no exist in the list
   {
@@ -2844,12 +3096,12 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
       
       command.clear();
       
-      setCursorPos(4,14);//set cursor position
+      setCursorPos(4,14);
       ConvertChoiceToINT = YesNoInput(" DO YOU CONFIRM THESE NUMBERS ? ", command);//confirm msg
       if(ConvertChoiceToINT == -1)//if choice is not yes or no
       {
         InvalidInputErr();//error
-        goto confirm;//re-confirm
+        goto confirm;
       }
       else if(ConvertChoiceToINT == 0)//if choice is no than modify
       {  
@@ -2867,8 +3119,43 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
       }
 
       
-  return (ConvertChoiceToINT);//return choice
-}
+      return (ConvertChoiceToINT);//return choice
+    }
+
+    void MonthlyReportGenerating(string &month)
+    {
+        string temp;
+        tempStorage.clear();
+        temp = "ATTENDANCE REPORT FOR ";
+        tempStorage = " IS BEING GENERATED";
+
+        int i=1;
+        do
+        {
+            scrClr(0.5);
+            setCursorPos(9,14);
+            SetColor(0);
+            cout<<temp;
+            SetColor(1);
+            cout<<month;
+            SetColor(0);
+            cout<<tempStorage;
+            ShowConsoleCursor(false);
+            scrClr(1);
+            tempStorage = tempStorage + ".";
+
+            if(i==4)
+            {
+                break;
+            }
+            i++;
+
+        } while (true);
+
+        tempStorage.clear();
+        SetColor(0);
+        scrClr();
+    }
 
   public:
 
@@ -2880,10 +3167,59 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
       buffer.clear();
       LIST.clear();
       DATA.clear();
+      month_report_flag=false;  
     }
 
     ~MODULE_2()
     {
+
+      /******************************** MONTHLY REPORT **************************************/
+       if(month_report_flag)
+       {         
+                 string month=(file_month==1)?"JANUARY":(file_month==2)?"FEBRUARY":(file_month==3)?"MARCH":(file_month==4)?"APRIL":(file_month==5)?"MAY":(file_month==6)?"JUNE":(file_month==7)?"JULY":(file_month==8)?"AUGUST":(file_month==9)?"SEPTEMBER":(file_month==10)?"OCTOBER":(file_month==11)?"NOVEMBER":(file_month==12)?"DECEMBER":"null";
+                 
+                 MonthlyReportGenerating(month);
+
+                 makeMonthReport();
+                 pdfName += "AMS_REPORT_" + course_name + "_SEM_" +sem + "_" + subject_name + "_" + month; 
+                 replaceWithHyphen(pdfName);
+                 pdfName += ".pdf";
+
+                //  command = SemPath + "\\FAC-STUD-DETAILS\\fac-sem-" + sem + ".txt";
+                //  getDataFromFile(command,FacultyEmail,2);
+    
+                 if(createMonthlyReportPDF(SemPath+"\\REPORTS\\fac_data.txt",SemPath+"\\REPORTS\\stud_name.txt",SemPath+"\\REPORTS\\stud_att.txt",pdfName))
+                 { 
+                     //*threading used for  processing email part 
+                   
+                     MODULE_2 MD2;
+                     thread t1(&sendToEmail,MD2,"ams.software.team@gmail.com","Amsisrich@45",FacultyEmail,"MONTHLY-ATTENDANCE-REPORT","Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your MONTHLY Attendance Report.\n\nThank You.\n\n",SemPath+"\\REPORTS\\"+pdfName,pdfName); 
+                     thread t2(&LoadingProcess,MD2);
+               
+                     t1.join(); // join the thread
+                     t2.join(); // join the thread
+               
+                     scrClr(); //by clearing screen it resolves flickring error of screen...
+                     
+                     if(process_flag && email_flag)
+                     { 
+                       reportSentSuccessfully(pdfName); //sent email successfully with attachment
+                       process_flag =email_flag = false; // resetting
+                     }
+                     else
+                     {
+                       warnMsg("REPORT COULDN'T BE SENT !",4,26,"ERROR CODE : 404/444/599 ",1,26); // error while sending email
+                       process_flag = email_flag = false; // resetting
+                     }
+           
+                 }
+                 else
+                 {
+                       warnMsg("PDF REPORT COULDN'T BE GENERATED !",4,22,"ERROR CODE : 404/417/424 ",1,26); // error while sending email
+                 }   
+        }         
+      /***********************************************************************/
+
       buffer.clear(); // clearing buffer
       LIST.clear();   // clearing List
       command.clear(); // clearing command
@@ -2891,9 +3227,41 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
       DATA.clear(); // clearing DATA
     }
 
-    int condfirmTodayAttendance()
+    void MonthlyReport()
     {
+        /***************************************/
+  
+         command.clear();
+         tempStorage.clear(); 
 
+         command = SemPath + "\\DAILY-RECORD\\records.txt";
+         getDataFromFile(command,tempStorage,countLinesOfFile(command));
+         //Debug(tempStorage);
+         tempStorage = tempStorage.substr(3,2);
+         
+         if(tempStorage=="01"){tempStorage="1";}
+         else if(tempStorage=="02"){tempStorage="2";}
+         else if(tempStorage=="03"){tempStorage="3";}
+         else if(tempStorage=="04"){tempStorage="4";}
+         else if(tempStorage=="05"){tempStorage="5";}
+         else if(tempStorage=="06"){tempStorage="6";}
+         else if(tempStorage=="07"){tempStorage="7";}
+         else if(tempStorage=="08"){tempStorage="8";}
+         else if(tempStorage=="09"){tempStorage="9";}
+         
+         
+         file_month = stoi(tempStorage);
+         //cout<<endl<<"file_month = "<<file_month<<endl<<"cur_month = "<<cur_month<<getch();  
+         if(file_month!=cur_month)
+         month_report_flag=true;       
+         
+         tempStorage.clear();
+         
+    }
+
+    int confirmTodayAttendance()
+    {
+       
       //int i;
       ConvertChoiceToINT = 1; // re-used
   
@@ -2902,7 +3270,7 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
 
       command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command var
       //fstream fin(command.c_str(), ios::in);//file opened
-      getDataFromFile(command,tempStorage,(countLinesOfFile(command)-1));
+      getDataFromFile(command,tempStorage,countLinesOfFile(command));
 
       //! EOP() seek.edit(*required) : DRASHTI DHOLA 
       /*can we use getDataFromFile() here insted of your file opening code*/
@@ -2945,7 +3313,6 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
       
         //fin.close();//file close
       //}
-
       return(ConvertChoiceToINT);//return 
     }
 
@@ -3038,10 +3405,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
     private:
     
-    string date;
-    string time;
     string attendance;
-    string pdfName; 
 
     public:
 
@@ -3095,7 +3459,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
         return true;
     }
     tempStorage.clear();
-}
+  }
 
   bool DateInput() //? taking date input
   {
@@ -3759,36 +4123,10 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
           remove(stud_att.c_str());       //delete stud_att file
           tempStorage.clear();
           command.clear();
+
     return(flag);
   }
 
-  void reportSentSuccessfully(string pdf_name,string stud_email="")
-  {
-    scrClr(0.5);
-
-    setCursorPos(6,18);
-    SetColor(2);
-    cout<<pdf_name;
-    setCursorPos(2,34);
-    SetColor(1);
-    cout<<CUR_DATE;
-    setCursorPos(2,21);
-    SetColor(0);
-    cout<<"REPORT HAS BEEN SENT SUCCESSFULLY TO :";
-    setCursorPos(2,24);
-    SetColor(1);
-    cout<<FacultyEmail;
-    if(!stud_email.empty())
-    {
-      cout<<" & ";
-      setCursorPos(2,24);
-      SetColor(1);
-      cout<<stud_email;
-    }
-    scrClr(3);
-    SetColor(0);
-    
-  }
 
   public:
 
@@ -3799,6 +4137,9 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     buffer.clear();
     LIST.clear();
     DATA.clear();
+    pdfName.clear();
+    date.clear();
+    time.clear();
   }
 
   int proceedFurther() //? confirmation  step
@@ -3925,7 +4266,6 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
         }
   }
  
- //! student also  send the email report
   void DateWiseReport() //? DateWise report create method
   {
     if(DateInput()) 
@@ -4097,6 +4437,9 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     buffer.clear();
     LIST.clear();
     DATA.clear();
+    pdfName.clear();
+    date.clear();
+    time.clear();
   }
   
   protected:
@@ -4154,8 +4497,10 @@ int main()
             break;
         }
         case 2:
-        {
+        {   
+           
             MODULE_2 MD2;
+            
             if(MD2.checkDB())//check database
             {
                  MD2.askCourseChoice();//ask course 
@@ -4165,8 +4510,9 @@ int main()
                  {
                     if(MD2.proceedFurther()) //confirmation for right choice
                     {
-                         if(MD2.condfirmTodayAttendance()) //check if already taken for today
-                         {
+                         if(MD2.confirmTodayAttendance()) //check if already taken for today
+                         {    
+                              MD2.MonthlyReport();
                               reask:
                               
                               MD2.AttendanceOptionWindow(); //ask easy option for attendance taking method
@@ -4184,7 +4530,6 @@ int main()
                     }
                  }     
             }
-
             break;
         }
         case 3:
@@ -4239,7 +4584,6 @@ int main()
         A.scrClr(); // screen clear
     }
  
-    return EXIT_SUCCESS;
+    return (EXIT_SUCCESS);
   }
-
 
