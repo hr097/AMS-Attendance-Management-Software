@@ -3240,7 +3240,6 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
          if(!tempStorage.empty())
          {
             tempStorage = tempStorage.substr(3,2);
-            Debug(tempStorage);
             
             if(tempStorage=="01"){tempStorage="1";}
             else if(tempStorage=="02"){tempStorage="2";}
