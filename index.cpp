@@ -310,7 +310,7 @@ private:
     {
       setCursorPos(1, 17);
       if (line == 1)
-        buildHorizontalWall(43, "1) NEW SETUP FOR SEMESTER");
+        buildHorizontalWall(43, "1) NEW AMS SETUP ");
       else if (line == 3)
         buildHorizontalWall(43, "2) TAKE ATTENDANCE ");
       else if (line == 5)
@@ -3228,35 +3228,40 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
     }
 
     void MonthlyReport()
-    {
+    {    
         /***************************************/
-  
+         
          command.clear();
          tempStorage.clear(); 
 
          command = SemPath + "\\DAILY-RECORD\\records.txt";
          getDataFromFile(command,tempStorage,countLinesOfFile(command));
-         //Debug(tempStorage);
-         tempStorage = tempStorage.substr(3,2);
+
+         if(!tempStorage.empty())
+         {
+            tempStorage = tempStorage.substr(3,2);
+            Debug(tempStorage);
+            
+            if(tempStorage=="01"){tempStorage="1";}
+            else if(tempStorage=="02"){tempStorage="2";}
+            else if(tempStorage=="03"){tempStorage="3";}
+            else if(tempStorage=="04"){tempStorage="4";}
+            else if(tempStorage=="05"){tempStorage="5";}
+            else if(tempStorage=="06"){tempStorage="6";}
+            else if(tempStorage=="07"){tempStorage="7";}
+            else if(tempStorage=="08"){tempStorage="8";}
+            else if(tempStorage=="09"){tempStorage="9";}
          
-         if(tempStorage=="01"){tempStorage="1";}
-         else if(tempStorage=="02"){tempStorage="2";}
-         else if(tempStorage=="03"){tempStorage="3";}
-         else if(tempStorage=="04"){tempStorage="4";}
-         else if(tempStorage=="05"){tempStorage="5";}
-         else if(tempStorage=="06"){tempStorage="6";}
-         else if(tempStorage=="07"){tempStorage="7";}
-         else if(tempStorage=="08"){tempStorage="8";}
-         else if(tempStorage=="09"){tempStorage="9";}
-         
-         
-         file_month = stoi(tempStorage);
-         //cout<<endl<<"file_month = "<<file_month<<endl<<"cur_month = "<<cur_month<<getch();  
-         if(file_month!=cur_month)
-         month_report_flag=true;       
-         
-         tempStorage.clear();
-         
+            file_month = stoi(tempStorage);
+            //cout<<endl<<"file_month = "<<file_month<<endl<<"cur_month = "<<cur_month<<getch();  
+            if(file_month!=cur_month)
+            month_report_flag=true;   
+
+
+         }    
+            
+            tempStorage.clear();
+
     }
 
     int confirmTodayAttendance()
@@ -4203,6 +4208,8 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
       ShowConsoleCursor(true);
       cout << "Type : ";
       getline(cin, tempStorage);
+
+      
       ShowConsoleCursor(false);
       ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
     
@@ -4211,7 +4218,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
         InvalidInputErr(); 
         goto reinputforattedance;
       }
-
+      
       return (ConvertChoiceToINT); // return confirmation 
   }
 
@@ -4509,12 +4516,13 @@ int main()
                  if(MD2.askSubjectChoice())//ask subject
                  {
                     if(MD2.proceedFurther()) //confirmation for right choice
-                    {
+                    {     
                          if(MD2.confirmTodayAttendance()) //check if already taken for today
                          {    
+                           
                               MD2.MonthlyReport();
                               reask:
-                              
+                             
                               MD2.AttendanceOptionWindow(); //ask easy option for attendance taking method
                      
                               if(MD2.takeAttendance(MODULE_2::AT_OPTION_CHOICE)) //take attendance
@@ -4545,7 +4553,7 @@ int main()
               {
                
                    if(MD3.proceedFurther()) //confirm taking attendance or Return to Home Screen
-                   { 
+                   {      
                          MD3.askReportChoice(); // select datewise or studentwise report
                                                 
                               switch(MODULE_3::CUS_REPORT_CHOICE)
