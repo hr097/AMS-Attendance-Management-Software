@@ -501,6 +501,7 @@ protected:
     cout << "CHOICE : ";
     fflush(stdin);            // flushing standard input buffer
     getline(cin, input);      // taking white space string input
+    cin.clear();
     ShowConsoleCursor(false); // hide the cursor
   }
 
@@ -549,6 +550,7 @@ protected:
     ShowConsoleCursor(true);
     cout << "Type : ";
     getline(cin, in);//take input
+    cin.clear();
     ShowConsoleCursor(false);
     line = validateString(in); // validate input // line re used as return value storage
 
@@ -1174,6 +1176,7 @@ public:
     ShowConsoleCursor(true);
     cout << "Type : ";
     getline(cin, tempStorage);
+    cin.clear();
     ShowConsoleCursor(false);
 
     ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
@@ -1797,6 +1800,7 @@ private:
     fflush(stdin);
     ShowConsoleCursor(true);
     getline(cin, input);
+    cin.clear();
     ShowConsoleCursor(false);
     
     if(!LengthValidation(input,27))
@@ -1820,6 +1824,7 @@ private:
     fflush(stdin);
     ShowConsoleCursor(true);
     getline(cin, input);
+    cin.clear();
     ShowConsoleCursor(false);
     
     transform(input.begin(), input.end(), input.begin(), ::tolower); // convert to uppercase
@@ -1852,6 +1857,7 @@ private:
     fflush(stdin);
     ShowConsoleCursor(true);
     getline(cin, course_name);
+    cin.clear();
     ShowConsoleCursor(false);
 
     if(!LengthValidation(course_name,27))
@@ -1879,6 +1885,7 @@ private:
     fflush(stdin);
     ShowConsoleCursor(true);
     getline(cin, sem);
+    cin.clear();
     ShowConsoleCursor(false);
 
     if (!validateString(sem, 10, 1)) // validate sem input
@@ -1898,6 +1905,7 @@ private:
     ShowConsoleCursor(true);
     fflush(stdin);
     getline(cin, subject_name);
+    cin.clear();
     ShowConsoleCursor(false);
     if(!LengthValidation(subject_name,27))
     {
@@ -1932,6 +1940,7 @@ private:
     fflush(stdin);
     ShowConsoleCursor(true);
     getline(cin, numberOfstudents);
+    cin.clear();
     ShowConsoleCursor(false);
     
     ConvertChoiceToINT = validateString(numberOfstudents, 5000, 1); //validate number of students input
@@ -2680,6 +2689,7 @@ private:
            ShowConsoleCursor(true);
            fflush(stdin);//flushing standard input buffer
            getline(cin,command);//take input
+           cin.clear();
            ShowConsoleCursor(false);
            if(command=="*")
            {    
@@ -2992,6 +3002,7 @@ int EnterPR_AR(int choice) // ? function for manually entering absent / present 
          ShowConsoleCursor(true);
          fflush(stdin);
          getline(cin, MCH);//take input
+         cin.clear();
          ShowConsoleCursor(false);
         
          if(MCH=="*")//if user press *
@@ -3482,6 +3493,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
      ShowConsoleCursor(true);
      SetColor(1);
      getline(cin,date);
+     cin.clear();
      SetColor(0);
      //! EOP() seek.review(*required) :ALL TEAM AMS_Path
      /*
@@ -3801,6 +3813,8 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     ShowConsoleCursor(true);
     cout<<"ENTER ROLL NUMBER OF STUDENT : ";
     getline(cin,RoLLNo);
+    cin.clear(); //clear bad input flag 
+
     ShowConsoleCursor(false);
 
     ConvertChoiceToINT =  validateRollNo(RoLLNo,stoi(numberOfstudents), 1);//validate roll number
@@ -3886,6 +3900,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
     ShowConsoleCursor(true);
     cout << "Type : ";
     getline(cin, tempStorage);
+    cin.clear();
     ShowConsoleCursor(false);
      
     ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
@@ -4208,7 +4223,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
       ShowConsoleCursor(true);
       cout << "Type : ";
       getline(cin, tempStorage);
-
+      cin.clear();
       
       ShowConsoleCursor(false);
       ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
