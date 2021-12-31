@@ -674,7 +674,7 @@ protected:
   bool checkAlphaSpInput(string &input,int both=0)  //?function to check occurence of special charaters and alphabets
   {
 
-    string list = "#%&{}\\/*>< $!:\'\"@+`|=";
+    string list = "#%&{}\\/*>< $!:\'\"@+`|=-.,;[]_()^~?";
     string list2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";    
 
     int j=0,i=0;
@@ -3423,19 +3423,19 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
   private:
 
-  bool dateValidation(string date) //?  date validation
-  {
-       match_results<string::const_iterator> m;
-       regex d("^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\\d\\d"); //date pattern
-       if(regex_match(date,m,d)) // if match
-       {
-          return(true); // matches then return true
-       }
-       else
-       {
-         return(false); // if not then return false
-       }
-  }
+  // bool dateValidation(string date) //?  date validation
+  // {
+      //  match_results<string::const_iterator> m;
+      //  regex d("^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\\d\\d"); //date pattern
+      //  if(regex_match(date,m,d)) // if match
+      //  {
+          // return(true); // matches then return true
+      //  }
+      //  else
+      //  {
+        //  return(false); // if not then return false
+      //  }
+  // }
 
   bool MailToStudent()
   {
@@ -3479,6 +3479,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
      cout<<"(DD/MM/YYYY)";
      SetColor(0);
      cout<<" : ";
+     ShowConsoleCursor(true);
      SetColor(1);
      getline(cin,date);
      SetColor(0);
@@ -3488,7 +3489,7 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
      */
      //? review please at last
 
-     if(EmptyInput(date)||(!dateValidation(date))) //validating date
+     if(EmptyInput(date)) //validating date
      {
        scrClr(0.5);
        InvalidInputErr();
