@@ -190,6 +190,30 @@ public:
       exit(1);
     }
     /**************** AMS DATABASE PATH GETTING *********************/
+    /***************** DESKTOP FOLDER AMS CREATE ********************/
+     makeDesktopPath_AMS();
+    /***************** DESKTOP FOLDER AMS CREATE ********************/
+  }
+
+  bool makeDesktopPath_AMS()
+  {
+      TCHAR appData[MAX_PATH];
+      if (SUCCEEDED(SHGetFolderPath(NULL,CSIDL_DESKTOPDIRECTORY | CSIDL_FLAG_CREATE,NULL,SHGFP_TYPE_CURRENT,appData)));
+      string DesktopPath = appData;
+      DesktopPath = DesktopPath + "\\" + "AMS";
+
+      if(!dirExists(DesktopPath.c_str()))
+      {
+          command.clear();
+          command="mkdir "+DesktopPath;
+          system(command.c_str());
+          command.clear();
+          return(true);
+      }
+      else
+      {
+          return(false);
+      }
   }
 
   void setCursorPos(int x, int y = 0) //? cursor position set ->IMPORTANT: relative postion is set
@@ -2290,104 +2314,135 @@ private:
     }
   }
 
-  bool createMonthlyReportPDF(string fac_data, string stud_name, string stud_att, string pdf_name)
-  {
-    tempStorage.clear();
+  bool createMonthlyReportPDF(string fac_data,string stud_name,string stud_att,string pdf_name)
+  {  
+    tempStorage.clear(); 
     command.clear();
     bool flag;
-    command = "from fpdf import FPDF\npagesize = (" + to_string(10 + countLinesOfFile(stud_att)) + ",12)\npdf=FPDF(format=pagesize, unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
-    command += "pdf.image('" + DoubleBackslashPath(AMS_Path) + "\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,pdf.w-pdf.l_margin,1.90)\npdf.line(0.4,1.97,pdf.w-pdf.l_margin,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\npdf.ln(0.5)\n";
-    getDataFromFile(fac_data, tempStorage, 1);
-    command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='L')\npdf.ln(0.3)\n"; // Faculty Name
+    int PresentCount = 0;
+    command = "from fpdf import FPDF\npagesize = ("+to_string(25+countLinesOfFile(stud_att))+",12)\npdf=FPDF(format=pagesize, unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
+    command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,pdf.w-pdf.l_margin,1.90)\npdf.line(0.4,1.97,pdf.w-pdf.l_margin,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\npdf.ln(0.5)\n";
+    getDataFromFile(fac_data,tempStorage,1);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
     tempStorage.clear();
-    getDataFromFile(fac_data, tempStorage, 2);
-    command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='L')\npdf.ln(0.3)\n"; // Faculty Email
+    getDataFromFile(fac_data,tempStorage,2);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Email
     tempStorage.clear();
-    getDataFromFile(fac_data, tempStorage, 3);
-    command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='L')\npdf.ln(0.3)\n"; // Course Name
+    getDataFromFile(fac_data,tempStorage,3);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course Name
     tempStorage.clear();
-    getDataFromFile(fac_data, tempStorage, 4);
-    command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='L')\npdf.ln(0.3)\n"; // Semester
+    getDataFromFile(fac_data,tempStorage,4);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
     tempStorage.clear();
-    getDataFromFile(fac_data, tempStorage, 5);
-    command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='L')\npdf.ln(0.5)\n"; // Subject Name
+    getDataFromFile(fac_data,tempStorage,5);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.5)\n";//Subject Name
     tempStorage.clear();
-    getDataFromFile(fac_data, tempStorage, 6);
-    command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='C')\n"; // Attendance Data Title
+    getDataFromFile(fac_data,tempStorage,6);
+    command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='C')\n";//Attendance Data Title
 
     /*Making 2D array for tabuler Data*/
-    command += "data = [['ROLL NO.','NAME'";
-    for (int i = 1; i <= (countLinesOfFile(stud_name) + 1); i++)
+    command += "data = [['ROLL NO.','NAME','PRESENT DAYS','ABSENT DAYS','PER'";
+    for(int i=1;i<=(countLinesOfFile(stud_name)+1);i++)
     {
-      if (i != 1)
-        command += ",[";
-      for (int j = 1; j <= (countLinesOfFile(stud_att) + 2); j++)
-      {
-        if (i == 1 && j > 2) // Dates (Column wise)
+        if(i!=1)
         {
-          tempStorage.clear();
-          getDataFromFile(stud_att, tempStorage, j - 2);
-          command += ",'" + tempStorage.substr(0, 10) + "'";
+            command += ",[";
+            PresentCount = 0;
+            for(int k=1;k<=(countLinesOfFile(stud_att));k++)
+            {
+                tempStorage.clear();
+                getDataFromFile(stud_att,tempStorage,k);
+                if(tempStorage[19+i-1] == 'P')
+                    PresentCount++;
+            }
         }
-        if (i > 1 && j == 1) // Roll Number(Row wise)
+            
+        for(int j=1;j<=(countLinesOfFile(stud_att)+5);j++)
         {
-          command += "'" + to_string(i - 1) + "',";
+            if(i==1 && j > 5)//Dates (Column wise)
+            {
+                tempStorage.clear();
+                getDataFromFile(stud_att,tempStorage,j-5);
+                command += ",'"+tempStorage.substr(0,10)+"'";
+            }
+            if(i>1 && j==1)//Roll Number(Row wise)
+            {
+                command += "'"+to_string(i-1)+"',";
+            }
+            
+            if(i>1 && j==2)//Name (Row wise)
+            {
+                tempStorage.clear();
+                getDataFromFile(stud_name,tempStorage,i-1);
+                command+= "'"+tempStorage+"',";
+            }
+            if(i>1 && j == 3)//Present Days
+            {
+                command += "'"+to_string(PresentCount)+"',";
+            } 
+            if(i>1 && j == 4)//Absent Days
+            {
+                command += "'"+to_string(countLinesOfFile(stud_att) - PresentCount)+"',";
+            } 
+            if(i>1 && j == 5)//Percentage Calculation
+            {
+                stringstream stream;
+                stream << fixed << setprecision(2) << (float(100 *  PresentCount)/countLinesOfFile(stud_att));
+                string temp = stream.str();
+                command += "'"+temp+"%'";
+            } 
+            if(i>1 && j > 5)
+            {
+                tempStorage.clear();
+                getDataFromFile(stud_att,tempStorage,j-5);
+                if(tempStorage[19+i-1] == 'P')
+                    command += ",'Present'";
+                else
+                    command += ",'Absent'";
+            }
         }
-        if (i > 1 && j == 2) // Name (Row wise)
-        {
-          tempStorage.clear();
-          getDataFromFile(stud_name, tempStorage, i - 1);
-          command += "'" + tempStorage + "'";
-        }
-        if (i > 1 && j > 2) // Attendance
-        {
-          tempStorage.clear();
-          getDataFromFile(stud_att, tempStorage, j - 2);
-          if (tempStorage[19 + i - 1] == 'P')
-            command += ",'Present'";
-          else
-            command += ",'Absent'";
-        }
-      }
-      command += "]";
+        command += "]";
     }
     command += "]\n";
-    command += "th = pdf.font_size\ncol_width = (epw-4)/" + to_string(countLinesOfFile(stud_att) + 1) + "\npdf.ln(0.3)\n";
+    command += "th = pdf.font_size\ncol_width = (epw-4)/"+to_string(countLinesOfFile(stud_att)+4)+"\npdf.ln(0.3)\n";
     command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\npdf.ln(2)";
     command += "\nLine = \"_\"\nfor i in range(int(pdf.w-pdf.l_margin)):\n\tfor j in range(10):\n\t\tLine+=\"_\" ";
-    command += "\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line, align='C')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line,align='C')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('" + DoubleBackslashPath(SemPath) + "\\\\REPORTS\\\\";
-    command += pdf_name + "','F')\n";
+    command += "\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line, align='C')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line,align='C')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('"+DoubleBackslashPath(SemPath) +"\\\\REPORTS\\\\";
+    command +=  pdf_name + "','F')\n";
 
     tempStorage.clear();
-    tempStorage = AMS_Path + "\\OTHER\\MWR.py"; // make python File
-    writeDataToFile(tempStorage, command);
-
+    tempStorage = AMS_Path+"\\OTHER\\MWR.py";   // make python File
+    writeDataToFile(tempStorage,command);
+    
     command.clear();
     command = "python " + AMS_Path + "\\OTHER\\MWR.py" + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";
 
-    system(command.c_str()); // run python file
+    system(command.c_str());    //run python file
+
 
     command.clear();
-    command = AMS_Path + "\\OTHER\\output.txt"; // error file size get
-
+    command = AMS_Path + "\\OTHER\\output.txt"; //error file size get
+        
     int err = checkEmptyFile(command);
-    if (err)
-      flag = false;
+    if(err)
+    flag=false;
     else
-      flag = true;
-    remove(command.c_str()); // delete output/error file
+    flag=true;
+    remove(command.c_str()); // delete output/error file 
 
-    command = AMS_Path + "\\OTHER\\MWR.py";
-    remove(command.c_str()); // delete python file
+    command = AMS_Path+"\\OTHER\\MWR.py"; 
+    remove(command.c_str());    //delete python file
 
-    remove(fac_data.c_str());  // delete fac_data file
-    remove(stud_name.c_str()); // delete stud_name file
-    remove(stud_att.c_str());  // delete stud_att file
-
-    tempStorage.clear(); // clear for re-using
+    remove(fac_data.c_str());     //delete fac_data file
+    remove(stud_name.c_str());    //delete stud_name file
+    remove(stud_att.c_str());     //delete stud_att file
+  
+    tempStorage.clear(); //clear for re-using
     command.clear();
-    return (flag);
+    return (flag); 
+  
   }
+
 
   bool checkExistRollNo(string &Attendance, string rl, char AT, int select = 0) //?checking if same roll no exist in the list
   {
