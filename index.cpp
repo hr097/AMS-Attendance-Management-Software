@@ -67,13 +67,11 @@ using namespace std; // standard namespace for  resolving naming coflicts
 
 void Debug(string t) //! EOP() seek.edit(*required) :ALL AMS TEAM
 {
-  cout << endl
-       << t << getch();
+  cout << endl << t << getch();
 }
 void Debug(int t) //! EOP() seek.edit(*required) :ALL AMS TEAM
 {
-  cout << endl
-       << t << getch();
+  cout << endl << t << getch();
 }
 
 //********* GLOBAL VARIABLE **************//
@@ -284,7 +282,7 @@ private:
   {
     int line;
 
-  gotoHomeScreen:
+    gotoHomeScreen:
 
     Date(1, 15); // current date print
     Time(0, 16); // current time print
@@ -406,8 +404,10 @@ private:
     std::wcscpy(cfi.FaceName, L"JetBrains Mono Bold");                     // Choose your font BY SETTING FONT FACE
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi); // pass reference of that structure to OUTPUT HANDLE
   }
+//? **************************  DATA - MEMEBERS ***************************************
 
 protected:
+
   string CUR_DATE, CUR_TIME; //*CURRENT DATE TIME FOR APPLICATION
   int ConvertChoiceToINT;    //* INTEGER CONVERT VARIABLE FOR INPUT FOR APPLICATION
   string AMS_Path;           //* DATABASE PATH
@@ -415,6 +415,9 @@ protected:
   string command;            //* COMMAND VARIABLE FOR SYSTEM()
   int cur_month;             //* CURRENT MONTH STORE FOR MONTHLY REPORT
   string pdfName;
+
+  //? ***********************  DATA - MEMEBERS -END ***************************************
+
   void SetColor(int color) //?for setting individual text color
   {
     WORD wColor;                                      // color specifier
@@ -4160,6 +4163,7 @@ private:
   }
 
 public:
+
   MODULE_3()
   {
     tempStorage.clear();
@@ -4250,7 +4254,7 @@ public:
   void askReportChoice() // ? report type select choice
   {
     int line = 0;
-  reask_report:
+    reask_report:
 
     // BOX-UI FOR REPORT CHOICE
     scrClr(0.5);
@@ -4479,6 +4483,85 @@ int MODULE_3::CUS_REPORT_CHOICE; // report choice student/datewise
 
 //-----------------------------------------------------------------------------------/
 
+
+class MODULE_4 : public MODULE_GENERAL //?module 4 class
+{
+
+  //*=============================DATA-MEMBERS================================//
+
+  private:
+    
+  public:
+  
+  protected:
+
+  //*=============================DATA-MEMBERS-END================================//
+
+  //*=============================MEMBERS-FUNCTIONS===================================//
+  private:
+  
+  public:
+
+  MODULE_4()  
+  {
+
+    tempStorage.clear();
+    command.clear();
+    buffer.clear();
+    LIST.clear();
+    DATA.clear();
+    
+    FacultyName.clear();
+    FacultyEmail.clear();
+    // course_name.clear();  //? if needed then uncomment
+    // sem.clear();
+    // subject_name.clear();
+
+    // student_name.clear();
+    // student_email.clear();
+    // RoLLNo.clear();
+
+    // date.clear();
+    // time.clear();
+
+  }
+
+  ~MODULE_4()
+  {
+    tempStorage.clear();
+    command.clear();
+    buffer.clear();
+    LIST.clear();
+    DATA.clear();
+        
+    FacultyName.clear();
+    FacultyEmail.clear();
+    // course_name.clear();
+    // sem.clear();
+    // subject_name.clear();
+    // student_name.clear();
+    // student_email.clear();
+    // RoLLNo.clear();
+    // numberOfstudents.clear();
+    // date.clear();
+    // time.clear();
+
+  }
+
+  protected:
+  
+  void SetNoObj()
+  {
+    //*empty defination of pure virtual functions , parent class object can't be created
+  }
+   //*=============================MEMBERS-FUNCTION-END================================//
+};
+
+
+
+
+
+
 //**************************************   MODULES-END   ***************************************************/
 
 //? ****************************** GENERAL FUNCTIONS ***********************************/
@@ -4585,29 +4668,31 @@ int main()
 
             switch (MODULE_3::CUS_REPORT_CHOICE)
             {
-            case 1:
-            {
-              MD3.DateWiseReport();
-              break;
-            }
-            case 2:
-            {
-              MD3.studentReport();
-              break;
-            }
-            default:
-            {
-              break;
-            }
+                case 1:
+                {
+                  MD3.DateWiseReport();
+                  break;
+                }
+                case 2:
+                {
+                  MD3.studentReport();
+                  break;
+                }
+                default:
+                {
+                  break;
+                }
             }
           }
         }
       }
-
       break;
     }
     case 4:
     {
+       MODULE_4 MD4;
+       cout<<endl<<endl<<"module development 4"<<getch();
+      //DRASHTI DHOLA CODE HERE MD_4 AND REMOVE THIS COMMENT
       break;
     }
     case 5:
