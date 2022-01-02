@@ -4955,7 +4955,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         if(studConfirmation())
         {
           scrClr(0.5);
-          MSG("STUDENT DETAILS HAS BEEN SUCCESSFULLY CHANGED","",2,0,20);
+          MSG("STUDENT DETAILS HAS BEEN SUCCESSFULLY CHANGED","",2,0,18);
         }
         else
           studDetailModChoice();
@@ -4983,7 +4983,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
           if(studConfirmation())
           {
             scrClr(0.5);
-            MSG("STUDENT DETAILS HAS BEEN SUCCESSFULLY CHANGED","",2,0,20);
+            MSG("STUDENT DETAILS HAS BEEN SUCCESSFULLY CHANGED","",2,0,18);
           }
           else
             studDetailModChoice();
