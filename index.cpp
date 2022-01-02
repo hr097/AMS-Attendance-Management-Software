@@ -345,13 +345,6 @@ private:
 
     askChoice(2, 32, operationChoice);
 
-    //! EOP() seek.edit(*required) :  NUPUR KUKADIYA
-    if (!cin) // new line(enter key input ignoring) // not necessary bcz it is set as invalid input error
-    {
-      cin.clear();
-      cin.ignore(80, '\n');
-    }
-
     ConvertChoiceToINT = validateString(operationChoice, 5, 1); // validate and convert choice into integer
 
     if (!ConvertChoiceToINT) // if wrong input then repeat process until correct input
@@ -1027,6 +1020,21 @@ protected:
       found = path.find("\\", found + 2); // found backslash again from (found+2)
     }
     return path; // return path
+  }
+  bool fileExists(const string &path) //! not used // ? checking function if file exists or not 
+  {   
+     bool status_flag = false;
+     ifstream read(path.c_str(),ios::binary|ios::in);     // file opened in binary mode 
+     if(!read.is_open())
+     {
+      status_flag=false; // not exists 
+     }
+     else
+     {
+       status_flag=true; //exists
+     }
+     read.close();
+     return(status_flag); 
   }
 };
 
@@ -1708,12 +1716,6 @@ private:
 
     askChoice(2, 32, tempStorage); // ask choice
 
-    //! EOP() seek.edit(*required) :NUPUR KUKADIYA
-    if (!cin) // new line(enter key input ignoring) // not necessary bcz it is set as invalid input error
-    {
-      cin.clear();
-      cin.ignore(80, '\n');
-    }
     ConvertChoiceToINT = validateString(tempStorage, 7, 1); // validate input
 
     if (ConvertChoiceToINT == 0) // if wrong input
@@ -1763,12 +1765,6 @@ private:
 
     askChoice(3, 32, tempStorage); // ask choice
 
-    //! EOP() seek.edit(*required) :NUPUR KUKADIYA
-    if (!cin) // new line(enter key input ignoring) // not necessary bcz it is set as invalid input error
-    {
-      cin.clear();
-      cin.ignore(80, '\n');
-    }
     ConvertChoiceToINT = validateString(tempStorage, 3, 1); // validate input
 
     if (ConvertChoiceToINT == 0) // if wrong input
@@ -1992,11 +1988,6 @@ public:
 
     askChoice(3, 33, tempStorage);
 
-    if (!cin) //! EOP() seek.edit(*required) NUPUR KUKADIYA
-    {
-      cin.clear();
-      cin.ignore(80, '\n');
-    }
     ConvertChoiceToINT = validateString(tempStorage, 2, 1);
     if (ConvertChoiceToINT == 0)
     {
@@ -4340,11 +4331,6 @@ public:
 
     askChoice(3, 33, tempStorage);
 
-    if (!cin) //! EOP() seek.edit(*required) NUPUR KUKADIYA
-    {
-      cin.clear();
-      cin.ignore(80, '\n');
-    }
     ConvertChoiceToINT = validateString(tempStorage, 2, 1);
     if (ConvertChoiceToINT == 0)
     {
@@ -4554,6 +4540,108 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
   //*=============================MEMBERS-FUNCTIONS===================================//
   private:
+
+    bool passwordAuthetication()
+    { 
+      string password,ams_password;
+      int counter_pwd = 3;
+
+      getDataFromFile(AMS_Path+"\\LOG-INFO\\logincredentials.txt",ams_password,2);
+      
+      re_input_ams_password : 
+
+      scrClr();
+
+    if(counter_pwd)
+    {
+        ShowConsoleCursor(true);
+        setCursorPos(1,27);
+        
+        cout<<"REMAINING ATTEMPTS : ";
+        if(counter_pwd!=1)
+        SetColor(2);
+        else
+        SetColor(4);
+
+        cout<<counter_pwd;
+        
+        password = getpass("ENTER AMS PASSWORD : ",24);
+
+        if(password!=ams_password)
+        { 
+          scrClr();
+          setCursorPos(9,29);
+          SetColor(4);
+          ShowConsoleCursor(false);
+          cout << "INCORRECT PASSWORD ! " << endl;
+          scrClr(2); // screen stops so user can read message
+          SetColor(0);
+          counter_pwd--;
+          goto re_input_ams_password;
+        }
+        else
+        {
+          return(true);
+        }
+
+    }
+    else
+    {
+      scrClr();
+      setCursorPos(9,14);
+      SetColor(4);
+      ShowConsoleCursor(false);
+      cout << "YOU ARE AN UNAUTHORIZED USER TO MODIFY THIS DATA !!! " << endl;
+      scrClr(2.5); // screen stops so user can read message
+      exit(0);
+      return(false);
+    }
+
+
+    }
+
+    string getpass(const char *prompt,unsigned int pos,bool show_asterisk=true) // ?password input as *
+    {
+          const char BACKSPACE=8;
+          const char RETURN=13;
+          
+          string pswd;
+          unsigned char ch=0;
+          
+          setCursorPos(8,pos);
+          SetColor(0);
+          cout <<prompt;
+        
+          DWORD con_mode;
+          DWORD dwRead;
+        
+          HANDLE hIn=GetStdHandle(STD_INPUT_HANDLE);
+        
+          GetConsoleMode( hIn, &con_mode );
+          SetConsoleMode( hIn, con_mode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT) );
+        
+          while(ReadConsoleA( hIn, &ch, 1, &dwRead, NULL) && ch !=RETURN)
+            {
+               if(ch==BACKSPACE)
+                 {
+                    if(pswd.length()!=0)
+                      {  
+                         if(show_asterisk)
+                             cout <<"\b \b";
+                         pswd.resize(pswd.length()-1);
+                      }
+                 }
+               else
+                 {
+                     pswd+=ch;
+                     if(show_asterisk)
+                         cout <<'*';
+                 }
+            }
+          cout <<endl;
+          ShowConsoleCursor(false);
+          return pswd;
+    }
   
   public:
 
@@ -4602,7 +4690,11 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     // time.clear();
 
   }
-
+  
+  
+  
+  
+  
   protected:
   
   void SetNoObj()
@@ -4611,10 +4703,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
   }
    //*=============================MEMBERS-FUNCTION-END================================//
 };
-
-
-
-
 
 
 //**************************************   MODULES-END   ***************************************************/
@@ -4746,8 +4834,7 @@ int main()
     case 4:
     {
        MODULE_4 MD4;
-       cout<<endl<<endl<<"module development 4"<<getch();
-      //DRASHTI DHOLA CODE HERE MD_4 AND REMOVE THIS COMMENT
+      
       break;
     }
     case 5:
