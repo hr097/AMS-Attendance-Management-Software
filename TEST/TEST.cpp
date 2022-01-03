@@ -1021,6 +1021,7 @@ protected:
     }
     return path; // return path
   }
+
   bool fileExists(const string &path) //! not used // ? checking function if file exists or not 
   {   
      bool status_flag = false;
@@ -1059,7 +1060,7 @@ public:
   {
   }
 
-  int checkDB() //? functions for checking at least(1) database semster Records exists or not
+  bool checkDB() //? functions for checking at least(1) database semster Records exists or not
   {
 
     if (!checkEmptyFile(AMS_Path + "\\OTHER\\semesterRecord.txt")) // check file size IF=0 -> NO RECORD IF=1 ->RECORD EXITS
@@ -1128,7 +1129,7 @@ public:
   {
     int line = 0;
 
-  reinputforattendance:
+    reinputforattendanceTakeOption:
 
     scrClr(0.5);
     line = 0;
@@ -1197,7 +1198,7 @@ public:
     if (ConvertChoiceToINT == -1)                     // validate input
     {
       InvalidInputErr();
-      goto reinputforattendance;
+      goto reinputforattendanceTakeOption;
     }
     return (ConvertChoiceToINT); // return confirmation for taking attendace
   }
@@ -1511,7 +1512,7 @@ protected:
   virtual int studConfirmation() //?basic confirmation message for user
   {
     int line;
-  reConfirm:
+    reConfirm:
     scrClr(0.5);
     // BOX-UI FOR STUDENT INFO CONFIRM
     setCursorPos(5, 15);
@@ -1644,7 +1645,7 @@ private:
   {
     int line;
 
-  reConfirm:
+    reConfirm:
 
     // cofirmation BOX-UI
     scrClr(0.5);
@@ -1679,7 +1680,7 @@ private:
   {
 
     int line;
-  reInputOfmodchoice:
+    reInputOfmodchoice:
 
     line = 0;
     setCursorPos(1);
@@ -1736,7 +1737,7 @@ private:
   {
 
     int line;
-  reInputOfmod:
+    reInputOfmod:
 
     line = 0;
     setCursorPos(3);
@@ -1778,6 +1779,24 @@ private:
   }
 
   /***********************************************************************************/
+  bool pipilineValidation(string &str)
+  {
+     size_t pos = str.find("|");
+     if (pos != string::npos)
+     {
+       scrClr(0.5);
+       setCursorPos(9, 25); // set cursor
+       SetColor(4);
+       cout << "PIPLINE('|') ISN'T ALLOWED !" << endl; // warn message
+       scrClr(1.5);
+       SetColor(0);
+       return(true);
+     }
+     else
+     {
+     return(false);
+     }
+  }
 
   void UpdateName(string &input) //?Faculty & student name update input
   {
@@ -1800,6 +1819,10 @@ private:
     {
       InvalidInputErr(); // input error
       goto reinput;      // re-ask student name
+    }
+    if(pipilineValidation(input))
+    {
+      goto reinput; 
     }
   }
 
@@ -1860,6 +1883,11 @@ private:
       goto reinputOfcourseName; // re-ask course_name
     }
 
+    if(pipilineValidation(course_name))
+    {
+      goto reinputOfcourseName; 
+    }
+
     scrClr(0.5); //! EOP() seek.review(*required) we can remove it :ALL AMS TEAM
   }
 
@@ -1877,7 +1905,7 @@ private:
     cin.clear();
     ShowConsoleCursor(false);
 
-    if (!validateString(sem, 10, 1)) // validate sem input
+    if (!validateString(sem, 15, 1)) // validate sem input
     {
       goto reinputOfsem; // re-ask sem
     }
@@ -1904,6 +1932,12 @@ private:
       InvalidInputErr();         // invalid input error
       goto reinputOfsubjectName; // re-ask subject name
     }
+
+    if(pipilineValidation(subject_name))
+    {
+      goto reinputOfsubjectName; 
+    }
+    
   }
 
   void rollNo(int RollNo) //?show Roll Number
@@ -1937,21 +1971,100 @@ private:
     }
   }
 
-public:
-  MODULE_1()
+  bool preReqCSV()
   {
-    buffer.clear();
-    LIST.clear();
-    command.clear();     // command clear for re-use
-    tempStorage.clear(); // tempStorage clear for re-use
-  }
+    int line = 0;
 
-  ~MODULE_1()
-  {
-    buffer.clear();
-    LIST.clear();
-    command.clear();
-    tempStorage.clear();
+    confirm:
+
+    scrClr(0.5);
+    line = 0;
+
+    //BOX-UI FOR CSV requirement
+
+    setCursorPos(1,1);
+    buildVerticalWall(77);
+
+    while (line < 13)
+    {
+      setCursorPos(1,1);
+      if (line == 1)
+      {
+        cout << "|";
+        SetColor(1);
+        cout<<"                        PRE-REQUIREMENT OF .CSV FILE";
+        SetColor(0);
+        cout << setw(26) << "|";
+      }
+      else if (line == 3)
+      {
+        cout << "|";
+        cout<<"     1) .CSV FILE SHOULD BE IN DESKTOP->AMS FOLDER";
+        SetColor(2);
+        cout<<" (SWITCH TABS : ALT+TAB)";
+        SetColor(0);
+        cout << setw(4) << "|";
+      }
+      else if (line == 5)
+      { 
+        cout << "|";
+        cout<<"     2) .CSV FILE SHOULD HAVE ONLY TWO COLUMS NAME & EMAIL OF STUDENT ";
+        cout << setw(8) << "|";
+      }
+      else if (line == 7)
+      { 
+        cout << "|";
+        cout<<"     3) NAME & EMAIL COLUMNS SHOULD NOT CONTAIN ANY EMPTY CELL ";
+        cout << setw(15) << "|";
+      }
+      else if (line == 9)
+      {  
+        cout << "|";
+        cout<<"     4) EMAIL COLUMN SHOULD HAVE PROPER FORMET OF EMAIL STANDARDS ";
+        cout << setw(12) << "|";
+      }
+      else if (line == 11)
+      {  
+        cout << "|";
+        cout<<"     5) COLUMNS MUST HAVE TITLE IN FIRST ROW LIKE NAME , EMAIL ";
+        cout << setw(15) << "|";
+      }
+      else
+        buildHorizontalWall(77, " ");
+      line++;
+    }
+    setCursorPos(1,1);
+    buildVerticalWall(77);
+
+    tempStorage.clear(); // clear variable for re-using
+    SetColor(1);
+    setCursorPos(2, 23);
+    cout << "DO YOU WANT TO PROCEED FURTHER ?";
+    SetColor(0);
+    setCursorPos(2, 32);
+    fflush(stdin);
+    ShowConsoleCursor(true);
+    cout << "Type : ";
+    getline(cin, tempStorage);
+    cin.clear();
+    ShowConsoleCursor(false);
+
+    ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
+    if (ConvertChoiceToINT == -1)                     // validate input
+    {
+      InvalidInputErr();
+      goto confirm;
+    }
+    
+    if(ConvertChoiceToINT)
+    {  
+      return (true);
+    } 
+    else
+    { 
+      return (false);
+    }
+
   }
 
   int askDataInputChoice() // Ask Data Input Choice
@@ -1997,6 +2110,90 @@ public:
     return(ConvertChoiceToINT);
   }
 
+  bool askStudDetailsInCSV() //? asking students details csv version
+  {
+    bool opRead=false; // reverse flag
+
+    if(preReqCSV())
+    { 
+      opRead=true;
+    }
+    else
+    {
+      opRead=false;
+    }
+
+   return(opRead); 
+  }
+
+  void askStudDetails() //? asking students details manual version
+  {
+
+    int ROLLNO = 0;
+    while (ROLLNO < stoi(numberOfstudents)) // functions for taking student data input roll no wise
+    {
+      ROLLNO++;
+
+      rollNo(ROLLNO);             // for take input of roll no
+      UpdateName(student_name);   // for take input of student name
+      UpdateEmail(student_email); // for taking input of email
+
+      confirmAgain:                 // final confirmation
+
+      RoLLNo = to_string(ROLLNO); // convert ROLLNO integer to string
+
+      if (studConfirmation()) // basic confirmation dialog if yes then semester folder create
+      {
+        tempStorage.clear();
+        RoLLNo = to_string(ROLLNO);                                      // rollNo Int to string
+        tempStorage = RoLLNo + "|" + student_name + "|" + student_email; // folder name
+                                                                         // writeDataToFile(command, tempStorage);                                      // writing data to files
+        LIST.push_back(tempStorage);
+      }
+      else
+      {
+        scrClr(0.5); // clear screen so flickring won't happen
+
+        switch (InfoStudModification()) // which details do you want to update that function returns
+        {
+        case 1:
+        {
+          UpdateName(student_name); // student name modification
+          break;
+        }
+        case 2:
+        {
+          UpdateEmail(student_email); // student email modification
+          break;
+        }
+        case 3:
+        {
+          scrClr(0.5);
+          break;
+        }
+        }
+        goto confirmAgain; // ask user to final confirmation
+      }
+    }
+  }
+
+public:
+  MODULE_1()
+  {
+    buffer.clear();
+    LIST.clear();
+    command.clear();     // command clear for re-use
+    tempStorage.clear(); // tempStorage clear for re-use
+  }
+
+  ~MODULE_1()
+  {
+    buffer.clear();
+    LIST.clear();
+    command.clear();
+    tempStorage.clear();
+  }
+
   void askFacDetails() //?asking faculty details
   {
 
@@ -2018,7 +2215,7 @@ public:
     getDataFromFile(command, FacultyName, 1);  // taking faculty name  from file
     getDataFromFile(command, FacultyEmail, 2); // taking  faculty email  from file
 
-  confirmAgain:
+    confirmAgain:
 
     if (confirmation()) // basic confirmation dialog if yes then semester folder create
     {
@@ -2084,58 +2281,22 @@ public:
       goto confirmAgain; // ask user to final confirmation
     }
   }
-  void askStudDetails(int arg) //? asking students details csv version
-  {
 
-    Debug("Excel part");
+  void getDataInputOfstudent()
+  {  
+    reask:
+    scrClr();
 
-  }
-  void askStudDetails() //? asking students details manual version
-  {
-
-    int ROLLNO = 0;
-    while (ROLLNO < stoi(numberOfstudents)) // functions for taking student data input roll no wise
+    if(askDataInputChoice()==1)
     {
-      ROLLNO++;
-
-      rollNo(ROLLNO);             // for take input of roll no
-      UpdateName(student_name);   // for take input of student name
-      UpdateEmail(student_email); // for taking input of email
-
-    confirmAgain:                 // final confirmation
-      RoLLNo = to_string(ROLLNO); // convert ROLLNO integer to string
-
-      if (studConfirmation()) // basic confirmation dialog if yes then semester folder create
+      askStudDetails();
+    }
+    else
+    {
+      bool repeat_flag = askStudDetailsInCSV();
+      if(!repeat_flag)
       {
-        tempStorage.clear();
-        RoLLNo = to_string(ROLLNO);                                      // rollNo Int to string
-        tempStorage = RoLLNo + "|" + student_name + "|" + student_email; // folder name
-                                                                         // writeDataToFile(command, tempStorage);                                      // writing data to files
-        LIST.push_back(tempStorage);
-      }
-      else
-      {
-        scrClr(0.5); // clear screen so flickring won't happen
-
-        switch (InfoStudModification()) // which details do you want to update that function returns
-        {
-        case 1:
-        {
-          UpdateName(student_name); // student name modification
-          break;
-        }
-        case 2:
-        {
-          UpdateEmail(student_email); // student email modification
-          break;
-        }
-        case 3:
-        {
-          scrClr(0.5);
-          break;
-        }
-        }
-        goto confirmAgain; // ask user to final confirmation
+        goto reask;
       }
     }
   }
@@ -4734,26 +4895,7 @@ int main()
     {
       MODULE_1 MD1;
       MD1.askFacDetails(); // ask faculty details
-
-      switch (MD1.askDataInputChoice())
-      {
-      case 1:
-      {
-        MD1.askStudDetails();
-        // ask student details manually
-      } 
-      case 2:
-      {
-        MD1.askStudDetails(0);
-        // ask student details from excel
-      } 
-      default:
-      {
-        break;
-      }
-
-      }
-
+      MD1.getDataInputOfstudent(); //get data input of student like name email
       MD1.SetUpSucceed(); // succeed msg print
       break;
     }
@@ -4775,7 +4917,7 @@ int main()
             {
 
               MD2.MonthlyReport();
-            reask:
+              reask:
 
               MD2.AttendanceOptionWindow(); // ask easy option for attendance taking method
 
