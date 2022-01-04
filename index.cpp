@@ -1021,6 +1021,26 @@ protected:
     }
     return path; // return path
   }
+
+  bool pipilineValidation(string &str)
+  {
+     size_t pos = str.find("|");
+     if (pos != string::npos)
+     {
+       scrClr(0.5);
+       setCursorPos(9, 25); // set cursor
+       SetColor(4);
+       cout << "PIPLINE('|') ISN'T ALLOWED !" << endl; // warn message
+       scrClr(1.5);
+       SetColor(0);
+       return(true);
+     }
+     else
+     {
+     return(false);
+     }
+  }
+  
   bool fileExists(const string &path) //! not used // ? checking function if file exists or not 
   {   
      bool status_flag = false;
@@ -1036,6 +1056,7 @@ protected:
      read.close();
      return(status_flag); 
   }
+
 };
 
 //*---------STATIC DEFINATIONS-OF-APP---------------//
@@ -1059,7 +1080,7 @@ public:
   {
   }
 
-  int checkDB() //? functions for checking at least(1) database semster Records exists or not
+  bool checkDB() //? functions for checking at least(1) database semster Records exists or not
   {
 
     if (!checkEmptyFile(AMS_Path + "\\OTHER\\semesterRecord.txt")) // check file size IF=0 -> NO RECORD IF=1 ->RECORD EXITS
@@ -1124,11 +1145,11 @@ public:
     }
   }
 
-  virtual int proceedFurther() //? functions for confirming to proceed for attendance
+  int proceedFurther() //? functions for confirming to proceed for attendance
   {
     int line = 0;
 
-  reinputforattendance:
+   reinputforattendanceTakeOption:
 
     scrClr(0.5);
     line = 0;
@@ -1197,10 +1218,116 @@ public:
     if (ConvertChoiceToINT == -1)                     // validate input
     {
       InvalidInputErr();
-      goto reinputforattendance;
+      goto  reinputforattendanceTakeOption;
     }
     return (ConvertChoiceToINT); // return confirmation for taking attendace
   }
+
+  int proceedFurther(int i) //? confirmation  step
+  {
+    int line = 0;
+  reinputforattendanceTakeOption:
+    scrClr(0.5);
+    line = 0;
+    command.clear();
+    command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt"; // making path to access faculty file
+    getDataFromFile(command, FacultyEmail, 2);                             // it will be needed later when sending email
+    // BOX-UI FOR Details confirmation
+    setCursorPos(1, 7);
+    buildVerticalWall(65);
+    if(i == 1)
+    {
+      while (line < 13)
+      {
+        setCursorPos(1, 7);
+        if (line == 1)
+        {
+          getDataFromFile(command, FacultyName, 1); // getting facultyname
+          buildHorizontalWall(65, "FACULTY NAME         :  " + FacultyName);
+        }
+        else if (line == 3)
+        {
+          buildHorizontalWall(65, "EMAIL                :  " + FacultyEmail);
+        }
+        else if (line == 5)
+        {
+          buildHorizontalWall(65, "COURSE               :  " + course_name);
+        }
+        else if (line == 7)
+        {
+          buildHorizontalWall(65, "SEM                  :  " + sem);
+        }
+        else if (line == 9)
+        {
+            buildHorizontalWall(65, "SUBJECT              :  " + subject_name);
+        }
+        else if (line == 11)
+        {
+          getDataFromFile(command, numberOfstudents, 6); // getting number of students
+          buildHorizontalWall(65, "NUMBER OF STUDENTS   :  " + numberOfstudents);
+        }
+        else
+          buildHorizontalWall(65, " ");
+        line++;
+      }
+    }
+    else
+    {
+        while (line < 11)
+        {
+          setCursorPos(1, 7);
+          if (line == 1)
+          {
+            getDataFromFile(command, FacultyName, 1); // getting facultyname
+            buildHorizontalWall(65, "FACULTY NAME         :  " + FacultyName);
+          }
+          else if (line == 3)
+          {
+            buildHorizontalWall(65, "COURSE               :  " + course_name);
+          }
+          else if (line == 5)
+          {
+            buildHorizontalWall(65, "SEM                  :  " + sem);
+          }
+          else if (line == 7)
+          {
+            buildHorizontalWall(65, "SUBJECT              :  " + subject_name);
+          }
+          else if (line == 9)
+          {
+              getDataFromFile(command, numberOfstudents, 6); // getting number of students
+              buildHorizontalWall(65, "NUMBER OF STUDENTS   :  " + numberOfstudents);
+          }
+          else
+            buildHorizontalWall(65, " ");
+          line++;
+        }
+
+    }
+    setCursorPos(1, 7);
+    buildVerticalWall(65);
+    tempStorage.clear();
+    SetColor(1);
+    setCursorPos(2, 23);
+    cout << "DO YOU WANT TO PROCEED FURTHER ?";
+    SetColor(0);
+    setCursorPos(2, 32);
+    fflush(stdin);
+    ShowConsoleCursor(true);
+    cout << "Type : ";
+    getline(cin, tempStorage);
+    cin.clear();
+    ShowConsoleCursor(false);
+    ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
+    if (ConvertChoiceToINT == -1) // validate input
+    {
+      InvalidInputErr();
+      goto reinputforattendanceTakeOption;
+    }
+    return (ConvertChoiceToINT); // return confirmation
+  }
+
+
 
 protected:
   virtual void SetNoObj() = 0; //*WE MAKE THIS CLASS AS PURE VIRTUAL SO  OBJECT OF THIS CLASS CAN'T NOT BE CREATED IN MAIN()
@@ -1507,8 +1634,65 @@ protected:
     subject_name.clear();
     SemPath.clear();
   }
+  
+  int studConfirmation() //? student confirmation  function (also available in general module as virtual)
+  {
+    tempStorage.clear();
+    int line;
+  reAsk:
+    scrClr(0.5);
+    line = 0;
+    setCursorPos(2, 7);
+    buildVerticalWall(65);
+    while (line < 7)
+    {
+      setCursorPos(1, 7);
+      if (line == 1)
+      {
+        buildHorizontalWall(65, "STUDENT ROLL NUMBER   :  " + RoLLNo);
+      }
+      else if (line == 3)
+      {
+        buildHorizontalWall(65, "STUDENT NAME          :  " + student_name);
+      }
+      else if (line == 5)
+      {
+        buildHorizontalWall(65, "STUDENT EMAIL         :  " + student_email);
+      }
+      else
+        buildHorizontalWall(65, " ");
+      line++;
+    }
+    setCursorPos(1, 7);
+    buildVerticalWall(65);
+    SetColor(1);
+    setCursorPos(3, 23);
+    cout << "DO YOU CONFIRM THESE DETAILS ?";
+    SetColor(0);
+    setCursorPos(2, 32);
+    fflush(stdin);
+    ShowConsoleCursor(true);
+    cout << "Type : ";
+    getline(cin, tempStorage);
+    cin.clear();
+    ShowConsoleCursor(false);
+    ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
+    if (ConvertChoiceToINT == -1)
+    {
+      InvalidInputErr();
+      goto reAsk;
+    }
+    else if (ConvertChoiceToINT)
+    {
+      return (1);
+    }
+    else
+    {
+      return (0);
+    }
+  }
 
-  virtual int studConfirmation() //?basic confirmation message for user
+  int studConfirmation(int argc) //? overloaded version basic confirmation message for user
   {
     int line;
   reConfirm:
@@ -1537,15 +1721,107 @@ protected:
         l++;
       }
     }
-
-    ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking
-    if (ConvertChoiceToINT == -1)                                                    // validate input
+    ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
+    if (ConvertChoiceToINT == -1) // validate input
     {
       InvalidInputErr(); // error message
       goto reConfirm;
     }
     return (ConvertChoiceToINT); // returns confirmation value yes=1 / no=0
   }
+
+  bool RollNoInput() //? take roll number input
+  {
+  rollNoReInput:
+    scrClr(0.5);
+    RoLLNo.clear();
+    setCursorPos(9, 22);
+    fflush(stdin);
+    ShowConsoleCursor(true);
+    cout << "ENTER ROLL NUMBER OF STUDENT : ";
+    getline(cin, RoLLNo);
+    cin.clear(); // clear bad input flag
+    ShowConsoleCursor(false);
+    ConvertChoiceToINT = validateRollNo(RoLLNo, stoi(numberOfstudents), 1); // validate roll number
+    if (!ConvertChoiceToINT)
+    {
+      goto rollNoReInput;
+    }
+    getStudentData(); // get data of that student
+    return (true);
+  }
+  void getStudentData() //? get student data of that particular roll number
+  {
+    command.clear();
+    tempStorage.clear();
+    int found_pos, temp_pos;
+    command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt"; // path for access student data file
+    getDataFromFile(command, tempStorage, stoi(RoLLNo));
+    found_pos = tempStorage.find("|");
+    temp_pos = (found_pos + 1);
+    found_pos = tempStorage.find("|", temp_pos);
+    student_name = tempStorage.substr(temp_pos, (found_pos - temp_pos));
+    temp_pos = (found_pos + 1);
+    found_pos = tempStorage.find("|", temp_pos);
+    student_email = tempStorage.substr(temp_pos);
+  }
+  
+  void UpdateName(string &input) //?Faculty & student name update input
+  {
+
+  reinput:
+    scrClr(0.5);
+    setCursorPos(9, 20);
+    cout << "ENTER NAME : ";
+    fflush(stdin);
+    ShowConsoleCursor(true);
+    getline(cin, input);
+    cin.clear();
+    ShowConsoleCursor(false);
+    if (!LengthValidation(input, 27))
+    {
+      goto reinput; // re-ask student name as length exceed
+    }
+    if (EmptyInput(input)) // if input is empty than error
+    {
+      InvalidInputErr(); // input error
+      goto reinput;      // re-ask student name
+    }
+    if(pipilineValidation(input))
+    {
+      goto reinput; 
+    }
+  }
+
+  void UpdateEmail(string &input) //?Faculty & student email address update & input
+  {
+  reinputOfEmail:
+    scrClr(0.5);
+    setCursorPos(9, 16);
+    cout << "ENTER E-MAIL : ";
+    fflush(stdin);
+    ShowConsoleCursor(true);
+    getline(cin, input);
+    cin.clear();
+    ShowConsoleCursor(false);
+    transform(input.begin(), input.end(), input.begin(), ::tolower); // convert to uppercase
+    if (!LengthValidation(input, 58)) // check email input length
+    {
+      goto reinputOfEmail; // re-ask student email as length exceed
+    }
+    if (EmptyInput(input)) // EmptyInput VALIDATION
+    {
+      InvalidInputErr(); // input error
+      goto reinputOfEmail;
+    }
+    else if (!validateEmail(input)) // email validation
+    {
+      warnMsg("INVALID E-MAIL ADDRESS !", 4, 26); // warn msg
+      goto reinputOfEmail;                        // re-ask email
+    }
+    scrClr(0.5); //! EOP() seek.review(*required) we can remove it : ALL AMS TEAM
+  }
+
 
   /***********************************************************************************************/
 };
@@ -1637,7 +1913,7 @@ private:
       return 0; // returns 0=failed as User trying to create that same folder again
     }
   }
-
+  
   //*----------------FACULTY DETAILS CONFIRMATION AND MODIFICATION---------------------/
 
   int confirmation() //?basic confirmation message for user
@@ -1732,6 +2008,8 @@ private:
 
   //********** STUDENT DETAILS CONFIRMATION AND MODIFICATION ****************/
 
+  
+
   int InfoStudModification() //? MODIFICATIONS OF STUDENTS DETAILS
   {
 
@@ -1778,93 +2056,135 @@ private:
   }
 
   /***********************************************************************************/
-
-  void UpdateName(string &input) //?Faculty & student name update input
+  
+  bool preReqCSV()
   {
-  reinput:
+    int line = 0;
+
+    confirm:
 
     scrClr(0.5);
-    setCursorPos(9, 20);
-    cout << "ENTER NAME : ";
+    line = 0;
+
+    //BOX-UI FOR CSV requirement
+
+    setCursorPos(1,1);
+    buildVerticalWall(77);
+
+    while (line < 13)
+    {
+      setCursorPos(1,1);
+      if (line == 1)
+      {
+        cout << "|";
+        SetColor(1);
+        cout<<"                        PRE-REQUIREMENT OF .CSV FILE";
+        SetColor(0);
+        cout << setw(26) << "|";
+      }
+      else if (line == 3)
+      {
+        cout << "|";
+        cout<<"     1) .CSV FILE SHOULD BE IN DESKTOP->AMS FOLDER";
+        SetColor(2);
+        cout<<" (SWITCH TABS : ALT+TAB)";
+        SetColor(0);
+        cout << setw(4) << "|";
+      }
+      else if (line == 5)
+      { 
+        cout << "|";
+        cout<<"     2) .CSV FILE SHOULD HAVE ONLY TWO COLUMS NAME & EMAIL OF STUDENT ";
+        cout << setw(8) << "|";
+      }
+      else if (line == 7)
+      { 
+        cout << "|";
+        cout<<"     3) NAME & EMAIL COLUMNS SHOULD NOT CONTAIN ANY EMPTY CELL ";
+        cout << setw(15) << "|";
+      }
+      else if (line == 9)
+      {  
+        cout << "|";
+        cout<<"     4) EMAIL COLUMN SHOULD HAVE PROPER FORMET OF EMAIL STANDARDS ";
+        cout << setw(12) << "|";
+      }
+      else if (line == 11)
+      {  
+        cout << "|";
+        cout<<"     5) COLUMNS MUST HAVE TITLE IN FIRST ROW LIKE NAME , EMAIL ";
+        cout << setw(15) << "|";
+      }
+      else
+        buildHorizontalWall(77, " ");
+      line++;
+    }
+    setCursorPos(1,1);
+    buildVerticalWall(77);
+
+    tempStorage.clear(); // clear variable for re-using
+    SetColor(1);
+    setCursorPos(2, 23);
+    cout << "DO YOU WANT TO PROCEED FURTHER ?";
+    SetColor(0);
+    setCursorPos(2, 32);
     fflush(stdin);
     ShowConsoleCursor(true);
-    getline(cin, input);
+    cout << "Type : ";
+    getline(cin, tempStorage);
     cin.clear();
     ShowConsoleCursor(false);
 
-    if (!LengthValidation(input, 27))
+    ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
+    if (ConvertChoiceToINT == -1)                     // validate input
     {
-      goto reinput; // re-ask student name as length exceed
+      InvalidInputErr();
+      goto confirm;
     }
-    if (EmptyInput(input)) // if input is empty than error
-    {
-      InvalidInputErr(); // input error
-      goto reinput;      // re-ask student name
-    }
-  }
-
-  void UpdateEmail(string &input) //?Faculty & student email address update & input
-  {
-  reinputOfEmail:
-
-    scrClr(0.5);
-    setCursorPos(9, 16);
-    cout << "ENTER E-MAIL : ";
-    fflush(stdin);
-    ShowConsoleCursor(true);
-    getline(cin, input);
-    cin.clear();
-    ShowConsoleCursor(false);
-
-    transform(input.begin(), input.end(), input.begin(), ::tolower); // convert to uppercase
-
-    if (!LengthValidation(input, 58)) // check email input length
-    {
-      goto reinputOfEmail; // re-ask student email as length exceed
+    
+    if(ConvertChoiceToINT)
+    {  
+      return (true);
+    } 
+    else
+    { 
+      return (false);
     }
 
-    if (EmptyInput(input)) // EmptyInput VALIDATION
-    {
-      InvalidInputErr(); // input error
-      goto reinputOfEmail;
-    }
-    else if (!validateEmail(input)) // email validation
-    {
-      warnMsg("INVALID E-MAIL ADDRESS !", 4, 26); // warn msg
-      goto reinputOfEmail;                        // re-ask email
-    }
-    scrClr(0.5); //! EOP() seek.review(*required) we can remove it : ALL AMS TEAM
   }
 
   void EnterCourseName() //?course name input
-  {
-  reinputOfcourseName:
+   {
+      reinputOfcourseName:
+      scrClr(0.5);
+      setCursorPos(9, 26);
+      cout << "ENTER COURSE NAME : ";
+      fflush(stdin);
+      ShowConsoleCursor(true);
+      getline(cin, course_name);
+      cin.clear();
+      ShowConsoleCursor(false);
 
-    scrClr(0.5);
-    setCursorPos(9, 26);
-    cout << "ENTER COURSE NAME : ";
-    fflush(stdin);
-    ShowConsoleCursor(true);
-    getline(cin, course_name);
-    cin.clear();
-    ShowConsoleCursor(false);
+      if (!LengthValidation(course_name, 27))
+      {
+        goto reinputOfcourseName; // re-ask course_name as length exceed
+      }
+      if (EmptyInput(course_name)) // check course_name is empty or not
+      {
+        InvalidInputErr();        // invalid input error
+        goto reinputOfcourseName; // re-ask course_name
+      }
+      if(pipilineValidation(course_name))
+      {
+        goto reinputOfcourseName; 
+      }
 
-    if (!LengthValidation(course_name, 27))
-    {
-      goto reinputOfcourseName; // re-ask course_name as length exceed
-    }
-
-    if (EmptyInput(course_name)) // check course_name is empty or not
-    {
-      InvalidInputErr();        // invalid input error
-      goto reinputOfcourseName; // re-ask course_name
-    }
-
-    scrClr(0.5); //! EOP() seek.review(*required) we can remove it :ALL AMS TEAM
-  }
+      scrClr(0.5); //! EOP() seek.review(*required) we can remove it :ALL AMS TEAM
+   }
 
   void EnterSem() //?input of semester
   {
+
   reinputOfsem:
 
     scrClr(0.5);
@@ -1877,33 +2197,37 @@ private:
     cin.clear();
     ShowConsoleCursor(false);
 
-    if (!validateString(sem, 10, 1)) // validate sem input
+    if (!validateString(sem, 15, 1)) // validate sem input
     {
       goto reinputOfsem; // re-ask sem
     }
   }
-
+  
   void EnterSubject() //?input subject
   {
-  reinputOfsubjectName:
-
-    scrClr(0.5);
-    setCursorPos(9, 26);
-    cout << "ENTER SUBJECT : ";
-    ShowConsoleCursor(true);
-    fflush(stdin);
-    getline(cin, subject_name);
-    cin.clear();
-    ShowConsoleCursor(false);
-    if (!LengthValidation(subject_name, 27))
-    {
-      goto reinputOfsubjectName; // re-ask subject name as length exceed
-    }
-    if (EmptyInput(subject_name)) // check subject name is empty or not
-    {
-      InvalidInputErr();         // invalid input error
-      goto reinputOfsubjectName; // re-ask subject name
-    }
+     reinputOfsubjectName:
+      scrClr(0.5);
+      setCursorPos(9, 26);
+      cout << "ENTER SUBJECT : ";
+      ShowConsoleCursor(true);
+      fflush(stdin);
+      getline(cin, subject_name);
+      cin.clear();
+      ShowConsoleCursor(false);
+      if (!LengthValidation(subject_name, 27))
+      {
+        goto reinputOfsubjectName; // re-ask subject name as length exceed
+      }
+      if (EmptyInput(subject_name)) // check subject name is empty or not
+      {
+        InvalidInputErr();         // invalid input error
+        goto reinputOfsubjectName; // re-ask subject name
+      }
+      if(pipilineValidation(subject_name))
+      {
+        goto reinputOfsubjectName; 
+      }
+  
   }
 
   void rollNo(int RollNo) //?show Roll Number
@@ -1937,7 +2261,138 @@ private:
     }
   }
 
+  short int readDataFromCSV(string filePath,unsigned int max_row,vector<string> &data)
+  {
+    string t_str,t2_str;
+    unsigned int count = 0;
+    while(count < max_row)
+    {   
+        count++;
+        t_str.clear();
+        t2_str.clear();
+        getDataFromFile(filePath,t_str,count+1);
+        std::replace( t_str.begin(), t_str.end(), ',', '|'); // replace all 'x' to 'y'
+        t2_str = to_string(count) ;
+        t2_str += "|"+ t_str;
+        data.push_back(t2_str);
+        
+    }
+
+    //error validation coding should be done 
+    //and acccording to that error code should be given here
+    // 1 is reserved for successful csv reading 
+
+   return(1);
+  }
+   
+  void askStudDetails() //? asking students details manual version
+  {
+
+    int ROLLNO = 0;
+    while (ROLLNO < stoi(numberOfstudents)) // functions for taking student data input roll no wise
+    {
+      ROLLNO++;
+
+      rollNo(ROLLNO);             // for take input of roll no
+      UpdateName(student_name);   // for take input of student name
+      UpdateEmail(student_email); // for taking input of email
+
+      confirmAgain:                 // final confirmation
+
+      RoLLNo = to_string(ROLLNO); // convert ROLLNO integer to string
+
+      if (studConfirmation()) // basic confirmation dialog if yes then semester folder create
+      {
+        tempStorage.clear();
+        RoLLNo = to_string(ROLLNO);                                      // rollNo Int to string
+        tempStorage = RoLLNo + "|" + student_name + "|" + student_email; // folder name
+                                                                         // writeDataToFile(command, tempStorage);                                      // writing data to files
+        LIST.push_back(tempStorage);
+      }
+      else
+      {
+        scrClr(0.5); // clear screen so flickring won't happen
+
+        switch (InfoStudModification()) // which details do you want to update that function returns
+        {
+        case 1:
+        {
+          UpdateName(student_name); // student name modification
+          break;
+        }
+        case 2:
+        {
+          UpdateEmail(student_email); // student email modification
+          break;
+        }
+        case 3:
+        {
+          scrClr(0.5);
+          break;
+        }
+        }
+        goto confirmAgain; // ask user to final confirmation
+      }
+    }
+  }
+
+  bool askStudDetailsInCSV() //? asking students details csv version
+  {
+    bool opRead=false; // reverse flag
+
+    if(preReqCSV())
+    { 
+      opRead=true;
+    }
+    else
+    {
+      opRead=false;
+    }
+
+   return(opRead); 
+  }
+
+  int askDataInputChoice() // Ask Data Input Choice
+  {
+     int line = 0;
+     reask_report:
+     
+     // BOX-UI FOR INPUT CHOICE
+     scrClr(0.5);
+     setCursorPos(3,14);
+     cout << " BY WHICH METHOD DO YOU WANT TO INPUT STUDENT DATA ? " << endl;
+     setCursorPos(2,23);
+     buildVerticalWall(30);
+     line = 0;
+     while (line < 5)
+     {
+       setCursorPos(1, 23);
+       if (line == 1)
+       {
+         buildHorizontalWall(30, "1) MANUAL INPUT ");
+       }
+       else if (line == 3)
+       {
+         buildHorizontalWall(30, "2) CSV FILE INPUT ");
+       }
+       else
+         buildHorizontalWall(30, " ");
+       line++;
+     }
+     setCursorPos(1, 23);
+     buildVerticalWall(30);
+     askChoice(3, 33, tempStorage);
+     ConvertChoiceToINT = validateString(tempStorage, 2, 1);
+     if (ConvertChoiceToINT == 0)
+     {
+       goto reask_report;
+     }
+     
+     return(ConvertChoiceToINT);
+   }
+
 public:
+
   MODULE_1()
   {
     buffer.clear();
@@ -1952,49 +2407,6 @@ public:
     LIST.clear();
     command.clear();
     tempStorage.clear();
-  }
-
-  int askDataInputChoice() // Ask Data Input Choice
-  {
-    int line = 0;
-    reask_report:
-    
-    // BOX-UI FOR INPUT CHOICE
-    scrClr(0.5);
-    setCursorPos(3,14);
-    cout << " BY WHICH METHOD DO YOU WANT TO INPUT STUDENT DATA ? " << endl;
-    setCursorPos(2,23);
-    buildVerticalWall(30);
-
-    line = 0;
-
-    while (line < 5)
-    {
-      setCursorPos(1, 23);
-      if (line == 1)
-      {
-        buildHorizontalWall(30, "1) MANUAL INPUT ");
-      }
-      else if (line == 3)
-      {
-        buildHorizontalWall(30, "2) CSV FILE INPUT ");
-      }
-      else
-        buildHorizontalWall(30, " ");
-      line++;
-    }
-    setCursorPos(1, 23);
-    buildVerticalWall(30);
-
-    askChoice(3, 33, tempStorage);
-
-    ConvertChoiceToINT = validateString(tempStorage, 2, 1);
-    if (ConvertChoiceToINT == 0)
-    {
-      goto reask_report;
-    }
-  
-    return(ConvertChoiceToINT);
   }
 
   void askFacDetails() //?asking faculty details
@@ -2084,58 +2496,21 @@ public:
       goto confirmAgain; // ask user to final confirmation
     }
   }
-  void askStudDetails(int arg) //? asking students details csv version
-  {
 
-    Debug("Excel part");
-
-  }
-  void askStudDetails() //? asking students details manual version
-  {
-
-    int ROLLNO = 0;
-    while (ROLLNO < stoi(numberOfstudents)) // functions for taking student data input roll no wise
+  void getDataInputOfstudent()
+  {  
+    reask:
+    scrClr();
+    if(askDataInputChoice()==1)
     {
-      ROLLNO++;
-
-      rollNo(ROLLNO);             // for take input of roll no
-      UpdateName(student_name);   // for take input of student name
-      UpdateEmail(student_email); // for taking input of email
-
-    confirmAgain:                 // final confirmation
-      RoLLNo = to_string(ROLLNO); // convert ROLLNO integer to string
-
-      if (studConfirmation()) // basic confirmation dialog if yes then semester folder create
+      askStudDetails();
+    }
+    else
+    {
+      bool repeat_flag = askStudDetailsInCSV();
+      if(!repeat_flag)
       {
-        tempStorage.clear();
-        RoLLNo = to_string(ROLLNO);                                      // rollNo Int to string
-        tempStorage = RoLLNo + "|" + student_name + "|" + student_email; // folder name
-                                                                         // writeDataToFile(command, tempStorage);                                      // writing data to files
-        LIST.push_back(tempStorage);
-      }
-      else
-      {
-        scrClr(0.5); // clear screen so flickring won't happen
-
-        switch (InfoStudModification()) // which details do you want to update that function returns
-        {
-        case 1:
-        {
-          UpdateName(student_name); // student name modification
-          break;
-        }
-        case 2:
-        {
-          UpdateEmail(student_email); // student email modification
-          break;
-        }
-        case 3:
-        {
-          scrClr(0.5);
-          break;
-        }
-        }
-        goto confirmAgain; // ask user to final confirmation
+        goto reask;
       }
     }
   }
@@ -3863,164 +4238,7 @@ private:
 
     return (flag);
   }
-  bool RollNoInput() //? take roll number input
-  {
-  rollNoReInput:
 
-    scrClr(0.5);
-    RoLLNo.clear();
-
-    setCursorPos(9, 22);
-    fflush(stdin);
-    ShowConsoleCursor(true);
-    cout << "ENTER ROLL NUMBER OF STUDENT : ";
-    getline(cin, RoLLNo);
-    cin.clear(); // clear bad input flag
-
-    ShowConsoleCursor(false);
-
-    ConvertChoiceToINT = validateRollNo(RoLLNo, stoi(numberOfstudents), 1); // validate roll number
-
-    if (!ConvertChoiceToINT)
-    {
-      goto rollNoReInput;
-    }
-
-    getStudentData(); // get data of that student
-
-    return (true);
-  }
-
-  void getStudentData() //? get student data of that particular roll number
-  {
-    command.clear();
-    tempStorage.clear();
-
-    int found_pos, temp_pos;
-
-    command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt"; // path for access student data file
-
-    getDataFromFile(command, tempStorage, stoi(RoLLNo));
-
-    found_pos = tempStorage.find("|");
-    temp_pos = (found_pos + 1);
-
-    found_pos = tempStorage.find("|", temp_pos);
-    student_name = tempStorage.substr(temp_pos, (found_pos - temp_pos));
-    temp_pos = (found_pos + 1);
-
-    found_pos = tempStorage.find("|", temp_pos);
-    student_email = tempStorage.substr(temp_pos);
-  }
-
-  int studConfirmation() //? student confirmation  function (also available in general module as virtual)
-  {
-    tempStorage.clear();
-
-    int line;
-
-  reAsk:
-
-    scrClr(0.5);
-
-    line = 0;
-    setCursorPos(2, 7);
-    buildVerticalWall(65);
-
-    while (line < 7)
-    {
-      setCursorPos(1, 7);
-
-      if (line == 1)
-      {
-        buildHorizontalWall(65, "STUDENT ROLL NUMBER   :  " + RoLLNo);
-      }
-      else if (line == 3)
-      {
-        buildHorizontalWall(65, "STUDENT NAME          :  " + student_name);
-      }
-      else if (line == 5)
-      {
-        buildHorizontalWall(65, "STUDENT EMAIL         :  " + student_email);
-      }
-      else
-        buildHorizontalWall(65, " ");
-      line++;
-    }
-
-    setCursorPos(1, 7);
-    buildVerticalWall(65);
-
-    SetColor(1);
-    setCursorPos(3, 23);
-    cout << "DO YOU CONFIRM THESE DETAILS ?";
-    SetColor(0);
-
-    setCursorPos(2, 32);
-    fflush(stdin);
-    ShowConsoleCursor(true);
-    cout << "Type : ";
-    getline(cin, tempStorage);
-    cin.clear();
-    ShowConsoleCursor(false);
-
-    ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
-    if (ConvertChoiceToINT == -1)
-    {
-      InvalidInputErr();
-      goto reAsk;
-    }
-    else if (ConvertChoiceToINT)
-    {
-      return (1);
-    }
-    else
-    {
-      return (0);
-    }
-  }
-
-  int studConfirmation(int argc) //? overloaded version basic confirmation message for user
-  {
-    int line;
-
-  reConfirm:
-    scrClr(0.5);
-
-    // BOX-UI FOR STUDENT INFO CONFIRM
-    setCursorPos(5, 15);
-    cout << "STUDENT ROLL NUMBER " << right << setw(4) << ": " << RoLLNo;
-    setCursorPos(1, 15);
-    cout << "STUDENT NAME " << right << setw(11) << ": " << student_name;
-    setCursorPos(1, 15);
-    if (student_email.length() <= 35)
-    {
-      cout << "STUDENT E-MAIL " << right << setw(9) << ": " << student_email;
-    }
-    else
-    {
-      int l = 0;
-      cout << "STUDENT E-MAIL " << right << setw(9) << ": ";
-      while (l < student_email.length())
-      {
-        if (l == 35)
-        {
-          setCursorPos(1, 39);
-        }
-        cout << student_email[l];
-        l++;
-      }
-    }
-    ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
-
-    if (ConvertChoiceToINT == -1) // validate input
-    {
-      InvalidInputErr(); // error message
-      goto reConfirm;
-    }
-
-    return (ConvertChoiceToINT); // returns confirmation value yes=1 / no=0
-  }
 
   void makeStudentReport()
   {
@@ -4220,81 +4438,6 @@ public:
     pdfName.clear();
     date.clear();
     time.clear();
-  }
-
-  int proceedFurther() //? confirmation  step
-  {
-    int line = 0;
-
-  reinputforattedance:
-
-    scrClr(0.5);
-    line = 0;
-    command.clear();
-
-    command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt"; // making path to access faculty file
-    getDataFromFile(command, FacultyEmail, 2);                             // it will be needed later when sending email
-
-    // BOX-UI FOR Details confirmation
-    setCursorPos(1, 7);
-    buildVerticalWall(65);
-
-    while (line < 11)
-    {
-      setCursorPos(1, 7);
-      if (line == 1)
-      {
-        getDataFromFile(command, FacultyName, 1); // getting facultyname
-        buildHorizontalWall(65, "FACULTY NAME         :  " + FacultyName);
-      }
-      else if (line == 3)
-      {
-        buildHorizontalWall(65, "COURSE               :  " + course_name);
-      }
-      else if (line == 5)
-      {
-        buildHorizontalWall(65, "SEM                  :  " + sem);
-      }
-      else if (line == 7)
-      {
-        buildHorizontalWall(65, "SUBJECT              :  " + subject_name);
-      }
-      else if (line == 9)
-      {
-        getDataFromFile(command, numberOfstudents, 6); // getting number of students
-        buildHorizontalWall(65, "NUMBER OF STUDENTS   :  " + numberOfstudents);
-      }
-      else
-        buildHorizontalWall(65, " ");
-
-      line++;
-    }
-
-    setCursorPos(1, 7);
-    buildVerticalWall(65);
-
-    tempStorage.clear();
-    SetColor(1);
-    setCursorPos(2, 23);
-    cout << "DO YOU WANT TO PROCEED FURTHER ?";
-    SetColor(0);
-    setCursorPos(2, 32);
-    fflush(stdin);
-    ShowConsoleCursor(true);
-    cout << "Type : ";
-    getline(cin, tempStorage);
-    cin.clear();
-
-    ShowConsoleCursor(false);
-    ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
-
-    if (ConvertChoiceToINT == -1) // validate input
-    {
-      InvalidInputErr();
-      goto reinputforattedance;
-    }
-
-    return (ConvertChoiceToINT); // return confirmation
   }
 
   void askReportChoice() // ? report type select choice
@@ -4533,6 +4676,8 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
   private:
     
   public:
+
+  static int MOD_CHOICE;
   
   protected:
 
@@ -4540,18 +4685,15 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
   //*=============================MEMBERS-FUNCTIONS===================================//
   private:
-
-    bool passwordAuthetication()
-    { 
-      string password,ams_password;
-      int counter_pwd = 3;
-
-      getDataFromFile(AMS_Path+"\\LOG-INFO\\logincredentials.txt",ams_password,2);
-      
-      re_input_ams_password : 
-
-      scrClr();
-
+  
+  bool passwordAuthetication()
+  { 
+    string password,ams_password;
+    int counter_pwd = 3;
+    getDataFromFile(AMS_Path+"\\LOG-INFO\\logincredentials.txt",ams_password,2);
+    
+    re_input_ams_password : 
+    scrClr();
     if(counter_pwd)
     {
         ShowConsoleCursor(true);
@@ -4562,11 +4704,9 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         SetColor(2);
         else
         SetColor(4);
-
         cout<<counter_pwd;
         
         password = getpass("ENTER AMS PASSWORD : ",24);
-
         if(password!=ams_password)
         { 
           scrClr();
@@ -4583,7 +4723,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         {
           return(true);
         }
-
     }
     else
     {
@@ -4596,52 +4735,664 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       exit(0);
       return(false);
     }
+  }
+  string getpass(const char *prompt,unsigned int pos,bool show_asterisk=true) // ?password input as *
+  {
+        const char BACKSPACE=8;
+        const char RETURN=13;
+        
+        string pswd;
+        unsigned char ch=0;
+        
+        setCursorPos(8,pos);
+        SetColor(0);
+        cout <<prompt;
+      
+        DWORD con_mode;
+        DWORD dwRead;
+      
+        HANDLE hIn=GetStdHandle(STD_INPUT_HANDLE);
+      
+        GetConsoleMode( hIn, &con_mode );
+        SetConsoleMode( hIn, con_mode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT) );
+      
+        while(ReadConsoleA( hIn, &ch, 1, &dwRead, NULL) && ch !=RETURN)
+          {
+             if(ch==BACKSPACE)
+               {
+                  if(pswd.length()!=0)
+                    {  
+                       if(show_asterisk)
+                           cout <<"\b \b";
+                       pswd.resize(pswd.length()-1);
+                    }
+               }
+             else
+               {
+                   pswd+=ch;
+                   if(show_asterisk)
+                       cout <<'*';
+               }
+          }
+        cout <<endl;
+        ShowConsoleCursor(false);
+        return pswd;
+  }
 
+  int userConfirmation()
+  {
+    command = AMS_Path + "\\USER-INFO\\userdetails.txt";
+      int line;
+      reAsk:
+        scrClr(0.5);
+        line = 0;
+        setCursorPos(2, 7);
+        buildVerticalWall(65);
+        while (line < 11)
+        {
+          setCursorPos(1, 7);
+          if (line == 1)
+          {
+            getDataFromFile(command,time,1);
+            buildHorizontalWall(65, "USER NAME           :  " + time);
+          }
+          else if (line == 3)
+          {
+            getDataFromFile(command,time,2);
+            buildHorizontalWall(65, "USER EMAIL          :  " + time);
+          }
+          else if (line == 5)
+          {
+            getDataFromFile(command,time,3);
+            buildHorizontalWall(65, "DEPARTMENT NAME     :  " + time);
+          }
+          else if (line == 7)
+          {
+            getDataFromFile(command,time,4);
+            buildHorizontalWall(65, "H.O.D EMAIL         :  " + time);
+          }
+          else if (line == 9)
+          {
+            getDataFromFile(command,time,5);
+            buildHorizontalWall(65, "YEAR OF JOINING     :  " + time);
+          }
+          else
+            buildHorizontalWall(65, " ");
+          line++;
+        }
+        setCursorPos(1, 7);
+        buildVerticalWall(65);
+        SetColor(1);
+        setCursorPos(3, 23);
+        cout << "DO YOU CONFIRM THESE DETAILS ?";
+        SetColor(0);
+        setCursorPos(2, 32);
+        fflush(stdin);
+        ShowConsoleCursor(true);
+        cout << "Type : ";
+        getline(cin, tempStorage);
+        cin.clear();
+        ShowConsoleCursor(false);
+        ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
+        if (ConvertChoiceToINT == -1)
+        {
+          InvalidInputErr();
+          goto reAsk;
+        }
+        else if (ConvertChoiceToINT)
+        {
+          return (1);
+        }
+        else
+        {
+          return (0);
+        }
+  }
 
-    }
-
-    string getpass(const char *prompt,unsigned int pos,bool show_asterisk=true) // ?password input as *
+  void semDetailModChoice() // Ask Data Input Choice
+  {
+    scrClr(0.5);
+    setCursorPos(2);
+    askCourseChoice(); 
+    askSemsterChoice();
+    if(askSubjectChoice())
     {
-          const char BACKSPACE=8;
-          const char RETURN=13;
-          
-          string pswd;
-          unsigned char ch=0;
-          
-          setCursorPos(8,pos);
-          SetColor(0);
-          cout <<prompt;
-        
-          DWORD con_mode;
-          DWORD dwRead;
-        
-          HANDLE hIn=GetStdHandle(STD_INPUT_HANDLE);
-        
-          GetConsoleMode( hIn, &con_mode );
-          SetConsoleMode( hIn, con_mode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT) );
-        
-          while(ReadConsoleA( hIn, &ch, 1, &dwRead, NULL) && ch !=RETURN)
-            {
-               if(ch==BACKSPACE)
-                 {
-                    if(pswd.length()!=0)
-                      {  
-                         if(show_asterisk)
-                             cout <<"\b \b";
-                         pswd.resize(pswd.length()-1);
-                      }
-                 }
-               else
-                 {
-                     pswd+=ch;
-                     if(show_asterisk)
-                         cout <<'*';
-                 }
-            }
-          cout <<endl;
-          ShowConsoleCursor(false);
-          return pswd;
+      if(proceedFurther(1))
+      {
+        int line = 0;
+        reask_semMod:
+            
+        // BOX-UI FOR INPUT CHOICE
+        scrClr(0.5);
+        setCursorPos(3,25);
+        cout << " WHAT DO YOU WANT TO MODIFY ? " << endl;
+        setCursorPos(2,24);
+        buildVerticalWall(30);
+        line = 0;
+        while (line < 5)
+        {
+          setCursorPos(1, 24);
+          if (line == 1)
+          {
+            buildHorizontalWall(30, "1) FACULTY DETAILS ");
+          }
+          else if (line == 3)
+          {
+            buildHorizontalWall(30, "2) STUDENT DETAILS ");
+          }
+          else
+            buildHorizontalWall(30, " ");
+          line++;
+        }
+        setCursorPos(1, 24);
+        buildVerticalWall(30);
+        askChoice(3, 33, tempStorage);
+        ConvertChoiceToINT = validateString(tempStorage,2,1);
+        if (ConvertChoiceToINT == 0)
+        {
+          goto reask_semMod;
+        }
+            
+        if (ConvertChoiceToINT == 1)
+        {
+           facDetailModChoice();
+        }
+        else if (ConvertChoiceToINT == 2)
+        {
+          studDetailModChoice();
+        }
+      }
     }
+    
+  }
+  void userDetailModChoice() // Ask Data Input Choice
+  {
+    int line = 0;
+    reask_userMod:
+    
+    // BOX-UI FOR INPUT CHOICE
+    scrClr(0.5);
+    setCursorPos(3,25);
+    cout << " WHAT DO YOU WANT TO MODIFY ? " << endl;
+    setCursorPos(2,24);
+    buildVerticalWall(30);
+    line = 0;
+    while (line < 9)
+    {
+      setCursorPos(1, 24);
+      if (line == 1)
+      {
+        buildHorizontalWall(30, "1) FACULTY NAME ");
+      }
+      else if (line == 3)
+      {
+        buildHorizontalWall(30, "2) FACULTY EMAIL ");
+      }
+      else if (line == 5)
+      {
+        buildHorizontalWall(30, "3) H.O.D EMAIL ");
+      }
+      else if (line == 7)
+      {
+        buildHorizontalWall(30, "4) DEPARTMENT NAME ");
+      }
+      else
+        buildHorizontalWall(30, " ");
+      line++;
+    }
+    setCursorPos(1, 24);
+    buildVerticalWall(30);
+    askChoice(3, 33, tempStorage);
+    
+    ConvertChoiceToINT = validateString(tempStorage,4,1);
+    if (ConvertChoiceToINT == 0)
+    {
+      goto reask_userMod;
+    }
+    updateUserDetail(ConvertChoiceToINT);
+    
+  }
+  
+  void updateUserDetail(int ch)
+  {
+    command = AMS_Path + "\\USER-INFO\\userdetails.txt";  
+    tempStorage = AMS_Path + "\\USER-INFO\\fileout.txt";   
+           
+    
+    int line;
+    reAsk:
+     scrClr(0.5);
+     line = 0;
+    setCursorPos(5, 7);
+    buildVerticalWall(65);
+    while (line < 3)
+    {
+      setCursorPos(1, 7);
+      if (line == 1)
+      {
+        if(ch == 1)
+        {
+          getDataFromFile(command, FacultyName, ch);
+          buildHorizontalWall(65, "FACULTY NAME    :  " + FacultyName);
+        }
+        else if(ch == 2)
+        {
+          getDataFromFile(command, FacultyEmail, ch);
+          buildHorizontalWall(65, "FACULTY EMAIL    :  " + FacultyEmail);
+        }
+        else if(ch == 3)
+        {
+          getDataFromFile(command, FacultyEmail, (ch+1));
+          buildHorizontalWall(65, "H.O.D EMAIL    :  " + FacultyEmail);
+        }
+        else if(ch == 4)
+        {
+          getDataFromFile(command, student_name, (ch-1));
+          buildHorizontalWall(65, "DEPARTMENT NAME    :  " + student_name);
+        }       
+      }
+      else
+      {
+        buildHorizontalWall(65, " ");
+      }
+      line++;
+    }
+    setCursorPos(1, 7);
+    buildVerticalWall(65);
+    SetColor(1);
+    setCursorPos(3, 25);
+    cout << "DO YOU CONFIRM THESE DETAILS ?";
+    SetColor(0);
+    setCursorPos(2, 32);
+    fflush(stdin);
+    ShowConsoleCursor(true);
+    cout << "Type : ";
+    getline(cin, tempStorage);
+    cin.clear();
+    ShowConsoleCursor(false);
+    ConvertChoiceToINT = validateString(tempStorage);
+
+    if (ConvertChoiceToINT == -1)
+    {
+      InvalidInputErr();
+      goto reAsk;
+    }
+    else if (ConvertChoiceToINT)
+    {
+      if(ch == 1 || ch == 4)
+      {
+        if(ch == 1)
+          getDataFromFile(command,student_name,ch);
+        else
+          getDataFromFile(command,student_name,(ch-1));
+
+        UpdateName(FacultyName);     
+        for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+        {
+          getDataFromFile(command,date,i);
+          
+          if(date == student_name)
+          {
+              date = FacultyName;
+          }             
+          writeDataToFile(tempStorage,date);
+        }
+
+        remove(command.c_str()); 
+        rename(tempStorage.c_str(),command.c_str());
+
+        if(!userConfirmation())
+        {
+          if(ch == 1)
+          {
+            getDataFromFile(command,FacultyName,ch);
+            scrClr(0.5);
+            Debug(command);
+          }            
+          else
+            getDataFromFile(command,FacultyName,(ch-1));
+
+          for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+          {
+            getDataFromFile(command,date,i);
+            
+            if(date == FacultyName)
+            {
+                date = student_name;
+            }             
+            writeDataToFile(tempStorage,date);
+          }
+
+          remove(command.c_str()); 
+          rename(tempStorage.c_str(),command.c_str());
+        }
+        else
+        {
+          MSG("USER DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
+        }
+      }
+      else if(ch == 2 || ch == 3)
+      {
+        if(ch == 2)
+          getDataFromFile(command,FacultyEmail,ch);
+        else
+          getDataFromFile(command,FacultyEmail,(ch+1));
+
+        UpdateEmail(student_email);
+                  
+        for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+        {
+          getDataFromFile(command,date,i);
+          
+          if(date == FacultyEmail)
+          {
+              date = student_email;
+          }             
+          writeDataToFile(tempStorage,date);
+        }
+
+        remove(command.c_str()); 
+        rename(tempStorage.c_str(),command.c_str());
+
+        if(!userConfirmation())
+        {
+          if(ch == 2)
+            getDataFromFile(command,student_email,ch);
+          else
+            getDataFromFile(command,student_email,(ch+1));
+
+          for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+          {
+            getDataFromFile(command,date,i);
+            
+            if(date == student_email)
+            {
+                date = FacultyEmail;
+            }             
+            writeDataToFile(tempStorage,date);
+          }
+
+          remove(command.c_str()); 
+          rename(tempStorage.c_str(),command.c_str());
+        }
+        else
+        {
+          MSG("USER DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
+        }
+      }
+    }
+  }
+
+  void facDetailModChoice() 
+  {
+    int line = 0;
+    reask_semMod:
+    
+    // BOX-UI FOR INPUT CHOICE
+    scrClr(0.5);
+    setCursorPos(3,25);
+    cout << " WHAT DO YOU WANT TO MODIFY ? " << endl;
+    setCursorPos(2,24);
+    buildVerticalWall(30);
+    line = 0;
+    while (line < 5)
+    {
+      setCursorPos(1, 24);
+      if (line == 1)
+      {
+        buildHorizontalWall(30, "1) FACULTY NAME ");
+      }
+      else if (line == 3)
+      {
+        buildHorizontalWall(30, "2) FACULTY EMAIL ");
+      }
+      else
+        buildHorizontalWall(30, " ");
+      line++;
+    }
+    setCursorPos(1, 24);
+    buildVerticalWall(30);
+    askChoice(3, 33, tempStorage);
+    
+    ConvertChoiceToINT = validateString(tempStorage,2,1);
+    if (ConvertChoiceToINT == 0)
+    {
+      goto reask_semMod;
+    }
+    
+    facDetailMod(ConvertChoiceToINT);
+  }
+  void facDetailMod(int choice)
+  {
+      if(choice == 1)
+      {
+        FacultyName.clear();
+        student_name.clear();
+        command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt";
+        tempStorage = SemPath + "\\FAC-STUD-DETAILS\\fileout.txt";
+        getDataFromFile(command,time,1);
+        UpdateName(student_name);
+        
+        
+        for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+        {
+          getDataFromFile(command,date,i);
+          
+          if(date == time)
+          {
+              date = student_name;
+          }             
+          writeDataToFile(tempStorage,date);
+        }
+
+        remove(command.c_str()); 
+        rename(tempStorage.c_str(),command.c_str());
+
+        if(!proceedFurther(1))
+        {
+          getDataFromFile(command,student_name,1);
+          Debug(student_name);
+          Debug(FacultyName);
+
+          for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+          {
+            getDataFromFile(command,date,i);
+            
+            if(date == student_name)
+            {
+                date = time;
+            }             
+            writeDataToFile(tempStorage,date);
+          }
+          remove(command.c_str()); 
+          rename(tempStorage.c_str(),command.c_str());
+        }
+        else
+        {
+          MSG("FACULTY DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
+        }
+      
+      }
+      else
+      {
+          command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt";
+          tempStorage = SemPath + "\\FAC-STUD-DETAILS\\fileout.txt";
+          getDataFromFile(command,time,2);
+          UpdateEmail(student_email);
+          
+          for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+          {
+            getDataFromFile(command,date,i);
+            
+            if(date == time)
+            {
+                date = student_email;
+            }             
+            writeDataToFile(tempStorage,date);
+          }
+          remove(command.c_str()); 
+          rename(tempStorage.c_str(),command.c_str());
+          if(!proceedFurther(1))
+          {
+            getDataFromFile(command,student_email,2);
+                      
+            for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+            {
+              getDataFromFile(command,date,i);
+              
+              if(date == student_email)
+              {
+                  date = time;
+              }             
+              writeDataToFile(tempStorage,date);
+            }
+            remove(command.c_str()); 
+            rename(tempStorage.c_str(),command.c_str());
+          }
+          else
+          {
+            MSG("FACULTY DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
+          }
+      }
+  }
+  void studDetailModChoice() 
+  {
+    int line = 0;
+    reask_semMod:
+    RollNoInput();
+    
+    
+      // BOX-UI FOR INPUT CHOICE
+      scrClr(0.5);
+      setCursorPos(3,25);
+      cout << " WHAT DO YOU WANT TO MODIFY ? " << endl;
+      setCursorPos(2,24);
+      buildVerticalWall(30);
+      line = 0;
+      while (line < 5)
+      {
+        setCursorPos(1, 24);
+        if (line == 1)
+        {
+          buildHorizontalWall(30, "1) STUDENT NAME ");
+        }
+        else if (line == 3)
+        {
+          buildHorizontalWall(30, "2) STUDENT EMAIL ");
+        }
+        else
+          buildHorizontalWall(30, " ");
+        line++;
+      }
+      setCursorPos(1, 24);
+      buildVerticalWall(30);
+      askChoice(3, 33, tempStorage);
+    
+      ConvertChoiceToINT = validateString(tempStorage,3,1);
+      if (ConvertChoiceToINT == 0)
+      {
+        goto reask_semMod;
+      }
+    
+      
+      studDetailMod(ConvertChoiceToINT);
+    
+    
+    
+  }
+  void studDetailMod(int choice)
+  {
+      if(studConfirmation())
+      {
+        if(choice == 1)
+        {
+          FacultyName.clear();
+  
+          command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
+          tempStorage = SemPath + "\\FAC-STUD-DETAILS\\fileout.txt";
+          getDataFromFile(command,FacultyName,stoi(RoLLNo));
+          
+          UpdateName(student_name);
+          
+          
+          for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+          {
+            getDataFromFile(command,date,i);
+            
+            if(date == FacultyName)
+            {
+                date = RoLLNo + "|" + student_name + "|" + student_email;
+            }             
+            writeDataToFile(tempStorage,date);
+          }
+          remove(command.c_str()); 
+          rename(tempStorage.c_str(),command.c_str());
+          if(!studConfirmation())
+          {
+            getDataFromFile(command,time,stoi(RoLLNo));
+          
+            for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+            {
+              getDataFromFile(command,date,i);
+              
+              if(date == time)
+              {
+                  date = FacultyName;
+              }             
+              writeDataToFile(tempStorage,date);
+            }
+            remove(command.c_str()); 
+            rename(tempStorage.c_str(),command.c_str());
+            
+          }
+          else
+            MSG("STUDENT DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,18);
+  
+        }
+        else
+        {
+          FacultyEmail.clear();
+
+            command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
+            tempStorage = SemPath + "\\FAC-STUD-DETAILS\\fileout.txt";
+            getDataFromFile(command,FacultyEmail,stoi(RoLLNo));
+            UpdateEmail(student_email);
+            
+            for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+            {
+              getDataFromFile(command,date,i);
+              
+              if(date == FacultyEmail)
+              {
+                  date = RoLLNo + "|" + student_name + "|" + student_email;
+              }             
+              writeDataToFile(tempStorage,date);
+            }
+            remove(command.c_str()); 
+            rename(tempStorage.c_str(),command.c_str());
+            if(!studConfirmation())
+            {
+              getDataFromFile(command,time,2);
+              
+              for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+              {
+                getDataFromFile(command,date,i);
+                
+                if(date == time)
+                {
+                    date = FacultyEmail;
+                }             
+                writeDataToFile(tempStorage,date);
+              }
+              remove(command.c_str()); 
+              rename(tempStorage.c_str(),command.c_str());
+              
+            }
+            else
+              MSG("STUDENT DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,18);
+        }
+      }
+  }
   
   public:
 
@@ -4656,18 +5407,217 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     
     FacultyName.clear();
     FacultyEmail.clear();
-    // course_name.clear();  //? if needed then uncomment
-    // sem.clear();
-    // subject_name.clear();
 
-    // student_name.clear();
-    // student_email.clear();
-    // RoLLNo.clear();
+    student_name.clear();
+    student_email.clear();
+    RoLLNo.clear();
+    course_name.clear();
+    sem.clear();
+    subject_name.clear();
 
-    // date.clear();
-    // time.clear();
+    date.clear();
+    time.clear();
 
   }
+
+  
+
+  void modDataChoice() 
+  {
+    int line = 0;
+    reask_mod:
+    
+    // BOX-UI FOR INPUT CHOICE
+    scrClr(0.5);
+    setCursorPos(3,27);
+    cout << " WHAT DO YOU WANT TO DO ? " << endl;
+    setCursorPos(2,21);
+    buildVerticalWall(36);
+    line = 0;
+    while (line < 7)
+    {
+      setCursorPos(1, 21);
+      if (line == 1)
+      {
+        buildHorizontalWall(36, "1) DETAILS MODIFICATION ");
+      }
+      else if (line == 3)
+      {
+        buildHorizontalWall(36, "2) AMS SETUP DELETION ");
+      }
+      else if (line == 5)
+      {
+        buildHorizontalWall(36, "3) GENERATE .CSV FILE ");
+      }
+      else
+        buildHorizontalWall(36, " ");
+      line++;
+    }
+    setCursorPos(1, 21);
+    buildVerticalWall(36);
+    askChoice(3, 33, tempStorage);
+  
+    ConvertChoiceToINT = validateString(tempStorage,3,1);
+    if (ConvertChoiceToINT == 0)
+    {
+      goto reask_mod;
+    }
+    
+    MOD_CHOICE = (ConvertChoiceToINT);
+  }
+
+  void DetailModChoice() 
+  {
+    int line = 0;
+    reask_userMod:
+    
+    // BOX-UI FOR INPUT CHOICE
+    scrClr(0.5);
+    setCursorPos(3,25);
+    cout << " WHAT DO YOU WANT TO MODIFY ? " << endl;
+    setCursorPos(2,24);
+    buildVerticalWall(30);
+    line = 0;
+    while (line < 5)
+    {
+      setCursorPos(1, 24);
+      if (line == 1)
+      {
+        buildHorizontalWall(30, "1) USER DETAILS ");
+      }
+      else if (line == 3)
+      {
+        buildHorizontalWall(30, "2) SEMESTER DETAILS ");
+      }
+      else
+        buildHorizontalWall(30, " ");
+      line++;
+    }
+    setCursorPos(1, 24);
+    buildVerticalWall(30);
+    askChoice(3, 33, tempStorage);
+  
+    ConvertChoiceToINT = validateString(tempStorage,2,1);
+    if (ConvertChoiceToINT == 0)
+    {
+      goto reask_userMod;
+    }
+    if (ConvertChoiceToINT == 1)
+    {
+      userDetailModChoice();
+    }
+    else if (ConvertChoiceToINT == 2)
+    {
+      semDetailModChoice();
+    }
+
+  }
+
+  int confirmDelete()
+  {
+      tempStorage.clear();
+      int line;
+  
+    reDeleConfirm:
+  
+      scrClr(0.5);
+      line = 0;
+      setCursorPos(2,7);
+      buildVerticalWall(61);
+      while (line < 7)
+      {
+        setCursorPos(1, 7);
+  
+        if (line == 1)
+        {
+          buildHorizontalWall(61, "          COURSE NAME  :  " + course_name);
+        }
+        else if (line == 3)
+        {
+          buildHorizontalWall(61, "          SEMESTER     :  " + sem);
+        }
+        else if (line == 5)
+        {
+          buildHorizontalWall(61, "          SUBJECT      :  " + subject_name);
+        }
+        else
+          buildHorizontalWall(61, " ");
+        line++;
+      }
+  
+      setCursorPos(1, 7);
+      buildVerticalWall(61);
+  
+      SetColor(1);
+      setCursorPos(2, 23);
+      cout << "DO YOU WANT TO DELETE THIS SETUP ?";
+      SetColor(0);
+      setCursorPos(2, 32);
+      fflush(stdin);
+      ShowConsoleCursor(true);
+      cout << "Type : ";
+      getline(cin, tempStorage);
+      cin.clear();
+  
+      ShowConsoleCursor(false);
+      ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
+  
+      if (ConvertChoiceToINT == -1) // validate input
+      {
+        InvalidInputErr();
+        goto reDeleConfirm;
+      }
+      return (ConvertChoiceToINT); // return confirmation
+    }
+  
+  bool DisplaySubject()
+  {
+      DisplayList_Input(subject_name);
+      getFolderPath();
+  
+      if ((!checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt")) || (!checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt")))
+      {
+        // error part
+        warnMsg(" ALERT! THIS FOLDER CONTAINS PARTIAL CONTENT!! ", 4, 17);
+        return false;
+      }
+      else
+      {
+        return true;
+      }
+  }
+    
+  void removeDir()
+  {
+    command.clear();
+    string path;
+    path = "rmdir /s /q " + SemPath; 
+    system(path.c_str());
+    command = course_name + "-SEM-" + "-" + sem + "-" + subject_name;
+    MSG(command," SUCCESSFULLY DELETED.",2,0,15);
+  
+    path.clear();
+    path = AMS_Path + "\\OTHER\\semesterRecord.txt";
+  
+    tempStorage = AMS_Path + "\\OTHER\\fileout.txt";
+  
+    command.clear();
+    command = course_name + "|" + sem + "|" + subject_name + "|" + course_name + "-SEM-" + sem + "-" + subject_name;
+  
+    for(int i = 1; i <= (countLinesOfFile(path) + 1);i++)
+    {
+      getDataFromFile(path,date,i);
+      
+      if(date != command)
+      {
+          writeDataToFile(tempStorage,date);
+      }   
+      
+    }
+    remove(path.c_str()); 
+    rename(tempStorage.c_str(),path.c_str());
+  }
+
 
   ~MODULE_4()
   {
@@ -4679,22 +5629,18 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         
     FacultyName.clear();
     FacultyEmail.clear();
-    // course_name.clear();
-    // sem.clear();
-    // subject_name.clear();
-    // student_name.clear();
-    // student_email.clear();
-    // RoLLNo.clear();
-    // numberOfstudents.clear();
-    // date.clear();
-    // time.clear();
+    course_name.clear();
+    sem.clear();
+    subject_name.clear();
+    student_name.clear();
+    student_email.clear();
+    RoLLNo.clear();
+    numberOfstudents.clear();
+    date.clear();
+    time.clear();
 
   }
-  
-  
-  
-  
-  
+
   protected:
   
   void SetNoObj()
@@ -4703,6 +5649,14 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
   }
    //*=============================MEMBERS-FUNCTION-END================================//
 };
+
+//*---------------------------STATIC DEFINATIONS-MODULE-4------------------------------/
+
+int MODULE_4::MOD_CHOICE; // MODIFICATION OPTION-CHOICE 
+
+//-----------------------------------------------------------------------------------/
+
+
 
 
 //**************************************   MODULES-END   ***************************************************/
@@ -4730,32 +5684,14 @@ int main()
 
     switch (APP::MODULE_CHOICE) // module choice asking
     {
+
     case 1:
     {
-      MODULE_1 MD1;
-      MD1.askFacDetails(); // ask faculty details
-
-      switch (MD1.askDataInputChoice())
-      {
-      case 1:
-      {
-        MD1.askStudDetails();
-        // ask student details manually
-      } 
-      case 2:
-      {
-        MD1.askStudDetails(0);
-        // ask student details from excel
-      } 
-      default:
-      {
+        MODULE_1 MD1;
+        MD1.askFacDetails(); // ask faculty details
+        MD1.getDataInputOfstudent(); //get data input of student like name email
+        MD1.SetUpSucceed(); // succeed msg print
         break;
-      }
-
-      }
-
-      MD1.SetUpSucceed(); // succeed msg print
-      break;
     }
     case 2:
     {
@@ -4805,7 +5741,7 @@ int main()
         if (MD3.askSubjectChoice()) // ask subject
         {
 
-          if (MD3.proceedFurther()) // confirm taking attendance or Return to Home Screen
+          if (MD3.proceedFurther(0)) // confirm taking attendance or Return to Home Screen
           {
             MD3.askReportChoice(); // select datewise or studentwise report
 
@@ -4834,7 +5770,52 @@ int main()
     case 4:
     {
        MODULE_4 MD4;
-      
+       
+      if(MD4.checkDB()) // check database
+      {
+            MD4.modDataChoice();
+    
+            switch (MODULE_4::MOD_CHOICE)
+            {
+                   case 1:
+                   {
+                     MD4.DetailModChoice();
+                     break;
+                   }
+                   case 2:
+                   {
+                        A.scrClr(0.5);
+                        MD4.askCourseChoice(); // ask course
+                        MD4.askSemsterChoice(); // ask semester
+                        if(MD4.DisplaySubject()) // ask subject
+                        {
+                          if (MD4.confirmDelete()) // confirmation for right choice
+                          {
+                            MD4.removeDir();
+                          }
+                        }
+                        else
+                        {
+                          if (MD4.confirmDelete()) // confirmation for right choice
+                          {
+                            MD4.removeDir();
+                          }
+                        }
+                     
+                     break;
+                   }
+                   case 3:
+                   {
+                     
+                     break;
+                   }
+                   default:
+                   {
+                     break;
+                   }
+            }
+      }
+
       break;
     }
     case 5:
