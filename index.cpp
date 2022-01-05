@@ -18,6 +18,7 @@
 #include <unistd.h>  // * for sleep function
 #include <vector>    // * STL DYNAMIC ARRAY used
 #include <windows.h> // * windows console related functions handle
+#include <signal.h>  //* signal crtl + c handler
 
 //--------FOR-DOCUMENT PATH GETTING------/
 
@@ -28,6 +29,8 @@
 #include <direct.h>
 
 #pragma comment(lib, "shell32.lib")
+
+inline void signal_callback_handler(int signum){signal(SIGINT, signal_callback_handler);}
 
 //--------FOR-DOCUMENT PATH GETTING-------------/
 
@@ -421,6 +424,7 @@ private:
     std::wcscpy(cfi.FaceName, L"JetBrains Mono Bold");                     // Choose your font BY SETTING FONT FACE
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi); // pass reference of that structure to OUTPUT HANDLE
   }
+  
 //? **************************  DATA - MEMEBERS ***************************************
 
 protected:
@@ -515,8 +519,10 @@ protected:
     cout << "CHOICE : ";
     fflush(stdin);       // flushing standard input buffer
     getline(cin, input); // taking white space string input
+
     if(input[0] == 3)
     Debug("debug");
+    
     cin.clear();
     ShowConsoleCursor(false); // hide the cursor
   }
@@ -5730,19 +5736,21 @@ int MODULE_4::MOD_CHOICE; // MODIFICATION OPTION-CHOICE
 
 //? ********************************************************************************/
 
+
 int main()
 {
   //* jay swaminrayan *//
   //* jay ganeshay namh *//
   //* jay kashtbhanjan dev *//
-
+  
   APP A;
-
   bool loop = true; // set true to run app by 1 time
+  signal(SIGINT, signal_callback_handler);
 
+ 
   while (loop)
   {
-
+    
     A.startApp();          // start app
     A.scrClr();            // clear screen
     A.setCursorPos(2, 10); // set cursor position
