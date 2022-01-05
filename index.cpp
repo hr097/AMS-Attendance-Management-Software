@@ -199,7 +199,7 @@ public:
   {
       TCHAR appData[MAX_PATH];
       if (SUCCEEDED(SHGetFolderPath(NULL,CSIDL_DESKTOPDIRECTORY | CSIDL_FLAG_CREATE,NULL,SHGFP_TYPE_CURRENT,appData)));
-      string DesktopPath = appData;
+      DesktopPath = appData;
       DesktopPath = DesktopPath + "\\" + "AMS";
 
       if(!dirExists(DesktopPath.c_str()))
@@ -431,7 +431,9 @@ protected:
   string tempStorage;        //* TEMPORARY STORAGE FOR APPLICATION VARIABLE
   string command;            //* COMMAND VARIABLE FOR SYSTEM()
   int cur_month;             //* CURRENT MONTH STORE FOR MONTHLY REPORT
-  string pdfName;
+  string pdfName;            //* email attachment name
+  string DesktopPath;        //* desktop path for .csv input
+
 
   //? ***********************  DATA - MEMEBERS -END ***************************************
 
@@ -1043,7 +1045,7 @@ protected:
      }
   }
   
-  bool fileExists(const string &path) //! not used // ? checking function if file exists or not 
+  bool fileExists(const string &path) //? checking function if file exists or not 
   {   
      bool status_flag = false;
      ifstream read(path.c_str(),ios::binary|ios::in);     // file opened in binary mode 
@@ -1100,6 +1102,7 @@ public:
 
   void askCourseChoice() //? take input choice of course for attendance
   {
+    scrClr();
     DisplayList_Input(course_name);                   // display list for taking input
     for (auto i = DATA.begin(); i != DATA.end(); ++i) // process to make list of semester in particular course
     {
@@ -1856,56 +1859,8 @@ private:
 
     if (!dirExists(SemPath.c_str())) // if directory not exists then create it
     {
-      command = "mkdir " + SemPath; // making commad which will pass in cmd
 
-      system(command.c_str()); // creating  directory by CMD
-
-      //*********************  FOLDERS ***********************************************/
-
-      command = "mkdir " + SemPath + "\\DAILY-RECORD"; // making COMMAND FOR DAILY_RECORD folder
-
-      system(command.c_str()); // creating DAILY_RECORD directory by CMD
-
-      command = "mkdir " + SemPath + "\\FAC-STUD-DETAILS"; // making COMMAND FOR FAC&STUD_DETAILS folder
-
-      system(command.c_str()); // creating FAC&STUD_DETAILS directory by CMD
-
-      command = "mkdir " + SemPath + "\\REPORTS"; // making COMMAND FOR MONTHLY_REPORTS folder
-
-      system(command.c_str()); // creating MONTHLY_REPORTS directory by CMD
-
-      /**********************************************************************************/
-
-      //*******************  FILES ******************************************************/
-
-      command = "cd. > " + SemPath + "\\DAILY-RECORD\\records.txt"; // RECORDS.TXT file
-      system(command.c_str());
-
-      command = "cd. > " + SemPath + "\\FAC-STUD-DETAILS\\faculty" + "-sem-" + sem + ".txt"; // faculty_details.TXT file
-      system(command.c_str());
-
-      command = "cd. > " + SemPath + "\\FAC-STUD-DETAILS\\student" + "-sem-" + sem + ".txt"; // student_details.TXT file
-      system(command.c_str());
-
-      tempStorage = course_name; // re used tempStorage
-      replaceWithHyphen(tempStorage);
-
-      command = course_name + "|" + sem + "|" + subject_name + "|" + tempStorage + "-SEM-" + sem + "-";
-
-      transform(command.begin(), command.end(), command.begin(), ::toupper); // convert to uppercase
-
-      tempStorage = subject_name; // re used tempStorage
-
-      replaceWithHyphen(tempStorage);
-
-      command = command + tempStorage; // command for making path for writting data to file
-
-      tempStorage.clear();
-
-      tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt"; //* it will keep record of each semester that is created like all data of faculty | folderName
-
-      writeDataToFile(tempStorage, command); //*writting data to file
-      return 1;                              // all above code works then returns 1 = successfully
+      return 1; // semester no exists so create it                             
 
       /***************************************************************************************/
     }
@@ -2070,59 +2025,59 @@ private:
 
     //BOX-UI FOR CSV requirement
 
-    setCursorPos(1,1);
-    buildVerticalWall(77);
+    setCursorPos(1);
+    buildVerticalWall(78);
 
     while (line < 13)
     {
-      setCursorPos(1,1);
+      setCursorPos(1);
       if (line == 1)
       {
         cout << "|";
         SetColor(1);
-        cout<<"                        PRE-REQUIREMENT OF .CSV FILE";
+        cout<<"                       PRE-REQUIREMENT OF .CSV FILE";
         SetColor(0);
-        cout << setw(26) << "|";
+        cout << setw(28) << "|";
       }
       else if (line == 3)
       {
         cout << "|";
-        cout<<"     1) .CSV FILE SHOULD BE IN DESKTOP->AMS FOLDER";
+        cout<<"    1) .CSV FILE SHOULD BE IN DESKTOP->AMS FOLDER";
         SetColor(2);
-        cout<<" (SWITCH TABS : ALT+TAB)";
+        cout<<" (SWITCH TABS : \"ALT+TAB\")";
         SetColor(0);
         cout << setw(4) << "|";
       }
       else if (line == 5)
       { 
         cout << "|";
-        cout<<"     2) .CSV FILE SHOULD HAVE ONLY TWO COLUMS NAME & EMAIL OF STUDENT ";
-        cout << setw(8) << "|";
+        cout<<"    2) .CSV FILE SHOULD HAVE ONLY TWO COLUMNS NAME & EMAIL OF STUDENT ";
+        cout << setw(9) << "|";
       }
       else if (line == 7)
       { 
         cout << "|";
-        cout<<"     3) NAME & EMAIL COLUMNS SHOULD NOT CONTAIN ANY EMPTY CELL ";
-        cout << setw(15) << "|";
+        cout<<"    3) NAME & EMAIL COLUMNS SHOULD NOT CONTAIN ANY EMPTY CELL ";
+        cout << setw(17) << "|";
       }
       else if (line == 9)
       {  
         cout << "|";
-        cout<<"     4) EMAIL COLUMN SHOULD HAVE PROPER FORMET OF EMAIL STANDARDS ";
-        cout << setw(12) << "|";
+        cout<<"    4) EMAIL COLUMN SHOULD HAVE PROPER FORMAT OF EMAIL STANDARDS ";
+        cout << setw(14) << "|";
       }
       else if (line == 11)
       {  
         cout << "|";
-        cout<<"     5) COLUMNS MUST HAVE TITLE IN FIRST ROW LIKE NAME , EMAIL ";
-        cout << setw(15) << "|";
+        cout<<"    5) COLUMNS MUST HAVE TITLE IN FIRST ROW LIKE NAME & EMAIL ";
+        cout << setw(17) << "|";
       }
       else
-        buildHorizontalWall(77, " ");
+        buildHorizontalWall(78, " ");
       line++;
     }
-    setCursorPos(1,1);
-    buildVerticalWall(77);
+    setCursorPos(1);
+    buildVerticalWall(78);
 
     tempStorage.clear(); // clear variable for re-using
     SetColor(1);
@@ -2338,18 +2293,67 @@ private:
     }
   }
 
+  void EnterFileCSVName(string &filename) //?input subject
+  {
+     reinput_f_name:
+      scrClr(0.5);
+      setCursorPos(9,22);
+      cout << "ENTER .CSV FILE NAME : ";
+      ShowConsoleCursor(true);
+      fflush(stdin);
+      getline(cin, filename);
+      cin.clear();
+      ShowConsoleCursor(false);
+      if (!LengthValidation(filename, 256))
+      {
+        goto reinput_f_name; 
+      }
+      if (EmptyInput(filename)) 
+      {
+        InvalidInputErr();         // invalid input error
+        goto reinput_f_name; 
+      }
+      if(pipilineValidation(filename))
+      {
+        goto reinput_f_name; 
+      }
+      if(filename.substr((filename.length()-4))!=".csv")
+      { 
+        scrClr(0.5);
+        setCursorPos(9, 25); // set cursor
+        SetColor(4);
+        cout << ".CSV FILE IS ONLY ALLOWED !" << endl; // warn message
+        scrClr(1.5);
+        SetColor(0);
+        goto reinput_f_name; 
+      }
+
+  }
   bool askStudDetailsInCSV() //? asking students details csv version
   {
     bool opRead=false; // reverse flag
 
     if(preReqCSV())
     { 
-      opRead=true;
+      string fileName; //file Name to .CSV file
+      EnterFileCSVName(fileName);
+      
+      if(fileExists(DesktopPath+"\\"+fileName))
+      {
+        readDataFromCSV(DesktopPath+"\\"+fileName,stoi(numberOfstudents),LIST);
+        opRead=true;
+      }
+      else
+      {
+        scrClr(0.5);
+        setCursorPos(9,19); // set cursor
+        SetColor(4);
+        cout << ".CSV FILE NOT FOUND IN DESKTOP->AMS FOLDER !" << endl; // warn message
+        scrClr(2);
+        SetColor(0);
+      }
     }
-    else
-    {
-      opRead=false;
-    }
+  
 
    return(opRead); 
   }
@@ -2519,6 +2523,58 @@ public:
 
   void SetUpSucceed() // module 1 successfully worked
   {
+    command.clear();
+
+    command = "mkdir " + SemPath; // making commad which will pass in cmd
+
+    system(command.c_str()); // creating  directory by CMD
+
+    //*********************  FOLDERS ***********************************************/
+
+    command = "mkdir " + SemPath + "\\DAILY-RECORD"; // making COMMAND FOR DAILY_RECORD folder
+
+    system(command.c_str()); // creating DAILY_RECORD directory by CMD
+
+    command = "mkdir " + SemPath + "\\FAC-STUD-DETAILS"; // making COMMAND FOR FAC&STUD_DETAILS folder
+
+    system(command.c_str()); // creating FAC&STUD_DETAILS directory by CMD
+
+    command = "mkdir " + SemPath + "\\REPORTS"; // making COMMAND FOR MONTHLY_REPORTS folder
+
+    system(command.c_str()); // creating MONTHLY_REPORTS directory by CMD
+
+    /**********************************************************************************/
+
+    //*******************  FILES ******************************************************/
+
+    command = "cd. > " + SemPath + "\\DAILY-RECORD\\records.txt"; // RECORDS.TXT file
+    system(command.c_str());
+
+    command = "cd. > " + SemPath + "\\FAC-STUD-DETAILS\\faculty" + "-sem-" + sem + ".txt"; // faculty_details.TXT file
+    system(command.c_str());
+
+    command = "cd. > " + SemPath + "\\FAC-STUD-DETAILS\\student" + "-sem-" + sem + ".txt"; // student_details.TXT file
+    system(command.c_str());
+
+    tempStorage = course_name; // re used tempStorage
+    replaceWithHyphen(tempStorage);
+
+    command = course_name + "|" + sem + "|" + subject_name + "|" + tempStorage + "-SEM-" + sem + "-";
+
+    transform(command.begin(), command.end(), command.begin(), ::toupper); // convert to uppercase
+
+    tempStorage = subject_name; // re used tempStorage
+
+    replaceWithHyphen(tempStorage);
+
+    command = command + tempStorage; // command for making path for writting data to file
+
+    tempStorage.clear();
+
+    tempStorage = AMS_Path + "\\OTHER\\semesterRecord.txt"; //* it will keep record of each semester that is created like all data of faculty | folderName
+
+    writeDataToFile(tempStorage, command); //*writting data to file
+
     command.clear();
     command = SemPath + "\\FAC-STUD-DETAILS\\student" + "-sem-" + sem + ".txt"; // path making for writing into file
 
@@ -5596,7 +5652,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     path = "rmdir /s /q " + SemPath; 
     system(path.c_str());
     command = course_name + "-SEM-" + "-" + sem + "-" + subject_name;
-    MSG(command," SUCCESSFULLY DELETED.",2,0,15);
+    MSG(command," SUCCESSFULLY DELETED.",2,0,19);
   
     path.clear();
     path = AMS_Path + "\\OTHER\\semesterRecord.txt";
@@ -5793,7 +5849,6 @@ int main()
                    }
                    case 2:
                    {
-                        A.scrClr(0.5);
                         MD4.askCourseChoice(); // ask course
                         MD4.askSemsterChoice(); // ask semester
                         if(MD4.DisplaySubject()) // ask subject
