@@ -342,7 +342,7 @@ private:
 
     setCursorPos(1, 17);
     buildVerticalWall(43);
-
+    
     askChoice(2, 32, operationChoice);
 
     ConvertChoiceToINT = validateString(operationChoice, 5, 1); // validate and convert choice into integer
@@ -513,6 +513,8 @@ protected:
     cout << "CHOICE : ";
     fflush(stdin);       // flushing standard input buffer
     getline(cin, input); // taking white space string input
+    if(input[0] == 3)
+    Debug("debug");
     cin.clear();
     ShowConsoleCursor(false); // hide the cursor
   }
@@ -5602,16 +5604,23 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     tempStorage = AMS_Path + "\\OTHER\\fileout.txt";
   
     command.clear();
-    command = course_name + "|" + sem + "|" + subject_name + "|" + course_name + "-SEM-" + sem + "-" + subject_name;
-  
-    for(int i = 1; i <= (countLinesOfFile(path) + 1);i++)
+    replaceWithHyphen(course_name);
+    
+    command = course_name + "|" + sem + "|" + subject_name + "|" + course_name + "-SEM-" + sem + "-";
+    replaceWithHyphen(subject_name);
+    command = command + subject_name;  
+    for(int i = 1; i <= (countLinesOfFile(path));i++)
     {
       getDataFromFile(path,date,i);
-      
-      if(date != command)
+    
+      if(date == command)
       {
-          writeDataToFile(tempStorage,date);
-      }   
+          date = "";
+      }    
+      if(date != "") 
+      {
+        writeDataToFile(tempStorage,date);
+      }        
       
     }
     remove(path.c_str()); 
