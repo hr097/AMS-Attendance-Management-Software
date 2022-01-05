@@ -1,0 +1,18 @@
+* Module 4 *
+
+Date : 05/01/2022
+
+
+Bugs / Suggestion : 
+
+1)   Module 4 -> Details Modification -> User Details -> F2   :  Enter char to Copy up to :
+
+2)   Module 4 -> Details Modification -> User Details -> F4   :  Enter char to Delete up to :
+
+3)   Actually This is Question -- Module 4 -> Details Modification -> User Details -> F7   :  History Show kare chhe to e tame set karelu chhe ?? 
+
+4)   Module 4 -> Details Modification -> User Details -> F9   :  Enter Command Number :
+
+5)   suggestion : In User details one more option should there that no changes so he/she redirect that 2 options that user details or semester details. We should this change at 2-3 places... 
+
+---> Remaining Functionalities Work Prperly..
