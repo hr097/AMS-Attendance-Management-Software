@@ -69,11 +69,12 @@ using namespace std; // standard namespace for  resolving naming coflicts
 //***************************** APP-CLASS ***********************************/
 
 void Debug(string t) //! EOP() seek.edit(*required) :ALL AMS TEAM
-{
+{ 
+  system("cls");
   cout << endl << t << getch();
 }
 void Debug(int t) //! EOP() seek.edit(*required) :ALL AMS TEAM
-{
+{ system("cls");
   cout << endl << t << getch();
 }
 
@@ -894,13 +895,25 @@ protected:
       return (false);
     }
   }
+  bool LengthValidationCSVEmail(string input, int l) //? input string length validatio
+  {
 
+    if (input.length() <= l)
+    {
+      return (true); // if valid then true return
+    }
+    else
+    {
+      return (false);
+    }
+
+  }
   bool validateEmail(string email) //?checking for email validation
   {
     const regex pattern("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"); // email pattern
     return regex_match(email, pattern);
   }
-
+  
   void LoadingProcess() //? LOADING WINDOWS WHILE TASK PROCESSING
   {
     tempStorage.clear();
@@ -2019,102 +2032,7 @@ private:
   }
 
   /***********************************************************************************/
-  
-  bool preReqCSV()
-  {
-    int line = 0;
 
-    confirm:
-
-    scrClr(0.5);
-    line = 0;
-
-    //BOX-UI FOR CSV requirement
-
-    setCursorPos(1);
-    buildVerticalWall(78);
-
-    while (line < 13)
-    {
-      setCursorPos(1);
-      if (line == 1)
-      {
-        cout << "|";
-        SetColor(1);
-        cout<<"                       PRE-REQUIREMENT OF .CSV FILE";
-        SetColor(0);
-        cout << setw(28) << "|";
-      }
-      else if (line == 3)
-      {
-        cout << "|";
-        cout<<"    1) .CSV FILE SHOULD BE IN DESKTOP->AMS FOLDER";
-        SetColor(2);
-        cout<<" (SWITCH TABS : \"ALT+TAB\")";
-        SetColor(0);
-        cout << setw(4) << "|";
-      }
-      else if (line == 5)
-      { 
-        cout << "|";
-        cout<<"    2) .CSV FILE SHOULD HAVE ONLY TWO COLUMNS NAME & EMAIL OF STUDENT ";
-        cout << setw(9) << "|";
-      }
-      else if (line == 7)
-      { 
-        cout << "|";
-        cout<<"    3) NAME & EMAIL COLUMNS SHOULD NOT CONTAIN ANY EMPTY CELL ";
-        cout << setw(17) << "|";
-      }
-      else if (line == 9)
-      {  
-        cout << "|";
-        cout<<"    4) EMAIL COLUMN SHOULD HAVE PROPER FORMAT OF EMAIL STANDARDS ";
-        cout << setw(14) << "|";
-      }
-      else if (line == 11)
-      {  
-        cout << "|";
-        cout<<"    5) COLUMNS MUST HAVE TITLE IN FIRST ROW LIKE NAME & EMAIL ";
-        cout << setw(17) << "|";
-      }
-      else
-        buildHorizontalWall(78, " ");
-      line++;
-    }
-    setCursorPos(1);
-    buildVerticalWall(78);
-
-    tempStorage.clear(); // clear variable for re-using
-    SetColor(1);
-    setCursorPos(2, 23);
-    cout << "DO YOU WANT TO PROCEED FURTHER ?";
-    SetColor(0);
-    setCursorPos(2, 32);
-    fflush(stdin);
-    ShowConsoleCursor(true);
-    cout << "Type : ";
-    getline(cin, tempStorage);
-    cin.clear();
-    ShowConsoleCursor(false);
-
-    ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
-    if (ConvertChoiceToINT == -1)                     // validate input
-    {
-      InvalidInputErr();
-      goto confirm;
-    }
-    
-    if(ConvertChoiceToINT)
-    {  
-      return (true);
-    } 
-    else
-    { 
-      return (false);
-    }
-
-  }
 
   void EnterCourseName() //?course name input
    {
@@ -2224,28 +2142,146 @@ private:
     }
   }
 
+  bool preReqCSV()
+  {
+    int line = 0;
+    confirm:
+    scrClr(0.5);
+    line = 0;
+    //BOX-UI FOR CSV requirement
+    setCursorPos(1);
+    buildVerticalWall(78);
+    while (line < 13)
+    {
+      setCursorPos(1);
+      if (line == 1)
+      {
+        cout << "|";
+        SetColor(1);
+        cout<<"                       PRE-REQUIREMENT OF .CSV FILE";
+        SetColor(0);
+        cout << setw(28) << "|";
+      }
+      else if (line == 3)
+      {
+        cout << "|";
+        cout<<"    1) .CSV FILE SHOULD BE IN DESKTOP->AMS FOLDER";
+        SetColor(2);
+        cout<<" (SWITCH TABS : \"ALT+TAB\")";
+        SetColor(0);
+        cout << setw(4) << "|";
+      }
+      else if (line == 5)
+      { 
+        cout << "|";
+        cout<<"    2) .CSV FILE SHOULD HAVE ONLY TWO COLUMNS NAME & EMAIL OF STUDENT ";
+        cout << setw(9) << "|";
+      }
+      else if (line == 7)
+      { 
+        cout << "|";
+        cout<<"    3) NAME & EMAIL COLUMNS SHOULD NOT CONTAIN ANY EMPTY CELL ";
+        cout << setw(17) << "|";
+      }
+      else if (line == 9)
+      {  
+        cout << "|";
+        cout<<"    4) EMAIL COLUMN SHOULD HAVE PROPER FORMAT OF EMAIL STANDARDS ";
+        cout << setw(14) << "|";
+      }
+      else if (line == 11)
+      {  
+        cout << "|";
+        cout<<"    5) COLUMNS MUST HAVE TITLE IN FIRST ROW LIKE NAME & EMAIL ";
+        cout << setw(17) << "|";
+      }
+      else
+        buildHorizontalWall(78, " ");
+      line++;
+    }
+    setCursorPos(1);
+    buildVerticalWall(78);
+    tempStorage.clear(); // clear variable for re-using
+    SetColor(1);
+    setCursorPos(2, 23);
+    cout << "DO YOU WANT TO PROCEED FURTHER ?";
+    SetColor(0);
+    setCursorPos(2, 32);
+    fflush(stdin);
+    ShowConsoleCursor(true);
+    cout << "Type : ";
+    getline(cin, tempStorage);
+    cin.clear();
+    ShowConsoleCursor(false);
+    ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
+    if (ConvertChoiceToINT == -1)                     // validate input
+    {
+      InvalidInputErr();
+      goto confirm;
+    }
+    
+    if(ConvertChoiceToINT)
+    {  
+      return (true);
+    } 
+    else
+    { 
+      return (false);
+    }
+  }
+  
   short int readDataFromCSV(string filePath,unsigned int max_row,vector<string> &data)
   {
-    string t_str,t2_str;
-    unsigned int count = 0;
-    while(count < max_row)
+    //student_name used as temp 1
+    //student_email used as temp 2
+    //unsigned int count = 0;
+    unsigned int roll_no = 0; //local variable
+
+    short int csv_read_code = 1;
+  
+    while(roll_no <= max_row)
     {   
-        count++;
-        t_str.clear();
-        t2_str.clear();
-        getDataFromFile(filePath,t_str,count+1);
-        std::replace( t_str.begin(), t_str.end(), ',', '|'); // replace all 'x' to 'y'
-        t2_str = to_string(count) ;
-        t2_str += "|"+ t_str;
-        data.push_back(t2_str);
+        student_name.clear();
+        student_email.clear();
+        getDataFromFile(filePath,student_name,roll_no+1);
+        if(roll_no ==0 )
+        RoLLNo = to_string(1);
+        else
+        RoLLNo = to_string(roll_no+1);    
+        Debug(student_name);
         
+        if(roll_no==0 && (student_name!="name,email"&&student_name!="Name,Email"&&student_name!="NAME,EMAIL"))
+        {
+          csv_read_code=5; // 5 Means First ROW: name and email title are missing
+          break;
+        }                                
+        else if(std::count(student_name.begin(), student_name.end(), ',')>1)
+        {
+          csv_read_code=2; // 2 Means more than two columns
+          break;
+        }
+        else if(student_name[0]==','||student_name[ (student_name.length()-1) ]==',') 
+        {
+           csv_read_code=3; // 3 Means empty cell
+           break;
+        }
+        else if( (!validateEmail(student_name.substr( (student_name.find(",") + 1 ) )) )|| ( !LengthValidationCSVEmail(student_name.substr( (student_name.find(",") + 1 ) ),58))  )
+        {
+          csv_read_code=4; // 4 Means email not valid
+          break;
+        }
+        
+        if(roll_no != 0)
+        {
+          replace( student_name.begin(), student_name.end(), ',', '|'); // replace all 'x' to 'y'
+          student_email = to_string(roll_no) ;
+          student_email += "|"+ student_name;
+          data.push_back(student_email);
+        }
+        roll_no++;
     }
 
-    //error validation coding should be done 
-    //and acccording to that error code should be given here
-    // 1 is reserved for successful csv reading 
-
-   return(1);
+   return(csv_read_code);
   }
    
   void askStudDetails() //? asking students details manual version
@@ -2323,7 +2359,7 @@ private:
       {
         goto reinput_f_name; 
       }
-      if(filename.substr((filename.length()-4))!=".csv")
+      if(filename.substr((filename.length()-4))!=".csv"&&filename.substr((filename.length()-4))!=".CSV")
       { 
         scrClr(0.5);
         setCursorPos(9, 25); // set cursor
@@ -2335,6 +2371,7 @@ private:
       }
 
   }
+
   bool askStudDetailsInCSV() //? asking students details csv version
   {
     bool opRead=false; // reverse flag
@@ -2344,10 +2381,33 @@ private:
       string fileName; //file Name to .CSV file
       EnterFileCSVName(fileName);
       
-      if(fileExists(DesktopPath+"\\"+fileName))
+      if(fileExists(DesktopPath+"\\"+fileName)) //pre requirement 1 check
       {
-        readDataFromCSV(DesktopPath+"\\"+fileName,stoi(numberOfstudents),LIST);
-        opRead=true;
+        switch(readDataFromCSV(DesktopPath+"\\"+fileName,stoi(numberOfstudents),LIST))
+        {
+          case 1:{opRead=true;break;}
+          case 2:
+          { warnMsg("ERROR : .CSV FILE HAS MORE THAN TWO COLUMNS !", 4,19,fileName + " => ROW : "+RoLLNo,1,22);
+            opRead=false;
+            break;
+          }
+          case 3:
+          { warnMsg("ERROR : .CSV FILE NAME/EMAIL COLUMN HAS EMPTY CELL !", 4, 19, fileName + " => ROW : "+RoLLNo,1,22);
+            opRead=false;
+            break;
+          }
+          case 4:
+          { warnMsg("ERROR : .CSV FILE HAS INVALID STUDENT EMAIL ADDRESS !", 4, 19, fileName + " => ROW : "+RoLLNo,1,22);
+            opRead=false;
+            break;
+          }
+          case 5:
+          { warnMsg("ERROR : .CSV FILE HAS NO TITLE COLUMS NAME & EMAIL !", 4, 19, fileName + " => ROW : "+RoLLNo,1,22);
+            opRead=false;
+            break;
+          }
+        }
+        
       }
       else
       {
@@ -2871,8 +2931,109 @@ private:
     command.clear();
     return (flag); 
   
-  }
+}
 
+bool createSixMonthReportPDF(string BasicDetails,string Name,string Percentage,string pdf_name)//?Date Vise Report Generate PDF(If overloding posssible then must overload  GeneratePDF function)
+{
+      int PresentCount;
+      tempStorage.clear(); 
+      command.clear();
+      bool flag;
+      command = AMS_Path+"\\OTHER\\6MR.py"; // make python path
+      fstream write(command.c_str(),ios::out);
+
+      if(!write.is_open()) // if file  not opened
+      {   
+        scrClr();
+        setCursorPos(9, 28);
+        cout << "DATA BASE-ERROR-201-204! ";//error 
+        scrClr(2);
+        exit(1);
+      }
+      else
+      {
+            command.clear();
+            command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
+            command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
+            getDataFromFile(BasicDetails,tempStorage,1);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,2);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Joining Year
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,3);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Department Name
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,4);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course name
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,5);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,6);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Subject Name
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,7);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Report type
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,8);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Records
+            command += "data = [['ROLL NO.','NAME','ATTENDANCE']";
+            for(int i=1;i<=countLinesOfFile(Name);i++)
+            {
+                command += ",['" + to_string(i) + "',"; 
+                tempStorage.clear();
+                getDataFromFile(Name,tempStorage,i);
+                command += "'" + tempStorage + "',";
+                PresentCount = 0;
+                for(int k=1;k<=(countLinesOfFile(Percentage));k++)
+                {
+                    tempStorage.clear();
+                    getDataFromFile(Percentage,tempStorage,k);
+     
+                     if(tempStorage[19+i] == 'P')
+                         PresentCount++;
+                 }
+                 stringstream stream;
+                 stream << fixed << setprecision(2) << (float(100 *  PresentCount)/countLinesOfFile(Percentage));
+                 string temp = stream.str();
+                 command += "'"+temp+"%'";
+                 command+= "]";
+             }
+             command += "]\n";
+             command += "th = pdf.font_size\ncol_width = (epw-4)/2\npdf.ln(0.3)\n";
+             command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\npdf.ln(2)";
+             command += "\nLine = \"_\"\nfor i in range(int(pdf.w-pdf.l_margin)):\n\tfor j in range(10):\n\t\tLine+=\"_\" ";
+             command += "\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line, align='C')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line,align='C')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('"+DoubleBackslashPath(SemPath) +"\\\\REPORTS\\\\";
+             command +=  pdf_name + "','F')\n";
+             tempStorage.clear();
+             tempStorage = AMS_Path+"\\OTHER\\6MR.py";   // make python File
+             writeDataToFile(tempStorage,command);
+             command.clear();
+        
+        
+             remove(command.c_str());
+             command = "python " + AMS_Path+"\\OTHER\\6MR.py";  
+             system(command.c_str());//run python file
+             
+             command = AMS_Path + "\\OTHER\\output.txt"; //error file size get
+                 
+             int err = checkEmptyFile(command);
+             if(err)
+             flag=false;
+             else
+             flag=true;
+     
+             command = AMS_Path+"\\OTHER\\6MR.py"; 
+             remove(command.c_str()); //delete python file
+             remove(BasicDetails.c_str());//delete fec_data file
+             remove(Name.c_str());//delete stud_name file
+             remove(Percentage.c_str());//delete stud_att file
+             return flag;
+     
+     } 
+         
+  }
 
   bool checkExistRollNo(string &Attendance, string rl, char AT, int select = 0) //?checking if same roll no exist in the list
   {
@@ -3718,6 +3879,9 @@ public:
       }
     }
     /***********************************************************************/
+    /****************************SEMIANNUAL REPORT*********************************/
+
+    /****************************SEMIANNUAL REPORT-END*****************************/
 
     buffer.clear();      // clearing buffer
     LIST.clear();        // clearing List
@@ -5755,8 +5919,8 @@ int main()
     A.scrClr();            // clear screen
     A.setCursorPos(2, 10); // set cursor position
 
-    switch (APP::MODULE_CHOICE) // module choice asking
-    {
+  switch (APP::MODULE_CHOICE) // module choice asking
+  {
 
     case 1:
     {
@@ -5904,7 +6068,8 @@ int main()
       exit(1);
       break;
     } //* exceptional  case
-    }
+
+  }
 
     A.scrClr(); // screen clear
   }
