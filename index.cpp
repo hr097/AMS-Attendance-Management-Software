@@ -1863,7 +1863,7 @@ protected:
   //*=============================MEMBERS-FUNCTIONS===================================//
 
 private:
-  int createSemester() //? return 1=semester created successfully & return 0=not created
+  bool createSemester() //? return 1=semester created successfully & return 0=not created
   {
 
     tempStorage = course_name;
@@ -1879,14 +1879,14 @@ private:
     if (!dirExists(SemPath.c_str())) // if directory not exists then create it
     {
 
-      return 1; // semester no exists so create it                             
+      return (true); // semester no exists so create it                             
 
       /***************************************************************************************/
     }
     else //* if that semester already exist
     {
       warnMsg("SEMSTER WITH THAT SUBJECT ALREADY EXIST !", 2, 19);
-      return 0; // returns 0=failed as User trying to create that same folder again
+      return (false); // returns 0=failed as User trying to create that same folder again
     }
   }
   
@@ -2235,52 +2235,61 @@ private:
     //student_name used as temp 1
     //student_email used as temp 2
     //unsigned int count = 0;
+
+    tempStorage.clear();
     unsigned int roll_no = 0; //local variable
 
     short int csv_read_code = 1;
   
     while(roll_no <= max_row)
     {   
+        tempStorage.clear();
         student_name.clear();
         student_email.clear();
-        getDataFromFile(filePath,student_name,roll_no+1);
+        getDataFromFile(filePath,tempStorage,roll_no+1);
         if(roll_no ==0 )
         RoLLNo = to_string(1);
         else
         RoLLNo = to_string(roll_no+1);    
-        Debug(student_name);
         
-        if(roll_no==0 && (student_name!="name,email"&&student_name!="Name,Email"&&student_name!="NAME,EMAIL"))
-        {
-          csv_read_code=5; // 5 Means First ROW: name and email title are missing
-          break;
-        }                                
-        else if(std::count(student_name.begin(), student_name.end(), ',')>1)
+                                
+        if(std::count(tempStorage.begin(), tempStorage.end(), ',')>1)
         {
           csv_read_code=2; // 2 Means more than two columns
           break;
         }
-        else if(student_name[0]==','||student_name[ (student_name.length()-1) ]==',') 
+        if(roll_no==0 && (tempStorage!="name,email"&&tempStorage!="Name,Email"&&tempStorage!="NAME,EMAIL"&&tempStorage!="name,Email"&&tempStorage!="Name,email"&&tempStorage!="NAME,email"&&tempStorage!="name,EMAIL"&&tempStorage!="NAME,Email"))
+        {
+          csv_read_code=5; // 5 Means First ROW: name and email title are missing
+          break;
+        }
+        else if(tempStorage[0]==','||tempStorage[ (tempStorage.length()-1) ]==',') 
         {
            csv_read_code=3; // 3 Means empty cell
            break;
         }
-        else if( (!validateEmail(student_name.substr( (student_name.find(",") + 1 ) )) )|| ( !LengthValidationCSVEmail(student_name.substr( (student_name.find(",") + 1 ) ),58))  )
+        else if( ( roll_no != 0 )&& ( (!validateEmail(tempStorage.substr( (tempStorage.find(",") + 1 ) )) )|| ( !LengthValidationCSVEmail(tempStorage.substr( (tempStorage.find(",") + 1 ) ),58)) )  )
         {
           csv_read_code=4; // 4 Means email not valid
           break;
         }
         
         if(roll_no != 0)
-        {
-          replace( student_name.begin(), student_name.end(), ',', '|'); // replace all 'x' to 'y'
-          student_email = to_string(roll_no) ;
-          student_email += "|"+ student_name;
-          data.push_back(student_email);
+        {  
+          string temp;
+          replace( tempStorage.begin(), tempStorage.end(), ',', '|'); // replace all 'x' to 'y'
+          temp = to_string(roll_no) ;
+          student_name = tempStorage.substr(0,(tempStorage.find("|")));
+          student_email = tempStorage.substr((tempStorage.find("|")+1));
+          tempStorage.clear();
+          transform(student_email.begin(), student_email.end(), student_email.begin(), ::tolower); // convert to uppercase
+          tempStorage = temp + "|" + student_name + "|" + student_email;
+          data.push_back(tempStorage);
+          temp.clear();
         }
         roll_no++;
     }
-
+   tempStorage.clear();
    return(csv_read_code);
   }
    
@@ -2375,6 +2384,8 @@ private:
   bool askStudDetailsInCSV() //? asking students details csv version
   {
     bool opRead=false; // reverse flag
+    
+    LIST.clear(); // clear list  on every wrong
 
     if(preReqCSV())
     { 
@@ -2387,22 +2398,22 @@ private:
         {
           case 1:{opRead=true;break;}
           case 2:
-          { warnMsg("ERROR : .CSV FILE HAS MORE THAN TWO COLUMNS !", 4,19,fileName + " => ROW : "+RoLLNo,1,22);
+          { warnMsg("ERROR : .CSV FILE HAS MORE THAN TWO COLUMNS !", 4,19,fileName + " => ROW NUMBER : "+RoLLNo,1,22);
             opRead=false;
             break;
           }
           case 3:
-          { warnMsg("ERROR : .CSV FILE NAME/EMAIL COLUMN HAS EMPTY CELL !", 4, 19, fileName + " => ROW : "+RoLLNo,1,22);
+          { warnMsg("ERROR : .CSV FILE NAME/EMAIL COLUMN HAS EMPTY CELL !", 4, 14, fileName + " => ROW NUMBER : "+RoLLNo,1,22);
             opRead=false;
             break;
           }
           case 4:
-          { warnMsg("ERROR : .CSV FILE HAS INVALID STUDENT EMAIL ADDRESS !", 4, 19, fileName + " => ROW : "+RoLLNo,1,22);
+          { warnMsg("ERROR : .CSV FILE HAS INVALID STUDENT EMAIL ADDRESS !", 4, 14, fileName + " => ROW NUMBER : "+RoLLNo,1,22);
             opRead=false;
             break;
           }
           case 5:
-          { warnMsg("ERROR : .CSV FILE HAS NO TITLE COLUMS NAME & EMAIL !", 4, 19, fileName + " => ROW : "+RoLLNo,1,22);
+          { warnMsg("ERROR : .CSV FILE HAS NO TITLE COLUMS NAME / EMAIL !", 4, 14, fileName + " => ROW NUMBER : "+RoLLNo,1,22);
             opRead=false;
             break;
           }
@@ -2490,11 +2501,6 @@ public:
     EnterSem();        // sem input
     EnterSubject();    // subject input
 
-    if (!createSemester()) // semester confirmation
-    {
-      goto reAskFacDet; // reasking faculty details as semester already exists
-    }
-
     askNumberOfStudents(); // number of students INPUT
 
     command = AMS_Path + "\\USER-INFO\\userdetails.txt"; // making path for getting data from file
@@ -2506,7 +2512,11 @@ public:
 
     if (confirmation()) // basic confirmation dialog if yes then semester folder create
     {
-
+      
+      if(!createSemester()) // semester confirmation
+      {
+        goto reAskFacDet; // reasking faculty details as semester already exists
+      }
       // writing faculty data to files
 
       buffer.push_back(FacultyName);
