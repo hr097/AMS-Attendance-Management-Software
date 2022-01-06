@@ -2825,7 +2825,6 @@ private:
       DATA.push_back(make_tuple(date, time, attendance, ""));
     }
 
-    cur_month = 11;
     auto i = DATA.begin();
     auto x = buffer.begin();
     for (; i != DATA.end() && x != buffer.end(); ++i, ++x)
