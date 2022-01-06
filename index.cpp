@@ -4214,7 +4214,58 @@ class MODULE_3 : public MODULE_GENERAL //?module 3 class
 
       return (ConvertChoiceToINT); // return confirmation 
   }
+  
+void askInputChoice() // ? Ask Report input Choice
+  {
+        int line = 0;
+        reask_report:
+        
 
+        //BOX-UI FOR INPUT CHOICE
+        scrClr(0.5);
+        setCursorPos(3);
+        cout<<setw(64)<<" HOW YOU WANT TO INPUT ? "<<endl;
+        setCursorPos(2,23);
+        buildVerticalWall(30);
+        
+        line=0;
+
+        while(line<5)
+        {
+            setCursorPos(1,23);
+            if(line == 1)
+            {
+                buildHorizontalWall(30,"1) MANUAL INPUT ");
+            }
+            else if(line == 3)
+            {
+                buildHorizontalWall(30, "2) EXEL INPUT ");
+            }
+            else
+                buildHorizontalWall(30, " ");
+            line++;
+        }
+        setCursorPos(1,23);
+        buildVerticalWall(30);
+    
+        askChoice(3,33,tempStorage);
+
+        if(!cin) //! EOP() seek.edit(*required) NUPUR KUKADIYA
+        {
+            cin.clear();
+            cin.ignore(80,'\n');
+        }
+        ConvertChoiceToINT = validateString(tempStorage,2,1);
+        if(ConvertChoiceToINT == 0)
+        {
+            goto reask_report;
+        }
+        else
+        {
+          CUS_REPORT_CHOICE=(ConvertChoiceToINT);
+        }
+  }
+ 
   void askReportChoice() // ? report type select choice
   {
         int line = 0;
@@ -4584,6 +4635,6 @@ int main()
         A.scrClr(); // screen clear
     }
  
-    return EXIT_SUCCESS;
+    return (EXIT_SUCCESS);
   }
 
