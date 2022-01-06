@@ -693,6 +693,34 @@ protected:
     }
   }
 
+  bool specialSyValidations(string &input)
+  {
+     string list = "#%&{}\\/*>< $!:\'\"@+`|=-.,;[]_()^~?";
+     int i,j;
+     bool flag = false;
+
+     for (i = 0; i < list.length(); i++) // checking special  symbols
+     {
+       for (j = 0; j < input.length(); j++)
+       {
+         if (input[j] == list[i])
+         { 
+           scrClr(0.5);
+           setCursorPos(9, 24); // set cursor
+           SetColor(4);
+           cout << "SPECIAL SYMBOLS ISN'T ALLOWED !" << endl; // warn message
+           scrClr(1.5);
+           SetColor(0);
+           flag = true;
+           break;
+         }
+       }
+       if(flag==true)
+       break;
+     }
+     return(flag);
+  }
+
   bool checkAlphaSpInput(string &input, int both = 0) //?function to check occurence of special charaters and alphabets
   {
 
@@ -2059,6 +2087,10 @@ private:
       {
         goto reinputOfcourseName; 
       }
+      if(specialSyValidations(course_name))
+      {
+        goto reinputOfcourseName; 
+      }
 
       scrClr(0.5); //! EOP() seek.review(*required) we can remove it :ALL AMS TEAM
    }
@@ -2105,6 +2137,10 @@ private:
         goto reinputOfsubjectName; // re-ask subject name
       }
       if(pipilineValidation(subject_name))
+      {
+        goto reinputOfsubjectName; 
+      }
+      if(specialSyValidations(subject_name))
       {
         goto reinputOfsubjectName; 
       }
