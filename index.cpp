@@ -695,7 +695,7 @@ protected:
 
   bool specialSyValidations(string &input)
   {
-     string list = "#%&{}\\/*>< $!:\'\"@+`|=-.,;[]_()^~?";
+     string list = "#%&{}\\/*><$!:\'\"@+`|=-.,;[]_()^~?";
      int i,j;
      bool flag = false;
 
@@ -5010,6 +5010,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       return(false);
     }
   }
+
   string getpass(const char *prompt,unsigned int pos,bool show_asterisk=true) // ?password input as *
   {
         const char BACKSPACE=8;
@@ -5053,6 +5054,141 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         return pswd;
   }
 
+  void removeSetUp()
+  {
+    command.clear();
+    LIST.clear();
+    tempStorage.clear();
+    
+    tempStorage = "rmdir /s /q " + SemPath; 
+    system(tempStorage.c_str());
+    command = course_name + " SEM " + sem + " " + subject_name;
+    MSG(command," SUCCESSFULLY DELETED.",2,0,19);
+    command = course_name + "|" + sem + "|" + subject_name + "|" ;
+    replaceWithHyphen(course_name);
+    replaceWithHyphen(subject_name);
+    command += course_name + "-SEM-" + sem + "-" +subject_name;
+    
+    for(int LN = 1; LN <= (countLinesOfFile(AMS_Path + "\\OTHER\\semesterRecord.txt"));LN++)
+    {      
+          tempStorage.clear();
+          getDataFromFile(AMS_Path + "\\OTHER\\semesterRecord.txt",tempStorage,LN);
+          if(tempStorage!=command)
+          LIST.push_back(tempStorage);
+    }
+
+    ofstream write(AMS_Path + "\\OTHER\\semesterRecord.txt",ios::trunc);
+
+    if(!write.is_open())
+    {
+      scrClr();
+      setCursorPos(9, 26);
+      cout << "DATABASE-ERROR : 201/204 "; // error
+      scrClr(2);
+      exit(1);
+    }
+    else
+    {
+
+      for(auto i= LIST.begin(); i != LIST.end();i++)
+      {
+        write<<(*i)<<endl;
+      }
+
+      write.close();
+
+    }
+
+
+    
+
+  /*
+    tempStorage = AMS_Path + "\\OTHER\\fileout.txt";
+  
+    command.clear();
+    replaceWithHyphen(course_name);
+    
+    command = course_name + "|" + sem + "|" + subject_name + "|" + course_name + "-SEM-" + sem + "-";
+    replaceWithHyphen(subject_name);
+    command = command + subject_name;  
+    for(int i = 1; i <= (countLinesOfFile(path));i++)
+    {
+      getDataFromFile(path,date,i);
+    
+      if(date == command)
+      {
+          date = "";
+      }    
+      if(date != "") 
+      {
+        writeDataToFile(tempStorage,date);
+      }        
+      
+    }
+    remove(path.c_str()); 
+    rename(tempStorage.c_str(),path.c_str());
+    */
+   LIST.clear();
+   tempStorage.clear();
+  }
+
+  int confirmDelete()
+  {
+      tempStorage.clear();
+      int line;
+  
+    reDeleConfirm:
+  
+      scrClr(0.5);
+      line = 0;
+      setCursorPos(2,7);
+      buildVerticalWall(61);
+      while (line < 7)
+      {
+        setCursorPos(1, 7);
+  
+        if (line == 1)
+        {
+          buildHorizontalWall(61, "          COURSE NAME  :  " + course_name);
+        }
+        else if (line == 3)
+        {
+          buildHorizontalWall(61, "          SEMESTER     :  " + sem);
+        }
+        else if (line == 5)
+        {
+          buildHorizontalWall(61, "          SUBJECT      :  " + subject_name);
+        }
+        else
+          buildHorizontalWall(61, " ");
+        line++;
+      }
+  
+      setCursorPos(1, 7);
+      buildVerticalWall(61);
+  
+      SetColor(1);
+      setCursorPos(2, 23);
+      cout << "DO YOU WANT TO DELETE THIS SETUP ?";
+      SetColor(0);
+      setCursorPos(2, 32);
+      fflush(stdin);
+      ShowConsoleCursor(true);
+      cout << "Type : ";
+      getline(cin, tempStorage);
+      cin.clear();
+  
+      ShowConsoleCursor(false);
+      ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
+  
+      if (ConvertChoiceToINT == -1) // validate input
+      {
+        InvalidInputErr();
+        goto reDeleConfirm;
+      }
+      return (ConvertChoiceToINT); // return confirmation
+    }
+  
   int userConfirmation()
   {
     command = AMS_Path + "\\USER-INFO\\userdetails.txt";
@@ -5179,6 +5315,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     }
     
   }
+
   void userDetailModChoice() // Ask Data Input Choice
   {
     int line = 0;
@@ -5694,8 +5831,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
   }
 
-  
-
   void modDataChoice() 
   {
     int line = 0;
@@ -5787,119 +5922,18 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
   }
 
-  int confirmDelete()
+  void deleteSetUp()
   {
-      tempStorage.clear();
-      int line;
-  
-    reDeleConfirm:
-  
-      scrClr(0.5);
-      line = 0;
-      setCursorPos(2,7);
-      buildVerticalWall(61);
-      while (line < 7)
-      {
-        setCursorPos(1, 7);
-  
-        if (line == 1)
-        {
-          buildHorizontalWall(61, "          COURSE NAME  :  " + course_name);
-        }
-        else if (line == 3)
-        {
-          buildHorizontalWall(61, "          SEMESTER     :  " + sem);
-        }
-        else if (line == 5)
-        {
-          buildHorizontalWall(61, "          SUBJECT      :  " + subject_name);
-        }
-        else
-          buildHorizontalWall(61, " ");
-        line++;
-      }
-  
-      setCursorPos(1, 7);
-      buildVerticalWall(61);
-  
-      SetColor(1);
-      setCursorPos(2, 23);
-      cout << "DO YOU WANT TO DELETE THIS SETUP ?";
-      SetColor(0);
-      setCursorPos(2, 32);
-      fflush(stdin);
-      ShowConsoleCursor(true);
-      cout << "Type : ";
-      getline(cin, tempStorage);
-      cin.clear();
-  
-      ShowConsoleCursor(false);
-      ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
-  
-      if (ConvertChoiceToINT == -1) // validate input
-      {
-        InvalidInputErr();
-        goto reDeleConfirm;
-      }
-      return (ConvertChoiceToINT); // return confirmation
-    }
-  
-  bool DisplaySubject()
-  {
-      DisplayList_Input(subject_name);
-      getFolderPath();
-  
-      if ((!checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt")) || (!checkEmptyFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt")))
-      {
-        // error part
-        warnMsg(" ALERT! THIS FOLDER CONTAINS PARTIAL CONTENT!! ", 4, 17);
-        return false;
-      }
-      else
-      {
-        return true;
-      }
+   if(passwordAuthetication())
+   {
+       if (confirmDelete()) // confirmation for right choice
+       {
+           removeSetUp();
+       }
+   }
+
   }
     
-  void removeDir()
-  {
-    command.clear();
-    string path;
-    path = "rmdir /s /q " + SemPath; 
-    system(path.c_str());
-    command = course_name + "-SEM-" + "-" + sem + "-" + subject_name;
-    MSG(command," SUCCESSFULLY DELETED.",2,0,19);
-  
-    path.clear();
-    path = AMS_Path + "\\OTHER\\semesterRecord.txt";
-  
-    tempStorage = AMS_Path + "\\OTHER\\fileout.txt";
-  
-    command.clear();
-    replaceWithHyphen(course_name);
-    
-    command = course_name + "|" + sem + "|" + subject_name + "|" + course_name + "-SEM-" + sem + "-";
-    replaceWithHyphen(subject_name);
-    command = command + subject_name;  
-    for(int i = 1; i <= (countLinesOfFile(path));i++)
-    {
-      getDataFromFile(path,date,i);
-    
-      if(date == command)
-      {
-          date = "";
-      }    
-      if(date != "") 
-      {
-        writeDataToFile(tempStorage,date);
-      }        
-      
-    }
-    remove(path.c_str()); 
-    rename(tempStorage.c_str(),path.c_str());
-  }
-
-
   ~MODULE_4()
   {
     tempStorage.clear();
@@ -5907,7 +5941,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     buffer.clear();
     LIST.clear();
     DATA.clear();
-        
     FacultyName.clear();
     FacultyEmail.clear();
     course_name.clear();
@@ -6069,21 +6102,8 @@ int main()
                    {
                         MD4.askCourseChoice(); // ask course
                         MD4.askSemsterChoice(); // ask semester
-                        if(MD4.DisplaySubject()) // ask subject
-                        {
-                          if (MD4.confirmDelete()) // confirmation for right choice
-                          {
-                            MD4.removeDir();
-                          }
-                        }
-                        else
-                        {
-                          if (MD4.confirmDelete()) // confirmation for right choice
-                          {
-                            MD4.removeDir();
-                          }
-                        }
-                     
+                        MD4.askSubjectChoice(); // ask subject
+                        MD4.deleteSetUp();
                      break;
                    }
                    case 3:
