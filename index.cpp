@@ -196,30 +196,11 @@ public:
     /**************** AMS DATABASE PATH GETTING *********************/
     /***************** DESKTOP FOLDER AMS CREATE ********************/
      makeDesktopPath_AMS();
+     makeSampleCsv();
     /***************** DESKTOP FOLDER AMS CREATE ********************/
   }
 
-  bool makeDesktopPath_AMS()
-  {
-      TCHAR appData[MAX_PATH];
-      if (SUCCEEDED(SHGetFolderPath(NULL,CSIDL_DESKTOPDIRECTORY | CSIDL_FLAG_CREATE,NULL,SHGFP_TYPE_CURRENT,appData)));
-      DesktopPath = appData;
-      DesktopPath = DesktopPath + "\\" + "AMS";
-
-      if(!dirExists(DesktopPath.c_str()))
-      {
-          command.clear();
-          command="mkdir "+DesktopPath;
-          system(command.c_str());
-          command.clear();
-          return(true);
-      }
-      else
-      {
-          return(false);
-      }
-  }
-
+  
   void setCursorPos(int x, int y = 0) //? cursor position set ->IMPORTANT: relative postion is set
   {
 
@@ -273,6 +254,48 @@ public:
   }
 
 private:
+
+bool makeDesktopPath_AMS()
+  {
+      TCHAR appData[MAX_PATH];
+      if (SUCCEEDED(SHGetFolderPath(NULL,CSIDL_DESKTOPDIRECTORY | CSIDL_FLAG_CREATE,NULL,SHGFP_TYPE_CURRENT,appData)));
+      DesktopPath = appData;
+      DesktopPath = DesktopPath + "\\" + "AMS";
+
+      if(!dirExists(DesktopPath.c_str()))
+      {
+          command.clear();
+          command="mkdir "+DesktopPath;
+          system(command.c_str());
+          command.clear();
+          return(true);
+      }
+      else
+      {
+          return(false);
+      }
+  }
+
+  void makeSampleCsv()
+  {
+    tempStorage.clear();
+    tempStorage = DesktopPath + "\\Sample.csv";
+    if(!dirExists(tempStorage.c_str()))
+    {
+      writeDataToFile(DesktopPath + "\\Sample.csv" , "Roll Number,Name,Email");
+      writeDataToFile(DesktopPath + "\\Sample.csv" , "1,Harshil Ramani,harshilramani9777@gmail.com");
+      writeDataToFile(DesktopPath + "\\Sample.csv" , "2,Shubham Khunt,shubhamkhunt1872003@gmail.com");
+      writeDataToFile(DesktopPath + "\\Sample.csv" , "3,Drashti Dhola,drashtishola1511@gmail.com");
+      writeDataToFile(DesktopPath + "\\Sample.csv" , "4,Fenil Munjani,fenilmunjani82@gmail.com");
+      writeDataToFile(DesktopPath + "\\Sample.csv" , "5,Shikhaa Tikiwala,shikhatikiwala@gmail.com");
+      writeDataToFile(DesktopPath + "\\Sample.csv" , "6,Viraj Talaviya,virajtalaviya02@gmail.com");
+      writeDataToFile(DesktopPath + "\\Sample.csv" , "7,Archit Gevariya,ghevariyaarchit3@gmail.com");
+      writeDataToFile(DesktopPath + "\\Sample.csv" , "8,Isha Dadawala,isha.dadawala@gmail.com");
+      writeDataToFile(DesktopPath + "\\Sample.csv" , "9,Sanjal Desai,sanjaldesai1234@gmail.com");
+    }
+    tempStorage.clear();
+  }
+  
   void initApp() //?setting up first time APP screen by making console in full screen
   {
 
