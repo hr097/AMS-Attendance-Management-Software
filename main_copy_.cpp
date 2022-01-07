@@ -6025,7 +6025,34 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
    }
 
   }
+
+  void generateCSV()
+  {  
+    bool flag=false;
+    string filename = "\\AMS ";
+    filename += course_name + " SEM " + sem + " " + subject_name + ".csv";
+    tempStorage.clear();
+    int i;
+    for(i=1;i<=countLinesOfFile(SemPath+"\\FAC-STUD-DETAILS"+"\\student-sem-"+sem+".txt");i++)
+    { 
+      tempStorage.clear();
+      getDataFromFile(SemPath+"\\FAC-STUD-DETAILS"+"\\student-sem-"+sem+".txt",tempStorage,i);
+      replace(tempStorage.begin(), tempStorage.end(), '|', ',');
+      writeDataToFile(DesktopPath+filename,tempStorage);
+      flag=true;
+    }
     
+  tempStorage.clear();
+
+  if(flag)
+  {
+  //successful code
+  tempStorage = course_name + " SEM " + sem + " " + subject_name + ".CSV ";
+  warnMsg(tempStorage,2,25, " GENERATED SUCCESSFULLY IN DESKTOP->AMS FOLDER",0, 16); // succeed msg
+  }
+
+  } 
+
   ~MODULE_4()
   {
     tempStorage.clear();
@@ -6078,158 +6105,145 @@ int main()
   //* jay ganeshay namh *//
   //* jay kashtbhanjan dev *//
   
-  APP A;
-  bool loop = true; // set true to run app by 1 time
-  signal(SIGINT, signal_callback_handler);
+    APP A;
+    bool loop = true; // set true to run app by 1 time
+    signal(SIGINT, signal_callback_handler);
 
  
-  while (loop)
-  {
-    
-    A.startApp();          // start app
-    A.scrClr();            // clear screen
-    A.setCursorPos(2, 10); // set cursor position
-
-  switch (APP::MODULE_CHOICE) // module choice asking
-  {
-
-    case 1:
+    while (loop)
     {
-        MODULE_1 MD1;
-        MD1.askFacDetails(); // ask faculty details
-        MD1.getDataInputOfstudent(); //get data input of student like name email
-        MD1.SetUpSucceed(); // succeed msg print
-        break;
-    }
-    case 2:
-    {
-
-      MODULE_2 MD2;
-
-      if (MD2.checkDB()) // check database
+          
+          A.startApp();          // start app
+          A.scrClr();            // clear screen
+          A.setCursorPos(2, 10); // set cursor position
+      
+      switch (APP::MODULE_CHOICE) // module choice asking
       {
-        MD2.askCourseChoice();  // ask course
-        MD2.askSemsterChoice(); // ask semester
 
-        if (MD2.askSubjectChoice()) // ask subject
-        {
-          if (MD2.proceedFurther()) // confirmation for right choice
-          {
-            if (MD2.confirmTodayAttendance()) // check if already taken for today
-            {
-
-              MD2.MonthlyReport();
-            reask:
-
-              MD2.AttendanceOptionWindow(); // ask easy option for attendance taking method
-
-              if (MD2.takeAttendance(MODULE_2::AT_OPTION_CHOICE)) // take attendance
+              case 1:
               {
-                MD2.AttendanceTakenSuccessfully(); // finally taken
+                  MODULE_1 MD1;
+                  MD1.askFacDetails(); // ask faculty details
+                  MD1.getDataInputOfstudent(); //get data input of student like name email
+                  MD1.SetUpSucceed(); // succeed msg print
+                  break;
               }
-              else
+              case 2:
               {
-                goto reask; // if option change automatically at last step
+                MODULE_2 MD2;
+                if (MD2.checkDB()) // check database
+                {
+                  MD2.askCourseChoice();  // ask course
+                  MD2.askSemsterChoice(); // ask semester
+                  if (MD2.askSubjectChoice()) // ask subject
+                  {
+                    if (MD2.proceedFurther()) // confirmation for right choice
+                    {
+                      if (MD2.confirmTodayAttendance()) // check if already taken for today
+                      {
+                        MD2.MonthlyReport();
+                        reask:
+                        MD2.AttendanceOptionWindow(); // ask easy option for attendance taking method
+                        if (MD2.takeAttendance(MODULE_2::AT_OPTION_CHOICE)) // take attendance
+                        {
+                          MD2.AttendanceTakenSuccessfully(); // finally taken
+                        }
+                        else
+                        {
+                          goto reask; // if option change automatically at last step
+                        }
+                      }
+                    }
+                  }
+                }
+              break;
               }
-            }
-          }
-        }
-      }
-      break;
-    }
-    case 3:
-    {
-      MODULE_3 MD3;
-
-      if (MD3.checkDB()) // check database
-      {
-        MD3.askCourseChoice();  // ask course
-        MD3.askSemsterChoice(); // ask semester
-
-        if (MD3.askSubjectChoice()) // ask subject
-        {
-
-          if (MD3.proceedFurther(0)) // confirm taking attendance or Return to Home Screen
-          {
-            MD3.askReportChoice(); // select datewise or studentwise report
-
-            switch (MODULE_3::CUS_REPORT_CHOICE)
-            {
-                case 1:
+              case 3:
+              {
+                MODULE_3 MD3;
+                if (MD3.checkDB()) // check database
                 {
-                  MD3.DateWiseReport();
-                  break;
+                  MD3.askCourseChoice();  // ask course
+                  MD3.askSemsterChoice(); // ask semester
+                  if(MD3.askSubjectChoice()) // ask subject
+                  {
+                    if(MD3.proceedFurther(0)) // confirm taking attendance or Return to Home Screen
+                    {
+                      MD3.askReportChoice(); // select datewise or studentwise report
+                      switch(MODULE_3::CUS_REPORT_CHOICE)
+                      {
+                          case 1:
+                          {
+                            MD3.DateWiseReport();
+                            break;
+                          }
+                          case 2:
+                          {
+                            MD3.studentReport();
+                            break;
+                          }
+                          default:
+                          {
+                            break;
+                          }
+                      }
+                    }
+                  }
                 }
-                case 2:
+              break;
+              }
+              case 4:
+              {
+                MODULE_4 MD4;
+                if(MD4.checkDB()) // check database
                 {
-                  MD3.studentReport();
-                  break;
+                      MD4.modDataChoice();
+                      switch (MODULE_4::MOD_CHOICE)
+                      {
+                             case 1:
+                             {
+                                  MD4.DetailModChoice();
+                                  break;
+                             }
+                             case 2:
+                             {
+                                  MD4.askCourseChoice(); // ask course
+                                  MD4.askSemsterChoice(); // ask semester
+                                  MD4.askSubjectChoice(); // ask subject
+                                  MD4.deleteSetUp();
+                               break;
+                             }
+                             case 3:
+                             { 
+                                  MD4.askCourseChoice(); // ask course
+                                  MD4.askSemsterChoice(); // ask semester
+                                  MD4.askSubjectChoice(); // ask subject
+                                  MD4.generateCSV();
+                               break;
+                             }
+                             default:
+                             {
+                               break;
+                             }
+                      }
                 }
-                default:
-                {
-                  break;
-                }
-            }
-          }
-        }
-      }
-      break;
-    }
-    case 4:
-    {
-       MODULE_4 MD4;
-       
-      if(MD4.checkDB()) // check database
-      {
-            MD4.modDataChoice();
-    
-            switch (MODULE_4::MOD_CHOICE)
-            {
-                   case 1:
-                   {
-                     MD4.DetailModChoice();
-                     break;
-                   }
-                   case 2:
-                   {
-                        MD4.askCourseChoice(); // ask course
-                        MD4.askSemsterChoice(); // ask semester
-                        MD4.askSubjectChoice(); // ask subject
-                        MD4.deleteSetUp();
-                     break;
-                   }
-                   case 3:
-                   {
-                     
-                     break;
-                   }
-                   default:
-                   {
-                     break;
-                   }
-            }
+              break;
+              }
+
+              case 5:
+              {
+                loop = false; // exit Application
+                break;
+              }
+
+              default:
+              {
+                A.setCursorPos(9, 24);cout << "ERROR CODE : 421/422/424 : APPLICATION CRASHED !!!" << endl;A.scrClr(3);exit(1);break;// exceptional  case
+              } 
+
       }
 
-      break;
-    }
-    case 5:
-    {
-      loop = false; // exit Application
-      break;
-    }
-
-    default:
-    {
-      A.setCursorPos(9, 24);
-      cout << "ERROR CODE : 421/422/424 : APPLICATION CRASHED !!!" << endl;
-      A.scrClr(3);
-      exit(1);
-      break;
-    } //* exceptional  case
-
-  }
-
-    A.scrClr(); // screen clear
+    A.scrClr(); 
   }
 
   return (EXIT_SUCCESS);
