@@ -2288,7 +2288,20 @@ private:
       return (false);
     }
   }
-  
+
+  bool pipilineValidation2(string &str)
+  {
+     size_t pos = str.find("|");
+     if (pos != string::npos)
+     {
+       return(true); //if found
+     }
+     else
+     {
+     return(false); //if not found
+     }
+  }
+
   short int readDataFromCSV(string filePath,unsigned int max_row,vector<string> &data)
   {
     //student_name used as temp 1
@@ -2298,9 +2311,9 @@ private:
     tempStorage.clear();
     unsigned int roll_no = 0; //local variable
 
-    short int csv_read_code = 1;
+    short int csv_read_code = 1; //by default data is okay
   
-    while(roll_no <= max_row)
+    while(roll_no < max_row)
     {   
         tempStorage.clear();
         student_name.clear();
@@ -2332,6 +2345,12 @@ private:
           csv_read_code=4; // 4 Means email not valid
           break;
         }
+        else if(pipilineValidation2(tempStorage))
+        {
+          csv_read_code=6; // 4 Means email not valid
+          break;
+        }
+
         
         if(roll_no != 0)
         {  
@@ -2473,6 +2492,11 @@ private:
           }
           case 5:
           { warnMsg("ERROR : .CSV FILE HAS NO TITLE COLUMS NAME / EMAIL !", 4, 14, fileName + " => ROW NUMBER : "+RoLLNo,1,22);
+            opRead=false;
+            break;
+          }
+          case 6:
+          { warnMsg("ERROR : .CSV FILE CELL DATA HAS PIPLINE ('|') WHICH IS NOT ALLOWED !", 4, 6, fileName + " => ROW NUMBER : "+RoLLNo,1,22);
             opRead=false;
             break;
           }
@@ -2856,12 +2880,51 @@ private:
       tempStorage = get<0>((*i));
       date.clear();
 
-      if (cur_month <= 9)
-        date = tempStorage.substr(4, 1);
-      else
-        date = tempStorage.substr(3, 2);
+      date = tempStorage.substr(3, 2);
 
-      if (date == to_string(cur_month))
+      if (!date.empty())
+      {
+      
+       if (date == "01")
+       {
+         date = "1";
+       }
+       else if (date == "02")
+       {
+         date = "2";
+       }
+       else if (date == "03")
+       {
+         date = "3";
+       }
+       else if (date == "04")
+       {
+         date = "4";
+       }
+       else if (date == "05")
+       {
+         date = "5";
+       }
+       else if (date == "06")
+       {
+         date = "6";
+       }
+       else if (date == "07")
+       {
+         date = "7";
+       }
+       else if (date == "08")
+       {
+         date = "8";
+       }
+       else if (date == "09")
+       {
+         date = "9";
+       }
+
+      }
+
+      if (date == to_string(getPrevMonth(cur_month)))
       {
         temp.clear();
         temp = (*x);
@@ -3874,6 +3937,87 @@ bool createSixMonthReportPDF(string BasicDetails,string Name,string Percentage,s
     SetColor(0);
     scrClr();
   }
+  int getPrevMonth(int cur_month)
+  {
+     cur_month--;
+     
+     if(cur_month<=0)
+     {
+       cur_month=12;
+     }
+     
+     return(cur_month);
+     
+  }
+
+  bool checkPreMonthData(int month)
+  {
+    tempStorage.clear();
+
+    int j = 1;
+    command = SemPath + "\\DAILY-RECORD\\records.txt"; // path stored in command var
+    int line = countLinesOfFile(command);
+    bool flag = false;
+    
+    while (j <= line)
+    {
+      tempStorage.clear();
+      getDataFromFile(command, tempStorage, j);
+      tempStorage =  tempStorage.substr(3,2);
+
+      if (!tempStorage.empty())
+      {
+          if (tempStorage == "01")
+          {
+            tempStorage = "1";
+          }
+          else if (tempStorage == "02")
+          {
+            tempStorage = "2";
+          }
+          else if (tempStorage == "03")
+          {
+            tempStorage = "3";
+          }
+          else if (tempStorage == "04")
+          {
+            tempStorage = "4";
+          }
+          else if (tempStorage == "05")
+          {
+            tempStorage = "5";
+          }
+          else if (tempStorage == "06")
+          {
+            tempStorage = "6";
+          }
+          else if (tempStorage == "07")
+          {
+            tempStorage = "7";
+          }
+          else if (tempStorage == "08")
+          {
+            tempStorage = "8";
+          }
+          else if (tempStorage == "09")
+          {
+            tempStorage = "9";
+          }
+
+      }
+
+      if(stoi(tempStorage)==month)
+      {
+        flag=true;
+        break;
+      }
+
+      j++;
+    }
+
+    tempStorage.clear();
+    return(flag);
+  }
 
 public:
   MODULE_2()
@@ -4011,7 +4155,7 @@ public:
 
       file_month = stoi(tempStorage);
       // cout<<endl<<"file_month = "<<file_month<<endl<<"cur_month = "<<cur_month<<getch();
-      if (file_month != cur_month)
+      if ( file_month != cur_month && checkPreMonthData(getPrevMonth(cur_month)) )
         month_report_flag = true;
     }
 
@@ -5978,7 +6122,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
   {
   //successful code
   tempStorage = course_name + " SEM " + sem + " " + subject_name + ".CSV ";
-  warnMsg(tempStorage,2,25, " GENERATED SUCCESSFULLY IN DESKTOP->AMS FOLDER",0, 16); // succeed msg
+  warnMsg(tempStorage,2,22, " GENERATED SUCCESSFULLY IN DESKTOP->AMS FOLDER",0, 16); // succeed msg
   }
 
   } 
