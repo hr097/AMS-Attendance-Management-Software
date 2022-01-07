@@ -4963,9 +4963,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         }
         else if (ConvertChoiceToINT == 2)
         {
-          RollNoInput();
-          if(studConfirmation())
-            studDetailModChoice();  
+          studDetailModChoice();
         }
       }
     }
@@ -5044,49 +5042,12 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         else if(ch == 2)
         {
           getDataFromFile(command, FacultyEmail, ch);
-          //buildHorizontalWall(65, "FACULTY EMAIL    :  " + FacultyEmail);
-          if (FacultyEmail.length() <= 30)
-          {
-            buildHorizontalWall(65, "FACULTY EMAIL    :  " + FacultyEmail);
-            //cout << "FACULTY E-MAIL " << right << setw(9) << ": " << FacultyEmail;
-          }
-          else
-          {
-            int l = 0;
-            cout << "FACULTY E-MAIL " << right << setw(9) << ": ";
-            while (l < FacultyEmail.length())
-            {
-              if (l == 35)
-              {
-                setCursorPos(1, 39);
-              }
-              cout << FacultyEmail[l];
-              l++;
-            }
-          }
+          buildHorizontalWall(65, "FACULTY EMAIL    :  " + FacultyEmail);
         }
         else if(ch == 3)
         {
           getDataFromFile(command, FacultyEmail, (ch+1));
-          //buildHorizontalWall(65, "H.O.D EMAIL    :  " + FacultyEmail);
-          if (FacultyEmail.length() <= 35)
-          {
-            cout << "H.O.D E-MAIL " << right << setw(9) << ": " << FacultyEmail;
-          }
-          else
-          {
-            int l = 0;
-            cout << "H.O.D E-MAIL " << right << setw(9) << ": ";
-            while (l < FacultyEmail.length())
-            {
-              if (l == 35)
-              {
-                setCursorPos(1, 39);
-              }
-              cout << FacultyEmail[l];
-              l++;
-            }
-          }
+          buildHorizontalWall(65, "H.O.D EMAIL    :  " + FacultyEmail);
         }
         else if(ch == 4)
         {
@@ -5171,7 +5132,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         }
         else
         {
-          MSG("USER DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
+          MSG("USER DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
         }
       }
       else if(ch == 2 || ch == 3)
@@ -5220,86 +5181,10 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         }
         else
         {
-          MSG("USER DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
+          MSG("USER DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
         }
       }
     }
-  }
-
-  int singleConfirmation(string path , string display , int choice)
-  {
-    // command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt";
-    int line;
-    reAsk:
-    scrClr(0.5);
-    line = 0;
-    
-    if(choice == 1 || choice == 4)
-    {
-      setCursorPos(5, 7);
-      buildVerticalWall(65);
-      while (line < 3)
-      {
-        setCursorPos(1, 7);
-        if (line == 1)
-        {
-          getDataFromFile(path , FacultyName, choice);
-          buildHorizontalWall(65, display + FacultyName);
-        }
-        else
-        {
-          buildHorizontalWall(65, " ");
-        }
-        line++;
-      }
-      setCursorPos(1, 7);
-      buildVerticalWall(65);
-    }
-    else
-    {
-      setCursorPos(5, 15);
-      getDataFromFile(path , FacultyEmail, choice);
-      if (FacultyEmail.length() <= 35)
-      {
-        cout << display << right << setw(5) << ": " << FacultyEmail;
-      }
-      else
-      {
-        int l = 0;
-        cout << display << right << setw(5) << ": ";
-        while (l < FacultyEmail.length())
-        {
-          if (l == 35)
-          {
-            setCursorPos(1, 39);
-          }
-          cout << FacultyEmail[l];
-          l++;
-        }
-      }
-    }
-
-    
-    SetColor(1);
-    setCursorPos(3, 25);
-    cout << "DO YOU CONFIRM THESE DETAILS ?";
-    SetColor(0);
-    setCursorPos(2, 32);
-    fflush(stdin);
-    ShowConsoleCursor(true);
-    cout << "Type : ";
-    getline(cin, tempStorage);
-    cin.clear();
-    ShowConsoleCursor(false);
-    ConvertChoiceToINT = validateString(tempStorage);
-
-    if (ConvertChoiceToINT == -1)
-    {
-      InvalidInputErr();
-      goto reAsk;
-    }
-          
-    return(ConvertChoiceToINT);
   }
 
   void facDetailModChoice() 
@@ -5342,15 +5227,13 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     facDetailMod(ConvertChoiceToINT);
   }
   void facDetailMod(int choice)
-  {   
-    command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt";
-    tempStorage = SemPath + "\\FAC-STUD-DETAILS\\fileout.txt";
-    if(choice == 1)
-    {
-      if(singleConfirmation(command , "FACULTY NAME  :",choice))
+  {
+      if(choice == 1)
       {
         FacultyName.clear();
         student_name.clear();
+        command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt";
+        tempStorage = SemPath + "\\FAC-STUD-DETAILS\\fileout.txt";
         getDataFromFile(command,time,1);
         UpdateName(student_name);
         
@@ -5372,7 +5255,9 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         if(!proceedFurther(1))
         {
           getDataFromFile(command,student_name,1);
-    
+          Debug(student_name);
+          Debug(FacultyName);
+
           for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
           {
             getDataFromFile(command,date,i);
@@ -5388,182 +5273,190 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         }
         else
         {
-          MSG("FACULTY DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
+          MSG("FACULTY DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
         }
+      
       }
-    
-    }
-    else
-    {
-      if(singleConfirmation(command , "FACULTY E-MAIL",choice))
+      else
       {
-        
-        getDataFromFile(command,time,2);
-        UpdateEmail(student_email);
-        
-        for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
-        {
-          getDataFromFile(command,date,i);
+          command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt";
+          tempStorage = SemPath + "\\FAC-STUD-DETAILS\\fileout.txt";
+          getDataFromFile(command,time,2);
+          UpdateEmail(student_email);
           
-          if(date == time)
-          {
-              date = student_email;
-          }             
-          writeDataToFile(tempStorage,date);
-        }
-        remove(command.c_str()); 
-        rename(tempStorage.c_str(),command.c_str());
-        if(!proceedFurther(1))
-        {
-          getDataFromFile(command,student_email,2);
-                    
           for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
           {
             getDataFromFile(command,date,i);
             
-            if(date == student_email)
+            if(date == time)
             {
-                date = time;
+                date = student_email;
             }             
             writeDataToFile(tempStorage,date);
           }
           remove(command.c_str()); 
           rename(tempStorage.c_str(),command.c_str());
-        }
-        else
-        {
-          MSG("FACULTY DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
-        }
+          if(!proceedFurther(1))
+          {
+            getDataFromFile(command,student_email,2);
+                      
+            for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+            {
+              getDataFromFile(command,date,i);
+              
+              if(date == student_email)
+              {
+                  date = time;
+              }             
+              writeDataToFile(tempStorage,date);
+            }
+            remove(command.c_str()); 
+            rename(tempStorage.c_str(),command.c_str());
+          }
+          else
+          {
+            MSG("FACULTY DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
+          }
       }
-    }
   }
   void studDetailModChoice() 
   {
     int line = 0;
     reask_semMod:
+    RollNoInput();
     
     
-    // BOX-UI FOR INPUT CHOICE
-    scrClr(0.5);
-    setCursorPos(3,25);
-    cout << " WHAT DO YOU WANT TO MODIFY ? " << endl;
-    setCursorPos(2,24);
-    buildVerticalWall(30);
-    line = 0;
-    while (line < 5)
-    {
+      // BOX-UI FOR INPUT CHOICE
+      scrClr(0.5);
+      setCursorPos(3,25);
+      cout << " WHAT DO YOU WANT TO MODIFY ? " << endl;
+      setCursorPos(2,24);
+      buildVerticalWall(30);
+      line = 0;
+      while (line < 5)
+      {
+        setCursorPos(1, 24);
+        if (line == 1)
+        {
+          buildHorizontalWall(30, "1) STUDENT NAME ");
+        }
+        else if (line == 3)
+        {
+          buildHorizontalWall(30, "2) STUDENT EMAIL ");
+        }
+        else
+          buildHorizontalWall(30, " ");
+        line++;
+      }
       setCursorPos(1, 24);
-      if (line == 1)
+      buildVerticalWall(30);
+      askChoice(3, 33, tempStorage);
+    
+      ConvertChoiceToINT = validateString(tempStorage,3,1);
+      if (ConvertChoiceToINT == 0)
       {
-        buildHorizontalWall(30, "1) STUDENT NAME ");
+        goto reask_semMod;
       }
-      else if (line == 3)
-      {
-        buildHorizontalWall(30, "2) STUDENT EMAIL ");
-      }
-      else
-        buildHorizontalWall(30, " ");
-      line++;
-    }
-    setCursorPos(1, 24);
-    buildVerticalWall(30);
-    askChoice(3, 33, tempStorage);
-  
-    ConvertChoiceToINT = validateString(tempStorage,3,1);
-    if (ConvertChoiceToINT == 0)
-    {
-      goto reask_semMod;
-    }
-  
-    studDetailMod(ConvertChoiceToINT);
+    
+      
+      studDetailMod(ConvertChoiceToINT);
+    
+    
     
   }
   void studDetailMod(int choice)
   {
-    command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
-    tempStorage = SemPath + "\\FAC-STUD-DETAILS\\fileout.txt";
-
-    if(choice == 1)
-    {
-      FacultyName.clear();
-      getDataFromFile(command,FacultyName,stoi(RoLLNo));
-      
-      UpdateName(student_name);
-      
-      
-      for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+      if(studConfirmation())
       {
-        getDataFromFile(command,date,i);
-        
-        if(date == FacultyName)
+        if(choice == 1)
         {
-            date = RoLLNo + "|" + student_name + "|" + student_email;
-        }             
-        writeDataToFile(tempStorage,date);
-      }
-      remove(command.c_str()); 
-      rename(tempStorage.c_str(),command.c_str());
-      if(!studConfirmation())
-      {
-        getDataFromFile(command,time,stoi(RoLLNo));
-      
-        for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
-        {
-          getDataFromFile(command,date,i);
+          FacultyName.clear();
+  
+          command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
+          tempStorage = SemPath + "\\FAC-STUD-DETAILS\\fileout.txt";
+          getDataFromFile(command,FacultyName,stoi(RoLLNo));
           
-          if(date == time)
-          {
-              date = FacultyName;
-          }             
-          writeDataToFile(tempStorage,date);
-        }
-        remove(command.c_str()); 
-        rename(tempStorage.c_str(),command.c_str());
-        
-      }
-      else
-        MSG("STUDENT DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,18);
-    }
-
-    else
-    
-      FacultyEmail.clear();
-      getDataFromFile(command,FacultyEmail,stoi(RoLLNo));
-      UpdateEmail(student_email);
-      
-      for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
-      {
-        getDataFromFile(command,date,i);
-        
-        if(date == FacultyEmail)
-        {
-            date = RoLLNo + "|" + student_name + "|" + student_email;
-        }             
-        writeDataToFile(tempStorage,date);
-      }
-      remove(command.c_str()); 
-      rename(tempStorage.c_str(),command.c_str());
-      if(!studConfirmation())
-      {
-        getDataFromFile(command,time,2);
-        
-        for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
-        {
-          getDataFromFile(command,date,i);
+          UpdateName(student_name);
           
-          if(date == time)
+          
+          for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
           {
-              date = FacultyEmail;
-          }             
-          writeDataToFile(tempStorage,date);
+            getDataFromFile(command,date,i);
+            
+            if(date == FacultyName)
+            {
+                date = RoLLNo + "|" + student_name + "|" + student_email;
+            }             
+            writeDataToFile(tempStorage,date);
+          }
+          remove(command.c_str()); 
+          rename(tempStorage.c_str(),command.c_str());
+          if(!studConfirmation())
+          {
+            getDataFromFile(command,time,stoi(RoLLNo));
+          
+            for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+            {
+              getDataFromFile(command,date,i);
+              
+              if(date == time)
+              {
+                  date = FacultyName;
+              }             
+              writeDataToFile(tempStorage,date);
+            }
+            remove(command.c_str()); 
+            rename(tempStorage.c_str(),command.c_str());
+            
+          }
+          else
+            MSG("STUDENT DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,18);
+  
         }
-        remove(command.c_str()); 
-        rename(tempStorage.c_str(),command.c_str());
-        
+        else
+        {
+          FacultyEmail.clear();
+
+            command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
+            tempStorage = SemPath + "\\FAC-STUD-DETAILS\\fileout.txt";
+            getDataFromFile(command,FacultyEmail,stoi(RoLLNo));
+            UpdateEmail(student_email);
+            
+            for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+            {
+              getDataFromFile(command,date,i);
+              
+              if(date == FacultyEmail)
+              {
+                  date = RoLLNo + "|" + student_name + "|" + student_email;
+              }             
+              writeDataToFile(tempStorage,date);
+            }
+            remove(command.c_str()); 
+            rename(tempStorage.c_str(),command.c_str());
+            if(!studConfirmation())
+            {
+              getDataFromFile(command,time,2);
+              
+              for(int i = 1; i <= (countLinesOfFile(command) + 1);i++)
+              {
+                getDataFromFile(command,date,i);
+                
+                if(date == time)
+                {
+                    date = FacultyEmail;
+                }             
+                writeDataToFile(tempStorage,date);
+              }
+              remove(command.c_str()); 
+              rename(tempStorage.c_str(),command.c_str());
+              
+            }
+            else
+              MSG("STUDENT DETAILS HAS BEEN SUCCESSFULLY UPDATED","",2,0,18);
+        }
       }
-      else
-        MSG("STUDENT DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,18);
-    }
+  }
   
   public:
 
