@@ -18,7 +18,7 @@
 #include <unistd.h>  // * for sleep function
 #include <vector>    // * STL DYNAMIC ARRAY used
 #include <windows.h> // * windows console related functions handle
-#include <signal.h>  //* signal crtl + c handler
+#include <signal.h>  // * signal crtl + c handler
 
 //--------FOR-DOCUMENT PATH GETTING------/
 
@@ -546,10 +546,6 @@ protected:
     cout << "CHOICE : ";
     fflush(stdin);       // flushing standard input buffer
     getline(cin, input); // taking white space string input
-
-    if(input[0] == 3)
-    Debug("debug");
-    
     cin.clear();
     ShowConsoleCursor(false); // hide the cursor
   }
@@ -1806,7 +1802,7 @@ protected:
         l++;
       }
     }
-    ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
+    ConvertChoiceToINT = YesNoInput("CONFIRM THESE DETAILS (Yes/No) ", tempStorage); // taking input yes/no
     if (ConvertChoiceToINT == -1) // validate input
     {
       InvalidInputErr(); // error message
@@ -1977,7 +1973,7 @@ private:
 
     // message BOX-UI
 
-    ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
+    ConvertChoiceToINT = YesNoInput("CONFIRM THESE DETAILS (Yes/No) ", tempStorage); // taking input yes/no
 
     if (ConvertChoiceToINT == -1) // validate input
     {
@@ -4214,7 +4210,7 @@ private:
     cout << "WOULD YOU LIKE TO SEND THIS REPORT TO STUDENT ALSO ? ";
     fflush(stdin);
 
-    ConvertChoiceToINT = YesNoInput("   Type [Yes/No] as follows ", tempStorage);
+    ConvertChoiceToINT = YesNoInput("   TYPE [Yes/No] AS FOLLOWS ", tempStorage);
 
     if (ConvertChoiceToINT == -1)
     {
@@ -4778,6 +4774,7 @@ private:
     command.clear();
   }*/
   //!EDIT HR
+
   bool createSemesterReportPDF(string BasicDetails,string Name,string Attendance,string pdf_name)//?Date Vise Report Generate PDF(If overloding posssible then must overload  GeneratePDF function)
   {
       int PresentCount;
@@ -5022,6 +5019,30 @@ private:
     
   }
 
+  int confirmSemReport(string d,string d2)
+  {
+    tempStorage.clear();
+
+    re_ask_report :
+    setCursorPos(7,15);
+    SetColor(0);
+    ShowConsoleCursor(false);
+    cout << "SEMESTER REPORT DURATION : " ; 
+    SetColor(1);
+    cout << d + " - " + d2 << endl;
+    SetColor(0);
+
+    ConvertChoiceToINT = YesNoInput("DO YOU WANT TO PROCEED (yes/no) ", tempStorage); // taking input yes/no
+
+    if (ConvertChoiceToINT == -1) // validate input
+    {
+      InvalidInputErr(); // error message
+      goto re_ask_report;
+    }
+
+    return (ConvertChoiceToINT); // returns basic confirmation value yes=1 / no=0
+  }
+
 public:
 
   MODULE_3()
@@ -5036,12 +5057,27 @@ public:
     time.clear();
   }
   
-  void SemesterReport() //! edit HR
+  void semesterReport() //! edit HR
   {
-    
     tempStorage.clear();
-    getDataFromFile(SemPath+"\\DAILY-RECORD\\records.txt",tempStorage,1);
-    if(!tempStorage.empty())
+    date.clear();
+    command.clear();
+    time.clear();
+
+    getDataFromFile(SemPath+"\\DAILY-RECORD\\records.txt",date,1);
+    getDataFromFile(SemPath+"\\DAILY-RECORD\\records.txt",time,countLinesOfFile(SemPath+"\\DAILY-RECORD\\records.txt"));
+    
+    date = date.substr(0,10); //re-used as date of starting
+    time = time.substr(0,10); // re -used at date of semester ending
+
+
+    if(confirmSemReport(date,time)) // basic confirmation of end of semester
+    {
+      Debug("OKAY");
+    }
+
+    
+    /*if(!tempStorage.empty())
     {
         tempStorage = tempStorage.substr(3, 2);
         if (tempStorage == "01")
@@ -5103,10 +5139,11 @@ public:
     if(CUR_DATE == tempStorage)
     {
        //! edit
-    }
+    }*/
    tempStorage.clear();
    command.clear();
   } 
+
   void askReportChoice() // ? report type select choice
   {
     int line = 0;
@@ -5121,7 +5158,7 @@ public:
 
     line = 0;
 
-    while (line < 5)
+    while (line < 7)
     {
       setCursorPos(1, 23);
       if (line == 1)
@@ -5132,6 +5169,10 @@ public:
       {
         buildHorizontalWall(30, "2) STUDENT REPORT ");
       }
+      else if (line == 5)
+      {
+        buildHorizontalWall(30, "3) SEMESTER REPORT ");
+      }
       else
         buildHorizontalWall(30, " ");
       line++;
@@ -5139,9 +5180,11 @@ public:
     setCursorPos(1, 23);
     buildVerticalWall(30);
 
+    tempStorage.clear();
+
     askChoice(3, 33, tempStorage);
 
-    ConvertChoiceToINT = validateString(tempStorage, 2, 1);
+    ConvertChoiceToINT = validateString(tempStorage, 3, 1);
     if (ConvertChoiceToINT == 0)
     {
       goto reask_report;
@@ -5998,7 +6041,7 @@ int userConfirmation()
           l++;
         }
       }
-      ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
+      ConvertChoiceToINT = YesNoInput("CONFIRM THESE DETAILS (Yes/No) ", tempStorage); // taking input yes/no
       if (ConvertChoiceToINT == -1) // validate input
       {
         InvalidInputErr(); // error message
@@ -6034,7 +6077,7 @@ int userConfirmation()
 
     // message BOX-UI
 
-    ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
+    ConvertChoiceToINT = YesNoInput("CONFIRM THESE DETAILS (Yes/No) ", tempStorage); // taking input yes/no
 
     if (ConvertChoiceToINT == -1) // validate input
     {
@@ -6698,26 +6741,41 @@ int userConfirmation()
     bool flag=false;
     string filename = "\\AMS ";
     filename += course_name + " SEM " + sem + " " + subject_name + ".csv";
-    tempStorage.clear();
-    int i;
-    for(i=1;i<=countLinesOfFile(SemPath+"\\FAC-STUD-DETAILS"+"\\student-sem-"+sem+".txt");i++)
-    { 
-      tempStorage.clear();
-      getDataFromFile(SemPath+"\\FAC-STUD-DETAILS"+"\\student-sem-"+sem+".txt",tempStorage,i);
-      replace(tempStorage.begin(), tempStorage.end(), '|', ',');
-      writeDataToFile(DesktopPath+filename,tempStorage);
-      flag=true;
+    command.clear();
+    command = DesktopPath + filename;
+    if(!fileExists(command))
+    {
+       flag=true;
+       tempStorage.clear();
+       int i;
+       for(i=1;i<=countLinesOfFile(SemPath+"\\FAC-STUD-DETAILS"+"\\student-sem-"+sem+".txt");i++)
+       { 
+         tempStorage.clear();
+         getDataFromFile(SemPath+"\\FAC-STUD-DETAILS"+"\\student-sem-"+sem+".txt",tempStorage,i);
+         replace(tempStorage.begin(), tempStorage.end(), '|', ',');
+         writeDataToFile(DesktopPath+filename,tempStorage);
+       }
+       tempStorage.clear();
     }
-    
-  tempStorage.clear();
-
+    else
+    {
+      flag=false;
+    }
+  
+  
   if(flag)
   {
-  //successful code
-  tempStorage = course_name + " SEM " + sem + " " + subject_name + ".CSV ";
-  warnMsg(tempStorage,2,22, " GENERATED SUCCESSFULLY IN DESKTOP->AMS FOLDER",0, 16); // succeed msg
+      //successful code
+      tempStorage = course_name + " SEM " + sem + " " + subject_name + ".CSV ";
+      warnMsg(tempStorage,2,22, " GENERATED SUCCESSFULLY IN DESKTOP->AMS FOLDER",0, 17); 
   }
-
+  else
+  {
+    //already exist code
+    tempStorage = course_name + " SEM " + sem + " " + subject_name + ".CSV ";
+    warnMsg(tempStorage,2,22, " IS ALREADY EXISTS IN DESKTOP->AMS FOLDER",0, 18); 
+  }
+  command.clear();
   } 
 
   ~MODULE_4()
@@ -6851,8 +6909,8 @@ int main()
                           }
                           case 3:
                           {
-                             //MD3.SemesterReport();
-                             break;
+                            MD3.semesterReport();
+                            break;
                           }
                           default:
                           {
@@ -6915,7 +6973,7 @@ int main()
 
       }
 
-    A.scrClr(); 
+       A.scrClr(); 
   }
 
   return (EXIT_SUCCESS);
