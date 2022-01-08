@@ -6109,7 +6109,7 @@ int userConfirmation()
       
       if(s == 0 )
       {
-        if(date.length()<=30 && !flag)
+        if(date.length()<=30 || !flag)
         {
           if(userConfirmation())
           {
