@@ -974,7 +974,7 @@ protected:
     do
     {
       scrClr();
-      setCursorPos(9, 26);
+      setCursorPos(9, 28);
       SetColor(2);
       ShowConsoleCursor(false);
       cout << tempStorage;
