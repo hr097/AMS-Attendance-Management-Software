@@ -2780,7 +2780,6 @@ class MODULE_2 : public MODULE_GENERAL //?module 2 class
 
 private:
   bool month_report_flag;
-  bool sixMonth_reportFlag; 
   int file_month;
 
 public:
@@ -3075,107 +3074,7 @@ private:
   
 }
 
-bool createSixMonthReportPDF(string BasicDetails,string Name,string Attendance,string pdf_name)//?Date Vise Report Generate PDF(If overloding posssible then must overload  GeneratePDF function)
-{
-      int PresentCount;
-      tempStorage.clear(); 
-      command.clear();
-      bool flag;
-      command = AMS_Path+"\\OTHER\\6MR.py"; // make python path
-      fstream write(command.c_str(),ios::out);
 
-      if(!write.is_open()) // if file  not opened
-      {   
-        scrClr();
-        setCursorPos(9, 28);
-        cout << "DATA BASE-ERROR-201-204! ";//error 
-        scrClr(2);
-        exit(1);
-      }
-      else
-      {
-            command.clear();
-            command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
-            command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
-            getDataFromFile(BasicDetails,tempStorage,1);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,2);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Joining Year
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,3);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Department Name
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,4);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course name
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,5);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,6);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Subject Name
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,7);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Report type
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,8);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Records
-            command += "data = [['ROLL NO.','NAME','ATTENDANCE']";
-            for(int i=1;i<=countLinesOfFile(Name);i++)
-            {
-                command += ",['" + to_string(i) + "',"; 
-                tempStorage.clear();
-                getDataFromFile(Name,tempStorage,i);
-                command += "'" + tempStorage + "',";
-                PresentCount = 0;
-                for(int k=1;k<=(countLinesOfFile(Attendance));k++)
-                {
-                    tempStorage.clear();
-                    getDataFromFile(Attendance,tempStorage,k);
-     
-                     if(tempStorage[19+i] == 'P')
-                         PresentCount++;
-                 }
-                 stringstream stream;
-                 stream << fixed << setprecision(2) << (float(100 *  PresentCount)/countLinesOfFile(Attendance));
-                 string temp = stream.str();
-                 command += "'"+temp+"%'";
-                 command+= "]";
-             }
-             command += "]\n";
-             command += "th = pdf.font_size\ncol_width = (epw-4)/2\npdf.ln(0.3)\n";
-             command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\npdf.ln(2)";
-             command += "\nLine = \"_\"\nfor i in range(int(pdf.w-pdf.l_margin)):\n\tfor j in range(10):\n\t\tLine+=\"_\" ";
-             command += "\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line, align='C')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line,align='C')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('"+DoubleBackslashPath(SemPath) +"\\\\REPORTS\\\\";
-             command +=  pdf_name + "','F')\n";
-             tempStorage.clear();
-             tempStorage = AMS_Path+"\\OTHER\\6MR.py";   // make python File
-             writeDataToFile(tempStorage,command);
-             command.clear();
-        
-        
-             remove(command.c_str());
-             command = "python " + AMS_Path+"\\OTHER\\6MR.py";  
-             system(command.c_str());//run python file
-             
-             command = AMS_Path + "\\OTHER\\output.txt"; //error file size get
-                 
-             int err = checkEmptyFile(command);
-             if(err)
-             flag=false;
-             else
-             flag=true;
-     
-             command = AMS_Path+"\\OTHER\\6MR.py"; 
-             remove(command.c_str()); //delete python file
-             remove(BasicDetails.c_str());//delete fec_data file
-             remove(Name.c_str());//delete stud_name file
-             remove(Attendance.c_str());//delete stud_att file
-             return flag;
-     
-     } 
-         
-  }
 
   bool checkExistRollNo(string &Attendance, string rl, char AT, int select = 0) //?checking if same roll no exist in the list
   {
@@ -4031,204 +3930,10 @@ bool createSixMonthReportPDF(string BasicDetails,string Name,string Attendance,s
     tempStorage.clear();
     return(flag);
   }
-  
-  void SemiAnnualReportGenerating()   //? semiannnual report generating
-  {
-    tempStorage.clear();
-    string temp;
-    temp = "SEMI ANNUAL ATTENDANCE REPORT";
-    tempStorage = " IS BEING GENERATED ";
 
-    int i = 1;
-    do
-    {
-      scrClr(0.5);
-      setCursorPos(9, 14);
-      SetColor(2);
-      cout << temp;
-      SetColor(0);
-      cout<<tempStorage;
-      ShowConsoleCursor(false);
-      scrClr(1);
-      tempStorage = tempStorage + ".";
-
-      if (i == 4)
-      {
-        break;
-      }
-      i++;
-
-    } while (true);
-
-    tempStorage.clear();
-    SetColor(0);
-    scrClr();
-  }
-  void makeSixMonthReport()
-  {
-    buffer.clear();
-    LIST.clear();
-    DATA.clear();
-
-    tempStorage.clear();
-
-    string join_year,department,attendance;
-
-    command.clear();
-    command = SemPath + "\\REPORTS\\fac_data.txt";
-    tempStorage = "1) FACULTY NAME : " + FacultyName;
-    writeDataToFile(command, tempStorage);
-    
-    command.clear();
-    command = SemPath + "\\LOG-INFO\\userdetails.txt";
-    getDataFromFile(command,join_year,5);
-    tempStorage = "2) FACULTY JOINING YEAR : " + join_year ;
-    command = SemPath + "\\REPORTS\\fac_data.txt";
-    writeDataToFile(command, tempStorage);
-    
-    command.clear();
-    command = SemPath + "\\LOG-INFO\\userdetails.txt";   
-    getDataFromFile(command,department,3);
-    tempStorage = "2) FACULTY JOINING YEAR : " + department ;
-    command = SemPath + "\\REPORTS\\fac_data.txt";
-    writeDataToFile(command, tempStorage);  
-
-    command.clear();
-    command = SemPath + "\\REPORTS\\fac_data.txt";
-    tempStorage = "2) FACULTY EMAIL : " + FacultyEmail;
-    writeDataToFile(command, tempStorage);
-
-    tempStorage.clear();
-    tempStorage = "3) COURSE NAME  : " + course_name;
-    writeDataToFile(command, tempStorage);
-
-    tempStorage.clear();
-    tempStorage = "4) SEMSTER : " + sem;
-    writeDataToFile(command, tempStorage);
-
-    tempStorage.clear();
-    tempStorage = "5) SUBJECT NAME : " + subject_name;
-    writeDataToFile(command, tempStorage);
-
-    tempStorage.clear();
-    tempStorage = "-: [ Attendance Data ] :- ";
-    writeDataToFile(command, tempStorage);
-
-    command.clear();
-    command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
-    int j = 1, found_pos, temp_pos, line = countLinesOfFile(command);
-
-    while (j <= line)
-    {
-      tempStorage.clear();
-      found_pos = temp_pos = 0;
-
-      command.clear();
-      command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
-      getDataFromFile(command, tempStorage, j);
-
-      found_pos = tempStorage.find("|");
-      student_name.clear();
-      student_name = tempStorage.substr((found_pos + 1), (tempStorage.find("|", (found_pos + 1)) - (found_pos + 1))); // time re used as student name
-
-      command.clear();
-      command = SemPath + "\\REPORTS\\stud_name.txt";
-      writeDataToFile(command, student_name);
-      j++;
-    }
-
-    tempStorage.clear();
-    j = 1;
-    command = SemPath + "\\DAILY-RECORD\\records.txt"; // path stored in command var
-    line = countLinesOfFile(command);
-    while (j <= line)
-    {
-      tempStorage.clear();
-      getDataFromFile(command, tempStorage, j);
-      buffer.push_back(tempStorage);
-      j++;
-    }
-
-    for (auto i = buffer.begin(); i != buffer.end(); ++i)
-    {
-      tempStorage.clear();
-      tempStorage = (*i);
-      found_pos = tempStorage.find("|");
-
-      date = tempStorage.substr(0, found_pos);
-      temp_pos = (found_pos + 1);
-      found_pos = tempStorage.find("|", temp_pos);
-      time = tempStorage.substr(temp_pos, (found_pos - temp_pos));
-      temp_pos = (found_pos + 1);
-      found_pos = tempStorage.find("|", temp_pos);
-      attendance = tempStorage.substr(temp_pos);
-      DATA.push_back(make_tuple(date, time, attendance, ""));
-    }
-
-    auto i = DATA.begin();
-    auto x = buffer.begin();
-    for (; i != DATA.end() && x != buffer.end(); ++i, ++x)
-    {
-      tempStorage.clear();
-      tempStorage = get<0>((*i));
-      date.clear();
-
-      date = tempStorage.substr(3, 2);
-
-      if (!date.empty())
-      {
-      
-       if (date == "01")
-       {
-         date = "1";
-       }
-       else if (date == "02")
-       {
-         date = "2";
-       }
-       else if (date == "03")
-       {
-         date = "3";
-       }
-       else if (date == "04")
-       {
-         date = "4";
-       }
-       else if (date == "05")
-       {
-         date = "5";
-       }
-       else if (date == "06")
-       {
-         date = "6";
-       }
-       else if (date == "07")
-       {
-         date = "7";
-       }
-       else if (date == "08")
-       {
-         date = "8";
-       }
-       else if (date == "09")
-       {
-         date = "9";
-       }
-
-      }
-
-      if (date == to_string(getPrevMonth(cur_month)))
-      {
-        temp.clear();
-        temp = (*x);
-        command.clear();
-        command = SemPath + "\\REPORTS\\stud_att.txt";
-        writeDataToFile(command, temp);
-      }
-    }
-  }
 
 public:
+
   MODULE_2()
   {
     // clear variable for re-use
@@ -4238,14 +3943,14 @@ public:
     LIST.clear();
     DATA.clear();
     month_report_flag = false;
-    sixMonth_reportFlag = false;
+   
   }
 
   ~MODULE_2()
   {
-
+    
     /******************************** MONTHLY REPORT **************************************/
-    if (month_report_flag) // ? according to 1 month trigger
+    if(month_report_flag) // ? according to 1 month trigger
     {
       string month = (file_month == 1) ? "JANUARY" : (file_month == 2) ? "FEBRUARY"
                                                  : (file_month == 3)   ? "MARCH"
@@ -4266,9 +3971,6 @@ public:
       pdfName += "AMS_REPORT_" + course_name + "_SEM_" + sem + "_" + subject_name + "_" + month;
       replaceWithHyphen(pdfName);
       pdfName += ".pdf";
-
-      //  command = SemPath + "\\FAC-STUD-DETAILS\\fac-sem-" + sem + ".txt";
-      //  getDataFromFile(command,FacultyEmail,2);
 
       if (createMonthlyReportPDF(SemPath + "\\REPORTS\\fac_data.txt", SemPath + "\\REPORTS\\stud_name.txt", SemPath + "\\REPORTS\\stud_att.txt", pdfName))
       {
@@ -4300,59 +4002,6 @@ public:
         warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26); // error while sending email
       }
     }
-    /***********************************************************************/
-    /****************************SEMIANNUAL REPORT*********************************/
-
-  if(sixMonth_reportFlag)                                 //? 6 month trigger 
-  {
-
-    SemiAnnualReportGenerating();
-    makeSixMonthReport(); 
-   
-    pdfName += "AMS_REPORT_SEMI-ANNUAL_" + course_name + "_SEM_" + sem + "_" + subject_name;
-    replaceWithHyphen(pdfName);
-    pdfName += ".pdf";
-
-    command.clear();
-    command = AMS_Path + "\\USER-INFO\\userdetails.txt";
-    getDataFromFile(command,HodEmail,4);
-
-   
-
-    if (createSixMonthReportPDF(SemPath + "\\REPORTS\\basic_details.txt", SemPath + "\\REPORTS\\stud_name.txt", SemPath + "\\REPORTS\\stud_att.txt", pdfName))
-    {
-        //*threading used for  processing email part
-
-        MODULE_2 MD2;
-        thread t1(&sendToEmail, MD2, "ams.software.team@gmail.com", "Amsisrich@45", command, "SEMI-ANNUAL-ATTENDANCE-REPORT", "Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your 6 MONTHS Attendance Report.\n\nThank You.\n\n", SemPath + "\\REPORTS\\" + pdfName, pdfName);
-        thread t2(&LoadingProcess, MD2);
-
-        t1.join(); // join the thread
-        t2.join(); // join the thread
-
-        scrClr(); // by clearing screen it resolves flickring error of screen...
-
-        if (process_flag && email_flag)
-        {
-            Beep(1950, 500);
-            reportSentSuccessfully(pdfName);   // sent email successfully with attachment
-            process_flag = email_flag = false; // resetting
-        }
-        else
-        {
-            warnMsg("REPORT COULDN'T BE SENT !", 4, 26, "ERROR CODE : 404/444/599 ", 1, 26); // error while sending email
-            process_flag = email_flag = false;                                               // resetting
-        }
-    }
-    else
-    {
-        warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26); // error while sending email
-    }
-    command.clear();
-   }
-
-    /****************************SEMIANNUAL REPORT-END*****************************/
-
     buffer.clear();      // clearing buffer
     LIST.clear();        // clearing List
     command.clear();     // clearing command
@@ -4419,75 +4068,6 @@ public:
     tempStorage.clear();
   }
   
-  void SemiAnnualReport() //? 6 month trigger enble /disable
-  {
-    tempStorage.clear();
-    getDataFromFile(SemPath+"\\DAILY-RECORD\\records.txt",tempStorage,1);
-
-    if(!tempStorage.empty())
-    {
-        tempStorage = tempStorage.substr(3, 2);
-        if (tempStorage == "01")
-        {
-          tempStorage = "1";
-        }
-        else if (tempStorage == "02")
-        {
-          tempStorage = "2";
-        }
-        else if (tempStorage == "03")
-        {
-          tempStorage = "3";
-        }
-        else if (tempStorage == "04")
-        {
-          tempStorage = "4";
-        }
-        else if (tempStorage == "05")
-        {
-          tempStorage = "5";
-        }
-        else if (tempStorage == "06")
-        {
-          tempStorage = "6";
-        }
-        else if (tempStorage == "07")
-        {
-          tempStorage = "7";
-        }
-        else if (tempStorage == "08")
-        {
-          tempStorage = "8";
-        }
-        else if (tempStorage == "09")
-        {
-          tempStorage = "9";
-        }
-    }
-    int ch_month = stoi(tempStorage);
-    if(ch_month<=6)
-    {
-      ch_month += 6;
-    }
-    else
-    { 
-      unsigned short int bckp = ch_month; 
-      ch_month = 0; 
-      while((bckp+6)>12)
-      {
-        ch_month++; 
-        bckp--;
-      }
-    }
-    
-    if(ch_month == cur_month)
-    {
-      sixMonth_reportFlag = true; 
-    }
-
-   tempStorage.clear();
-  }
-
   int confirmTodayAttendance()
   {
     ConvertChoiceToINT = 1; // re-used
@@ -4623,7 +4203,7 @@ protected:
   //*=============================MEMBERS-FUNCTIONS===================================//
 
 private:
-
+  
   bool MailToStudent()
   {
   ReAskChoice:
@@ -5159,6 +4739,288 @@ private:
 
     return (flag);
   }
+  
+  /*if(sixMonth_reportFlag)   //! EDIT HR
+  {
+    semsterReportGenerating();
+    makeSemesterReport(); 
+    pdfName += "AMS_REPORT_SEMI-ANNUAL_" + course_name + "_SEM_" + sem + "_" + subject_name;
+    replaceWithHyphen(pdfName);
+    pdfName += ".pdf";
+    command.clear();
+    command = AMS_Path + "\\USER-INFO\\userdetails.txt";
+    getDataFromFile(command,HodEmail,4);
+    if(createSemesterReportPDF(SemPath + "\\REPORTS\\basic_details.txt", SemPath + "\\REPORTS\\stud_name.txt", SemPath + "\\REPORTS\\stud_att.txt", pdfName))
+    {
+        //*threading used for  processing email part
+        MODULE_2 MD2;
+        thread t1(&sendToEmail, MD2, "ams.software.team@gmail.com", "Amsisrich@45", command, "SEMI-ANNUAL-ATTENDANCE-REPORT", "Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your 6 MONTHS Attendance Report.\n\nThank You.\n\n", SemPath + "\\REPORTS\\" + pdfName, pdfName);
+        thread t2(&LoadingProcess, MD2);
+        t1.join(); // join the thread
+        t2.join(); // join the thread
+        scrClr(); // by clearing screen it resolves flickring error of screen...
+        if(process_flag && email_flag)
+        {
+            Beep(1950, 500);
+            reportSentSuccessfully(pdfName);   // sent email successfully with attachment
+            process_flag = email_flag = false; // resetting
+        }
+        else
+        {
+            warnMsg("REPORT COULDN'T BE SENT !", 4, 26, "ERROR CODE : 404/444/599 ", 1, 26); // error while sending email
+            process_flag = email_flag = false;                                               // resetting
+        }
+    }
+    else
+    {
+        warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26); // error while sending email
+    }
+    command.clear();
+  }*/
+  //!EDIT HR
+  bool createSemesterReportPDF(string BasicDetails,string Name,string Attendance,string pdf_name)//?Date Vise Report Generate PDF(If overloding posssible then must overload  GeneratePDF function)
+  {
+      int PresentCount;
+      tempStorage.clear(); 
+      command.clear();
+      bool flag;
+      command = AMS_Path+"\\OTHER\\6MR.py"; // make python path
+      fstream write(command.c_str(),ios::out);
+
+      if(!write.is_open()) // if file  not opened
+      {   
+        scrClr();
+        setCursorPos(9, 28);
+        cout << "DATA BASE-ERROR-201-204! ";//error 
+        scrClr(2);
+        exit(1);
+      }
+      else
+      {
+            command.clear();
+            command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
+            command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
+            getDataFromFile(BasicDetails,tempStorage,1);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,2);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Joining Year
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,3);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Department Name
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,4);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course name
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,5);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,6);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Subject Name
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,7);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Number of student
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,8);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Report type
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,9);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Records
+            tempStorage.clear();
+            getDataFromFile(BasicDetails,tempStorage,10);
+            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='C')\npdf.ln(0.3)\n";//Attendance
+            command += "data = [['ROLL NO.','NAME','ATTENDANCE']";
+            for(int i=1;i<=countLinesOfFile(Name);i++)
+            {
+                command += ",['" + to_string(i) + "',"; 
+                tempStorage.clear();
+                getDataFromFile(Name,tempStorage,i);
+                command += "'" + tempStorage + "',";
+                PresentCount = 0;
+                for(int k=1;k<=(countLinesOfFile(Attendance));k++)
+                {
+                    tempStorage.clear();
+                    getDataFromFile(Attendance,tempStorage,k);
+     
+                     if(tempStorage[19+i] == 'P')
+                         PresentCount++;
+                 }
+                 stringstream stream;
+                 stream << fixed << setprecision(2) << (float(100 *  PresentCount)/countLinesOfFile(Attendance));
+                 string temp = stream.str();
+                 command += "'"+temp+"%'";
+                 command+= "]";
+             }
+             command += "]\n";
+             command += "th = pdf.font_size\ncol_width = (epw-4)/2\npdf.ln(0.3)\n";
+             command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\npdf.ln(2)";
+             command += "\nLine = \"_\"\nfor i in range(int(pdf.w-pdf.l_margin)):\n\tfor j in range(10):\n\t\tLine+=\"_\" ";
+             command += "\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line, align='C')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line,align='C')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('"+DoubleBackslashPath(SemPath) +"\\\\REPORTS\\\\";
+             command +=  pdf_name + "','F')\n";
+             tempStorage.clear();
+             tempStorage = AMS_Path+"\\OTHER\\6MR.py";   // make python File
+             writeDataToFile(tempStorage,command);
+             command.clear();
+        
+        
+             remove(command.c_str());
+             command = "python " + AMS_Path+"\\OTHER\\6MR.py";  
+             system(command.c_str());//run python file
+             
+             command = AMS_Path + "\\OTHER\\output.txt"; //error file size get
+                 
+             int err = checkEmptyFile(command);
+             if(err)
+             flag=false;
+             else
+             flag=true;
+     
+             command = AMS_Path+"\\OTHER\\6MR.py"; 
+             remove(command.c_str()); //delete python file
+             remove(BasicDetails.c_str());//delete fec_data file
+             remove(Name.c_str());//delete stud_name file
+             remove(Attendance.c_str());//delete stud_att file
+             return flag;
+     
+     } 
+         
+  }
+  //!EDIT HR
+  void semsterReportGenerating()   //? semiannnual report generating
+  {
+    tempStorage.clear();
+    string temp;
+    temp = "SEMESTER ATTENDANCE REPORT";
+    tempStorage = " IS BEING GENERATED ";
+
+    int i = 1;
+    do
+    {
+      scrClr(0.5);
+      setCursorPos(9, 14);
+      SetColor(2);
+      cout << temp;
+      SetColor(0);
+      cout<<tempStorage;
+      ShowConsoleCursor(false);
+      scrClr(1);
+      tempStorage = tempStorage + ".";
+
+      if (i == 4)
+      {
+        break;
+      }
+      i++;
+
+    } while (true);
+
+    tempStorage.clear();
+    SetColor(0);
+    scrClr();
+  }
+  //!EDIT HR
+  void makeSemesterReport()
+  {
+    HodName.clear();
+    HodEmail.clear();
+
+    tempStorage.clear();
+
+    command.clear();
+    command = SemPath + "\\REPORTS\\fac_data.txt";
+    tempStorage = "1) FACULTY NAME : " + FacultyName;
+    writeDataToFile(command, tempStorage);
+    
+    command.clear();
+    command = SemPath + "\\LOG-INFO\\userdetails.txt";
+    getDataFromFile(command,HodName,5);
+    tempStorage = "2) FACULTY JOINING YEAR : " + HodName ; // re used as  join_year
+    command = SemPath + "\\REPORTS\\fac_data.txt";
+    writeDataToFile(command, tempStorage);
+    
+    command.clear();
+    command = SemPath + "\\LOG-INFO\\userdetails.txt";   
+    getDataFromFile(command,HodEmail,3);
+    tempStorage = "3) DEPARTMENT NAME : " + HodEmail ; // re used as  department_name
+    command = SemPath + "\\REPORTS\\fac_data.txt";
+    writeDataToFile(command, tempStorage);  
+
+    tempStorage.clear();
+    tempStorage = "4) COURSE NAME  : " + course_name;
+    writeDataToFile(command, tempStorage);
+
+    tempStorage.clear();
+    tempStorage = "5) SEMSTER : " + sem;
+    writeDataToFile(command, tempStorage);
+
+    tempStorage.clear();
+    tempStorage = "6) SUBJECT NAME : " + subject_name;
+    writeDataToFile(command, tempStorage);
+
+    tempStorage.clear();
+    tempStorage = "7) NUMBER OF STUDENT : " + numberOfstudents;
+    writeDataToFile(command, tempStorage);
+
+    tempStorage.clear();
+    tempStorage = "8) REPORT TYPE : SEMI ANNUAL ";
+    writeDataToFile(command, tempStorage);
+
+    tempStorage.clear();
+    HodName.clear(); // re used as  first  date
+    HodEmail.clear(); // re used as  last date
+    command.clear();
+    command = SemPath + "\\DAILY-RECORD\\records.txt";  
+    getDataFromFile(command,HodName,1);
+    getDataFromFile(command,HodEmail,(countLinesOfFile(command))); 
+    
+    tempStorage = "9) REPORT DURATION : " + HodName + "  -  "+HodEmail;
+    command = SemPath + "\\REPORTS\\fac_data.txt";
+    writeDataToFile(command, tempStorage);
+
+    tempStorage.clear();
+    tempStorage = "-: [ Attendance Data ] :- ";
+    writeDataToFile(command, tempStorage);
+
+    command.clear();
+    command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
+    int j = 1, found_pos, temp_pos, line = countLinesOfFile(command);
+
+    while (j <= line)
+    {
+      tempStorage.clear();
+      found_pos = temp_pos = 0;
+
+      command.clear();
+      command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
+      getDataFromFile(command, tempStorage, j);
+
+      found_pos = tempStorage.find("|");
+      student_name.clear();
+      student_name = tempStorage.substr((found_pos + 1), (tempStorage.find("|", (found_pos + 1)) - (found_pos + 1))); // time re used as student name
+
+      command.clear();
+      command = SemPath + "\\REPORTS\\stud_name.txt";
+      writeDataToFile(command, student_name);
+      j++;
+    }
+
+    tempStorage.clear();
+    j = 1;
+    command = SemPath + "\\DAILY-RECORD\\records.txt"; // path stored in command var
+    line = countLinesOfFile(command);
+    while (j <= line)
+    {
+      tempStorage.clear();
+      command.clear();
+      command = SemPath + "\\DAILY-RECORD\\records.txt"; // path stored in command var
+      getDataFromFile(command, tempStorage, j);
+      command.clear();
+      command = SemPath + "\\REPORTS\\stud_att.txt";
+      writeDataToFile(command, tempStorage);
+      j++;
+    }
+    
+  }
 
 public:
 
@@ -5173,7 +5035,78 @@ public:
     date.clear();
     time.clear();
   }
-
+  
+  void SemesterReport() //! edit HR
+  {
+    
+    tempStorage.clear();
+    getDataFromFile(SemPath+"\\DAILY-RECORD\\records.txt",tempStorage,1);
+    if(!tempStorage.empty())
+    {
+        tempStorage = tempStorage.substr(3, 2);
+        if (tempStorage == "01")
+        {
+          tempStorage = "1";
+        }
+        else if (tempStorage == "02")
+        {
+          tempStorage = "2";
+        }
+        else if (tempStorage == "03")
+        {
+          tempStorage = "3";
+        }
+        else if (tempStorage == "04")
+        {
+          tempStorage = "4";
+        }
+        else if (tempStorage == "05")
+        {
+          tempStorage = "5";
+        }
+        else if (tempStorage == "06")
+        {
+          tempStorage = "6";
+        }
+        else if (tempStorage == "07")
+        {
+          tempStorage = "7";
+        }
+        else if (tempStorage == "08")
+        {
+          tempStorage = "8";
+        }
+        else if (tempStorage == "09")
+        {
+          tempStorage = "9";
+        }
+    }
+    int ch_month = stoi(tempStorage);
+    if(ch_month<=6)
+    {
+      ch_month += 6;
+    }
+    else
+    { 
+      unsigned short int bckp = ch_month; 
+      ch_month = 0; 
+      while((bckp+6)>12)
+      {
+        ch_month++; 
+        bckp--;
+      }
+    }
+    command.clear();
+    tempStorage.clear();
+    command = SemPath + "\\DAILY-RECORD\\semi-annual-trigger.txt";
+    getDataFromFile(command,tempStorage,1);
+    if(CUR_DATE == tempStorage)
+    {
+       //! edit
+    }
+   tempStorage.clear();
+   command.clear();
+  } 
   void askReportChoice() // ? report type select choice
   {
     int line = 0;
@@ -6876,7 +6809,6 @@ int main()
                       if (MD2.confirmTodayAttendance()) // check if already taken for today
                       {
                         MD2.MonthlyReport();
-                        MD2.SemiAnnualReport();
                         reask:
                         MD2.AttendanceOptionWindow(); // ask easy option for attendance taking method
                         if (MD2.takeAttendance(MODULE_2::AT_OPTION_CHOICE)) // take attendance
@@ -6916,6 +6848,11 @@ int main()
                           {
                             MD3.studentReport();
                             break;
+                          }
+                          case 3:
+                          {
+                             //MD3.SemesterReport();
+                             break;
                           }
                           default:
                           {
