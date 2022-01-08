@@ -5884,6 +5884,7 @@ int userConfirmation()
       cout << "STUDENT ROLL NUMBER " << right << setw(4) << ": " << lineRef.substr(0, (found_pos));
       temp_pos = (found_pos + 1);
       setCursorPos(1, 15);
+      found_pos = lineRef.find("|", temp_pos);
       cout << "STUDENT NAME " << right << setw(11) << ": " << lineRef.substr(temp_pos, (found_pos - temp_pos));
       temp_pos = (found_pos + 1);
       setCursorPos(1, 15);
@@ -5960,17 +5961,9 @@ int userConfirmation()
     askSemsterChoice();
     if(askSubjectChoice())
     {
-      bool flag;
       getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",command,2);
-      Debug(command);
-      if(command.length()<=30)
-      {
-        flag = proceedFurther(1);
-      }
-      else
-      {
-        flag = confirmation();
-      }
+      int flag = ( command.length()<=30 ) ? proceedFurther(1) : confirmation();
+      
       if(flag)
       {
         int line = 0;
@@ -6014,7 +6007,8 @@ int userConfirmation()
         else if (ConvertChoiceToINT == 2)
         {
           RollNoInput();
-          if(studConfirmation())
+          flag = ( student_email.length() <= 30 ) ? studConfirmation() : studConfirmation(1);
+          if(flag)
             studDetailModChoice();  
         }
       }
@@ -6071,8 +6065,7 @@ int userConfirmation()
 
   void updateUser(string path,int s = 0,int e = 0)
   {
-    bool flag;
-
+    
     for(int LN = 1; LN <= (countLinesOfFile(path));LN++)
     {      
           tempStorage.clear();
@@ -6088,8 +6081,6 @@ int userConfirmation()
             }
             else
               tempStorage = date;
-            if(tempStorage.length()<=30)
-              flag = true;
           }
           LIST.push_back(tempStorage);
     }
@@ -6106,100 +6097,57 @@ int userConfirmation()
     }
     else
     {
-      
+      string &lineRef = LIST.at(1);
+      bool noflag;
       if(s == 0 )
       {
-        if(date.length()<=30 || !flag)
+        int flag = ( lineRef.length() > 30 || date.length() > 30 ) ? userConfirmation(1) : userConfirmation();
+        if(flag)
         {
-          if(userConfirmation())
-          {
             for(auto i= LIST.begin(); i != LIST.end();i++)
             {
               write<<(*i)<<endl;
             }
             write.close();
             MSG("USER DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
-          }
-          else
-            flag = true;
+          
         }
         else
-        {
-          if(userConfirmation(1))
-          {
-            for(auto i= LIST.begin(); i != LIST.end();i++)
-            {
-              write<<(*i)<<endl;
-            }
-            write.close();
-            MSG("USER DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
-          }
-          else
-            flag = true;
-        }
+          noflag = true;
       }
       else if(s == 2)
       {
-        if(date.length()<=30 )
+        int flag = ( date.length()<=30 ) ? facConfirmation() : facConfirmation(1);
+        if(flag)
         {
-          if(facConfirmation())
-          {
             for(auto i= LIST.begin(); i != LIST.end();i++)
             {
               write<<(*i)<<endl;
             }
             write.close();
             MSG("FACULTY DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);  
-          }
-          else
-          {
-             flag = true;
-          }
-          
-        }
-        else if(facConfirmation(1))
-        {
-          for(auto i= LIST.begin(); i != LIST.end();i++)
-          {
-            write<<(*i)<<endl;
-          }
-          write.close();
-          MSG("FACULTY DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
         }
         else
-          flag = true;
-        
-      } 
+           noflag = true;
+          
+      }
       else if(s == 1 ) 
       {
-        if(date.length()<=30 )
+        int flag = ( date.length()<=30 ) ? stdConfirmation() : stdConfirmation(1);
+        if(flag)
         {
-          if(stdConfirmation())
-          {
             for(auto i= LIST.begin(); i != LIST.end();i++)
             {
               write<<(*i)<<endl;
             }
             write.close();
             MSG("STUDENT DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
-          }
-          else
-            flag = true;
-        }
-        else if(stdConfirmation(1))
-        {
-          for(auto i= LIST.begin(); i != LIST.end();i++)
-          {
-            write<<(*i)<<endl;
-          }
-          write.close();
-          MSG("STUDENT DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
         }
         else
-          flag = true;
-          
+          noflag = true;
       }
-      if(flag)
+    
+      if(noflag)
       {
         for(auto i= LIST.begin(); i != LIST.end();i++)
         {
@@ -6233,9 +6181,9 @@ int userConfirmation()
     date.clear();
     time.clear();
 
-    if(ch == 1 || ch == 4)
+    switch(ch)
     {
-      if(ch == 1)
+      case 1:
       {
         if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","FACULTY NAME   :  ",ch))
         {
@@ -6243,30 +6191,20 @@ int userConfirmation()
           UpdateName(date); 
           updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
         }
-          
-      }  
-      else
-      {
-        if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","DEPARTMENT NAME   :  ",(ch-1)))
-        {
-          getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,(ch-1));
-          UpdateName(date); 
-          updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
-        }
+        break;
       }
-    }
-    else if(ch == 2 || ch == 3)
-    {
-      if(ch == 2)
+      case 2:
       {
+        
         if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","FACULTY E-MAIL",ch))
         {
           getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,ch);
           UpdateEmail(date);
           updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
         }
-      }  
-      else
+        break;
+      }
+      case 3:
       {
         if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","H.O.D E-MAIL",(ch+1)))
         {
@@ -6274,8 +6212,25 @@ int userConfirmation()
           UpdateEmail(date);
           updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
         }
+        break;
       }
+      case 4:
+      {
+        if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","DEPARTMENT NAME   :  ",(ch-1)))
+        {
+          getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,(ch-1));
+          UpdateName(date); 
+          updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
+        }
+        break;
+      }
+      default:
+      break;
     }
+
+    LIST.clear();
+    date.clear();
+    time.clear();
   }
 
   int singleConfirmation(string path , string display , int choice)
@@ -6411,29 +6366,35 @@ int userConfirmation()
 
   void facDetailMod(int choice)
   {   
-    if(choice == 1)
+    switch (choice)
     {
-      if(singleConfirmation(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt" , "FACULTY NAME  :  ",choice))
+      case 1:
       {
-        FacultyName.clear();
-        student_name.clear();
-        time.clear();
-        date.clear();
-        getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",time,1);
-        UpdateName(date);
-        updateUser(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",2);
-      }   
-    }
-    else
-    {
-      if(singleConfirmation(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt" , "FACULTY E-MAIL",choice))
-      {
-        
-        getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",time,2);
-        UpdateEmail(date);
-        updateUser(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",2);
-
+        if(singleConfirmation(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt" , "FACULTY NAME  :  ",choice))
+        {
+          FacultyName.clear();
+          student_name.clear();
+          time.clear();
+          date.clear();
+          getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",time,1);
+          UpdateName(date);
+          updateUser(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",2);
+        }   
+        break;
       }
+      case 2:
+      {
+        if(singleConfirmation(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt" , "FACULTY E-MAIL",choice))
+        {
+          
+          getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",time,2);
+          UpdateEmail(date);
+          updateUser(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",2);      
+        }
+        break;
+      }
+      default:
+      break;
     }
   }
 
@@ -6481,25 +6442,32 @@ int userConfirmation()
 
   void studDetailMod(int choice)
   {
-
-    if(choice == 1)
+    switch (choice)
     {
-      date.clear();
-      time.clear();
-      FacultyName.clear();
-      getDataFromFile(command,time,stoi(RoLLNo));
+      case 1:
+      {
+        date.clear();
+        time.clear();
+        FacultyName.clear();
+        getDataFromFile(command,time,stoi(RoLLNo));    
+        UpdateName(date);
+        updateUser(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt",1);
+        break;
+      }
       
-      UpdateName(date);
-      updateUser(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt",1);
-    }
-    else
-    {
+      case 2:
+      {
+        date.clear();
+        time.clear();
+        FacultyEmail.clear();
+        getDataFromFile(command,time,stoi(RoLLNo));
+        UpdateEmail(date);
+        updateUser(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt",1,1);
+        break;
+      }
     
-      FacultyEmail.clear();
-      getDataFromFile(command,time,stoi(RoLLNo));
-      UpdateEmail(date);
-      updateUser(SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt",1,1);
-
+    default:
+      break;
     }
   }
   
