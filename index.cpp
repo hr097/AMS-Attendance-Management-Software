@@ -4030,20 +4030,22 @@ bool createSixMonthReportPDF(string BasicDetails,string Name,string Attendance,s
     return(flag);
   }
   
-
   void SemiAnnualReportGenerating()   //? semiannnual report generating
   {
     tempStorage.clear();
-    tempStorage = "SEMI ANNUAL ATTENDANCE REPORT IS BEING GENERATED ";
+    string temp;
+    temp = "SEMI ANNUAL ATTENDANCE REPORT";
+    tempStorage = " IS BEING GENERATED ";
 
     int i = 1;
     do
     {
       scrClr(0.5);
       setCursorPos(9, 14);
+      SetColor(2);
+      cout << temp;
       SetColor(0);
-      cout << tempStorage;
-      SetColor(1);
+      cout<<tempStorage;
       ShowConsoleCursor(false);
       scrClr(1);
       tempStorage = tempStorage + ".";
