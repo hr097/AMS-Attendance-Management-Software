@@ -30,6 +30,8 @@
 
 #pragma comment(lib, "shell32.lib")
 
+
+
 inline void signal_callback_handler(int signum){signal(SIGINT, signal_callback_handler);}
 
 //--------FOR-DOCUMENT PATH GETTING-------------/
@@ -4064,9 +4066,166 @@ bool createSixMonthReportPDF(string BasicDetails,string Name,string Attendance,s
   }
   void makeSixMonthReport()
   {
-    //! remove this code after you implement
-    Debug("under construction....please try again later !");
-    exit(1);
+    buffer.clear();
+    LIST.clear();
+    DATA.clear();
+
+    tempStorage.clear();
+
+    string join_year,department,attendance;
+
+    command.clear();
+    command = SemPath + "\\REPORTS\\fac_data.txt";
+    tempStorage = "1) FACULTY NAME : " + FacultyName;
+    writeDataToFile(command, tempStorage);
+    
+    command.clear();
+    command = SemPath + "\\LOG-INFO\\userdetails.txt";
+    getDataFromFile(command,join_year,5);
+    tempStorage = "2) FACULTY JOINING YEAR : " + join_year ;
+    command = SemPath + "\\REPORTS\\fac_data.txt";
+    writeDataToFile(command, tempStorage);
+    
+    command.clear();
+    command = SemPath + "\\LOG-INFO\\userdetails.txt";   
+    getDataFromFile(command,department,3);
+    tempStorage = "2) FACULTY JOINING YEAR : " + department ;
+    command = SemPath + "\\REPORTS\\fac_data.txt";
+    writeDataToFile(command, tempStorage);  
+
+    command.clear();
+    command = SemPath + "\\REPORTS\\fac_data.txt";
+    tempStorage = "2) FACULTY EMAIL : " + FacultyEmail;
+    writeDataToFile(command, tempStorage);
+
+    tempStorage.clear();
+    tempStorage = "3) COURSE NAME  : " + course_name;
+    writeDataToFile(command, tempStorage);
+
+    tempStorage.clear();
+    tempStorage = "4) SEMSTER : " + sem;
+    writeDataToFile(command, tempStorage);
+
+    tempStorage.clear();
+    tempStorage = "5) SUBJECT NAME : " + subject_name;
+    writeDataToFile(command, tempStorage);
+
+    tempStorage.clear();
+    tempStorage = "-: [ Attendance Data ] :- ";
+    writeDataToFile(command, tempStorage);
+
+    command.clear();
+    command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
+    int j = 1, found_pos, temp_pos, line = countLinesOfFile(command);
+
+    while (j <= line)
+    {
+      tempStorage.clear();
+      found_pos = temp_pos = 0;
+
+      command.clear();
+      command = SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
+      getDataFromFile(command, tempStorage, j);
+
+      found_pos = tempStorage.find("|");
+      student_name.clear();
+      student_name = tempStorage.substr((found_pos + 1), (tempStorage.find("|", (found_pos + 1)) - (found_pos + 1))); // time re used as student name
+
+      command.clear();
+      command = SemPath + "\\REPORTS\\stud_name.txt";
+      writeDataToFile(command, student_name);
+      j++;
+    }
+
+    tempStorage.clear();
+    j = 1;
+    command = SemPath + "\\DAILY-RECORD\\records.txt"; // path stored in command var
+    line = countLinesOfFile(command);
+    while (j <= line)
+    {
+      tempStorage.clear();
+      getDataFromFile(command, tempStorage, j);
+      buffer.push_back(tempStorage);
+      j++;
+    }
+
+    for (auto i = buffer.begin(); i != buffer.end(); ++i)
+    {
+      tempStorage.clear();
+      tempStorage = (*i);
+      found_pos = tempStorage.find("|");
+
+      date = tempStorage.substr(0, found_pos);
+      temp_pos = (found_pos + 1);
+      found_pos = tempStorage.find("|", temp_pos);
+      time = tempStorage.substr(temp_pos, (found_pos - temp_pos));
+      temp_pos = (found_pos + 1);
+      found_pos = tempStorage.find("|", temp_pos);
+      attendance = tempStorage.substr(temp_pos);
+      DATA.push_back(make_tuple(date, time, attendance, ""));
+    }
+
+    auto i = DATA.begin();
+    auto x = buffer.begin();
+    for (; i != DATA.end() && x != buffer.end(); ++i, ++x)
+    {
+      tempStorage.clear();
+      tempStorage = get<0>((*i));
+      date.clear();
+
+      date = tempStorage.substr(3, 2);
+
+      if (!date.empty())
+      {
+      
+       if (date == "01")
+       {
+         date = "1";
+       }
+       else if (date == "02")
+       {
+         date = "2";
+       }
+       else if (date == "03")
+       {
+         date = "3";
+       }
+       else if (date == "04")
+       {
+         date = "4";
+       }
+       else if (date == "05")
+       {
+         date = "5";
+       }
+       else if (date == "06")
+       {
+         date = "6";
+       }
+       else if (date == "07")
+       {
+         date = "7";
+       }
+       else if (date == "08")
+       {
+         date = "8";
+       }
+       else if (date == "09")
+       {
+         date = "9";
+       }
+
+      }
+
+      if (date == to_string(getPrevMonth(cur_month)))
+      {
+        temp.clear();
+        temp = (*x);
+        command.clear();
+        command = SemPath + "\\REPORTS\\stud_att.txt";
+        writeDataToFile(command, temp);
+      }
+    }
   }
 
 public:
