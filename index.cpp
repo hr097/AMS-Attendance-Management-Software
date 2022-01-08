@@ -5491,7 +5491,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     }
   
 
-  int userConfirmation()
+int userConfirmation()
   {
       auto i = LIST.begin();
       int line;
@@ -5505,12 +5505,12 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
           setCursorPos(1, 7);
           if (line == 1)
           {
-            buildHorizontalWall(65, "USER NAME           :  " + (*i));
+            buildHorizontalWall(65, "FACULTY NAME        :  " + (*i));
             i++;
           }
           else if (line == 3)
           {
-            buildHorizontalWall(65, "USER EMAIL          :  " + (*i));
+            buildHorizontalWall(65, "FACULTY EMAIL       :  " + (*i));
             i++;
           }
           else if (line == 5)
@@ -5561,6 +5561,96 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         }
     }
 
+    int userConfirmation(int arg)
+    {
+      auto i = LIST.begin();
+  
+      reConfirm:
+  
+      // cofirmation BOX-UI
+      scrClr(0.5);
+  
+      setCursorPos(4, 15);
+      cout << "FACULTY NAME " << right << setw(9) << ": " << (*i);
+      i++;
+      setCursorPos(1, 15);
+      // cout << "FACULTY E-MAIL " << right << setw(7) << ": " << (*i);
+      if ((*i).length() <= 35)
+      {
+        cout << "FACULTY E-MAIL " << right << setw(7) << ": " << (*i);
+      }
+      else
+      {
+        int l = 0;
+        cout << "FACULTY E-MAIL " << right << setw(7) << ": ";
+        while (l < (*i).length())
+        {
+          if (l == 35)
+          {
+            setCursorPos(1, 39);
+          }
+          cout << (*i)[l];
+          l++;
+        }
+      }
+      i++;
+      setCursorPos(2, 15);
+      cout << "DEPARTMENT NAME " << right << setw(6) << ": " << (*i);
+      i++;
+      setCursorPos(1, 15);
+      // cout << "H.O.D EMAIL " << right << setw(10) << ": " << (*i);
+      if ((*i).length() <= 35)
+      {
+        cout << "H.O.D EMAIL " << right << setw(10) << ": " << (*i);
+      }
+      else
+      {
+        int l = 0;
+        cout << "H.O.D EMAIL " << right << setw(10) << ": ";
+        while (l < (*i).length())
+        {
+          if (l == 35)
+          {
+            setCursorPos(1, 39);
+          }
+          cout << (*i)[l];
+          l++;
+        }
+      }
+      i++;
+      setCursorPos(1, 15);
+      cout << "YEAR OF JOINING " << right << setw(6) << ": " << (*i);
+      i++;
+  
+      // message BOX-UI
+  
+      setCursorPos(2, 23);
+        cout << "DO YOU CONFIRM THESE DETAILS ?";
+        SetColor(0);
+        setCursorPos(2, 32);
+        fflush(stdin);
+        ShowConsoleCursor(true);
+        cout << "Type : ";
+        getline(cin, tempStorage);
+        cin.clear();
+        ShowConsoleCursor(false);
+        ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
+        if (ConvertChoiceToINT == -1)
+        {
+          InvalidInputErr();
+          goto reConfirm;
+        }
+        else if (ConvertChoiceToINT)
+        {
+          return (1);
+        }
+        else
+        {
+          return (0);
+        }
+
+    }
+
     int facConfirmation()
     {
       auto i = LIST.begin();
@@ -5602,7 +5692,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
             }
             else if (line == 11)
             {
-              buildHorizontalWall(65, "NUMBER OF STUDENTS   :  " + numberOfstudents);
+              buildHorizontalWall(65, "NUMBER OF STUDENTS   :  " + (*i));
               i++;
             }
             else
@@ -5638,71 +5728,228 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         }
     }
 
-  int stdConfirmation()
-  {
-    string & lineRef = LIST.at((stoi(RoLLNo)-1));
-      int line = 0;
-    reInputStdConfirm:
+    int facConfirmation(int j) //?basic confirmation message for user
+    {
+      auto i = LIST.begin();
+  
+    reConfirm:
+  
+      // cofirmation BOX-UI
       scrClr(0.5);
-      line = 0;
-      // BOX-UI FOR Details confirmation
-      setCursorPos(1, 7);
-      buildVerticalWall(65);
-      int found_pos = lineRef.find("|");
-      int temp_pos = (found_pos + 1);
-        while (line < 7)
-        {
-          setCursorPos(1, 7);
-          if (line == 1)
-          {
-            buildHorizontalWall(65, "ROLL NUMBER         :  " + lineRef.substr(0, (found_pos)));
-            temp_pos = (found_pos + 1);    
-            // i++;
-          }
-          else if (line == 3)
-          {
-            found_pos = lineRef.find("|", temp_pos); 
-            buildHorizontalWall(65, "STUDENT NAME        :  " + lineRef.substr(temp_pos, (found_pos - temp_pos)));
-            temp_pos = (found_pos + 1); 
-            // i++;
-          }
-          else if (line == 5)
-          {
-            // found_pos = lineRef.find("|", temp_pos);
-            buildHorizontalWall(65, "STUDENT E-MAIL      :  " + lineRef.substr(temp_pos));
-            // i++;
-          }
-          else
-            buildHorizontalWall(65, " ");
-          line++;
-        }
-      setCursorPos(1, 7);
-      buildVerticalWall(65);
-      SetColor(1);
-      setCursorPos(3, 23);
-      cout << "DO YOU CONFIRM THESE DETAILS ?";
-      SetColor(0);
-      setCursorPos(2, 32);
-      fflush(stdin);
-      ShowConsoleCursor(true);
-      cout << "Type : ";
-      getline(cin, tempStorage);
-      cin.clear();
-      ShowConsoleCursor(false);
-      ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
-      if (ConvertChoiceToINT == -1)
+  
+      setCursorPos(4, 15);
+      cout << "FACULTY NAME " << right << setw(9) << ": " << (*i);
+      i++;
+      setCursorPos(1, 15);
+      // cout << "FACULTY E-MAIL " << right << setw(7) << ": " << (*i);
+      if ((*i).length() <= 35)
       {
-        InvalidInputErr();
-        goto reInputStdConfirm;
-      }
-      else if (ConvertChoiceToINT)
-      {
-        return (1);
+        cout << "FACULTY E-MAIL " << right << setw(7) << ": " << (*i);
       }
       else
       {
-        return (0);
+        int l = 0;
+        cout << "FACULTY E-MAIL " << right << setw(7) << ": ";
+        while (l < (*i).length())
+        {
+          if (l == 35)
+          {
+            setCursorPos(1, 39);
+          }
+          cout << (*i)[l];
+          l++;
+        }
       }
+      i++;
+      setCursorPos(2, 15);
+      cout << "COURSE NAME " << right << setw(10) << ": " << (*i);
+      i++;
+      setCursorPos(1, 15);
+      cout << "SEMESTER " << right << setw(13) << ": " << (*i);
+      i++;
+      setCursorPos(1, 15);
+      cout << "SUBJECT " << right << setw(14) << ": " << (*i);
+      i++;
+      setCursorPos(1, 15);
+      cout << "NUMBER OF STUDENTS " << right << setw(3) << ": " << (*i);
+      i++;
+  
+      // message BOX-UI
+  
+      setCursorPos(2, 23);
+        cout << "DO YOU CONFIRM THESE DETAILS ?";
+        SetColor(0);
+        setCursorPos(2, 32);
+        fflush(stdin);
+        ShowConsoleCursor(true);
+        cout << "Type : ";
+        getline(cin, tempStorage);
+        cin.clear();
+        ShowConsoleCursor(false);
+        ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
+        if (ConvertChoiceToINT == -1)
+        {
+          InvalidInputErr();
+          goto reConfirm;
+        }
+        else if (ConvertChoiceToINT)
+        {
+          return (1);
+        }
+        else
+        {
+          return (0);
+        }
+    }
+
+    int stdConfirmation() //?basic confirmation message after updation
+    {
+      // auto i = LIST[RoLLNo];
+      // string i = LIST.data();
+      string & lineRef = LIST.at((stoi(RoLLNo)-1));
+        int line = 0;
+      reInputStdConfirm:
+        scrClr(0.5);
+        line = 0;
+        // BOX-UI FOR Details confirmation
+        setCursorPos(1, 7);
+        buildVerticalWall(65);
+        int found_pos = lineRef.find("|");
+        int temp_pos = (found_pos + 1);
+          while (line < 7)
+          {
+            setCursorPos(1, 7);
+            if (line == 1)
+            {
+              buildHorizontalWall(65, "ROLL NUMBER         :  " + lineRef.substr(0, (found_pos)));
+              temp_pos = (found_pos + 1);    
+              // i++;
+            }
+            else if (line == 3)
+            {
+              found_pos = lineRef.find("|", temp_pos); 
+              buildHorizontalWall(65, "STUDENT NAME        :  " + lineRef.substr(temp_pos, (found_pos - temp_pos)));
+              temp_pos = (found_pos + 1); 
+              // i++;
+            }
+            else if (line == 5)
+            {
+              // found_pos = lineRef.find("|", temp_pos);
+              buildHorizontalWall(65, "STUDENT E-MAIL      :  " + lineRef.substr(temp_pos));
+              // i++;
+            }
+            else
+              buildHorizontalWall(65, " ");
+            line++;
+          }
+        setCursorPos(1, 7);
+        buildVerticalWall(65);
+        SetColor(1);
+        setCursorPos(3, 23);
+        cout << "DO YOU CONFIRM THESE DETAILS ?";
+        SetColor(0);
+        setCursorPos(2, 32);
+        fflush(stdin);
+        ShowConsoleCursor(true);
+        cout << "Type : ";
+        getline(cin, tempStorage);
+        cin.clear();
+        ShowConsoleCursor(false);
+        ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
+        if (ConvertChoiceToINT == -1)
+        {
+          InvalidInputErr();
+          goto reInputStdConfirm;
+        }
+        else if (ConvertChoiceToINT)
+        {
+          return (1);
+        }
+        else
+        {
+          return (0);
+        }
+
+    }
+
+    int stdConfirmation(int argc) //? overloaded version basic confirmation message after updation
+    {
+      string & lineRef = LIST.at((stoi(RoLLNo)-1));
+      int found_pos = lineRef.find("|");
+      int temp_pos = (found_pos + 1);
+    reConfirm:
+      scrClr(0.5);
+      // BOX-UI FOR STUDENT INFO CONFIRM
+      setCursorPos(5, 15);
+      cout << "STUDENT ROLL NUMBER " << right << setw(4) << ": " << lineRef.substr(0, (found_pos));
+      temp_pos = (found_pos + 1);
+      setCursorPos(1, 15);
+      cout << "STUDENT NAME " << right << setw(11) << ": " << lineRef.substr(temp_pos, (found_pos - temp_pos));
+      temp_pos = (found_pos + 1);
+      setCursorPos(1, 15);
+      if (student_email.length() <= 35)
+      {
+        cout << "STUDENT E-MAIL " << right << setw(9) << ": " << lineRef.substr(temp_pos);
+      }
+      else
+      {
+        int l = 0;
+        cout << "STUDENT E-MAIL " << right << setw(9) << ": ";
+        while (l < student_email.length())
+        {
+          if (l == 35)
+          {
+            setCursorPos(1, 39);
+          }
+          cout << student_email[l];
+          l++;
+        }
+      }
+      ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
+      if (ConvertChoiceToINT == -1) // validate input
+      {
+        InvalidInputErr(); // error message
+        goto reConfirm;
+      }
+      return (ConvertChoiceToINT); // returns confirmation value yes=1 / no=0
+    }
+
+    int confirmation() //?basic confirmation message for user
+  {
+    int line;
+
+  reConfirm:
+
+    // cofirmation BOX-UI
+    scrClr(0.5);
+
+    setCursorPos(4, 15);
+    getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",command,1);
+    cout << "FACULTY NAME " << right << setw(9) << ": " << command;
+    setCursorPos(1, 15);
+    getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",command,2);
+    cout << "FACULTY E-MAIL " << right << setw(7) << ": " << command;
+    setCursorPos(2, 15);
+    cout << "COURSE NAME " << right << setw(10) << ": " << course_name;
+    setCursorPos(1, 15);
+    cout << "SEMESTER " << right << setw(13) << ": " << sem;
+    setCursorPos(1, 15);
+    cout << "SUBJECT " << right << setw(14) << ": " << subject_name;
+    setCursorPos(1, 15);
+    getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",command,6);
+    cout << "NUMBER OF STUDENTS " << right << setw(3) << ": " << command;
+
+    // message BOX-UI
+
+    ConvertChoiceToINT = YesNoInput("Confirm these details (yes/no) ", tempStorage); // taking input yes/no
+
+    if (ConvertChoiceToINT == -1) // validate input
+    {
+      InvalidInputErr(); // error message
+      goto reConfirm;
+    }
+
+    return (ConvertChoiceToINT); // returns basic confirmation value yes=1 / no=0
   }
 
   void semDetailModChoice() // Ask Data Input Choice
@@ -5713,7 +5960,18 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     askSemsterChoice();
     if(askSubjectChoice())
     {
-      if(proceedFurther(1))
+      bool flag;
+      getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",command,2);
+      Debug(command);
+      if(command.length()<=30)
+      {
+        flag = proceedFurther(1);
+      }
+      else
+      {
+        flag = confirmation();
+      }
+      if(flag)
       {
         int line = 0;
         reask_semMod:
@@ -5763,7 +6021,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     }
     
   }
-  
   void userDetailModChoice() // Ask Data Input Choice
   {
     int line = 0;
@@ -5814,6 +6071,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
   void updateUser(string path,int s = 0,int e = 0)
   {
+    bool flag;
 
     for(int LN = 1; LN <= (countLinesOfFile(path));LN++)
     {      
@@ -5830,6 +6088,8 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
             }
             else
               tempStorage = date;
+            if(tempStorage.length()<=30)
+              flag = true;
           }
           LIST.push_back(tempStorage);
     }
@@ -5845,49 +6105,101 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       exit(1);
     }
     else
-    { 
+    {
       
-      if(s == 0 && userConfirmation())
+      if(s == 0 )
       {
-        if(passwordAuthetication())
+        if(date.length()<=30 && !flag)
         {
-
+          if(userConfirmation())
+          {
+            for(auto i= LIST.begin(); i != LIST.end();i++)
+            {
+              write<<(*i)<<endl;
+            }
+            write.close();
+            MSG("USER DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
+          }
+          else
+            flag = true;
+        }
+        else
+        {
+          if(userConfirmation(1))
+          {
+            for(auto i= LIST.begin(); i != LIST.end();i++)
+            {
+              write<<(*i)<<endl;
+            }
+            write.close();
+            MSG("USER DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
+          }
+          else
+            flag = true;
+        }
+      }
+      else if(s == 2)
+      {
+        if(date.length()<=30 )
+        {
+          if(facConfirmation())
+          {
+            for(auto i= LIST.begin(); i != LIST.end();i++)
+            {
+              write<<(*i)<<endl;
+            }
+            write.close();
+            MSG("FACULTY DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);  
+          }
+          else
+          {
+             flag = true;
+          }
+          
+        }
+        else if(facConfirmation(1))
+        {
           for(auto i= LIST.begin(); i != LIST.end();i++)
           {
             write<<(*i)<<endl;
           }
           write.close();
-          MSG("USER DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,20);
-
+          MSG("FACULTY DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
         }
-      }
-      else if(s == 2 && facConfirmation())
-      {
-        if(passwordAuthetication())
-        {
-
-        for(auto i= LIST.begin(); i != LIST.end();i++)
-        {
-          write<<(*i)<<endl;
-        }
-        write.close();
-        MSG("FACULTY DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
-
-        }
+        else
+          flag = true;
+        
       } 
-      else if(s == 1 && stdConfirmation()) 
+      else if(s == 1 ) 
       {
-        if(passwordAuthetication())
+        if(date.length()<=30 )
         {
-           for(auto i= LIST.begin(); i != LIST.end();i++)
-           {
-             write<<(*i)<<endl;
-           }
-           write.close();
-           MSG("STUDENT DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
+          if(stdConfirmation())
+          {
+            for(auto i= LIST.begin(); i != LIST.end();i++)
+            {
+              write<<(*i)<<endl;
+            }
+            write.close();
+            MSG("STUDENT DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
+          }
+          else
+            flag = true;
         }
+        else if(stdConfirmation(1))
+        {
+          for(auto i= LIST.begin(); i != LIST.end();i++)
+          {
+            write<<(*i)<<endl;
+          }
+          write.close();
+          MSG("STUDENT DETAIL HAS BEEN SUCCESSFULLY UPDATED","",2,0,17);
+        }
+        else
+          flag = true;
+          
       }
-      else
+      if(flag)
       {
         for(auto i= LIST.begin(); i != LIST.end();i++)
         {
@@ -5914,8 +6226,58 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     }
 
   }
-
   
+  void updateUserDetail(int ch)
+  {
+    LIST.clear();
+    date.clear();
+    time.clear();
+
+    if(ch == 1 || ch == 4)
+    {
+      if(ch == 1)
+      {
+        if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","FACULTY NAME   :  ",ch))
+        {
+          getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,ch);
+          UpdateName(date); 
+          updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
+        }
+          
+      }  
+      else
+      {
+        if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","DEPARTMENT NAME   :  ",(ch-1)))
+        {
+          getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,(ch-1));
+          UpdateName(date); 
+          updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
+        }
+      }
+    }
+    else if(ch == 2 || ch == 3)
+    {
+      if(ch == 2)
+      {
+        if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","FACULTY E-MAIL",ch))
+        {
+          getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,ch);
+          UpdateEmail(date);
+          updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
+        }
+      }  
+      else
+      {
+        if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","H.O.D E-MAIL",(ch+1)))
+        {
+          getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,(ch+1));
+          UpdateEmail(date);
+          updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
+        }
+      }
+    }
+  }
+
   int singleConfirmation(string path , string display , int choice)
   {
     int line;
@@ -6006,58 +6368,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
           
     return(ConvertChoiceToINT);
   }
-  
-  void updateUserDetail(int ch)
-  {
-    LIST.clear();
-    date.clear();
-    time.clear();
-
-    if(ch == 1 || ch == 4)
-    {
-      if(ch == 1)
-      {
-        if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","FACULTY NAME   :  ",ch))
-        {
-          getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,ch);
-          UpdateName(date); 
-          updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
-        }
-          
-      }  
-      else
-      {
-        if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","DEPARTMENT NAME   :  ",(ch-1)))
-        {
-          getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,(ch-1));
-          UpdateName(date); 
-          updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
-        }
-      }
-    }
-    else if(ch == 2 || ch == 3)
-    {
-      if(ch == 2)
-      {
-        if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","FACULTY E-MAIL",ch))
-        {
-          getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,ch);
-          UpdateEmail(date);
-          updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
-        }
-      }  
-      else
-      {
-        if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","H.O.D E-MAIL",(ch+1)))
-        {
-          getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,(ch+1));
-          UpdateEmail(date);
-          updateUser(AMS_Path + "\\USER-INFO\\userdetails.txt");
-        }
-      }
-    }
-  }
-
 
   void facDetailModChoice() 
   {
@@ -6103,23 +6413,23 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
   {   
     if(choice == 1)
     {
-      if(singleConfirmation(command , "FACULTY NAME  :  ",choice))
+      if(singleConfirmation(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt" , "FACULTY NAME  :  ",choice))
       {
         FacultyName.clear();
         student_name.clear();
         time.clear();
         date.clear();
-        getDataFromFile(command,time,1);
+        getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",time,1);
         UpdateName(date);
         updateUser(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",2);
       }   
     }
     else
     {
-      if(singleConfirmation(command , "FACULTY E-MAIL",choice))
+      if(singleConfirmation(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt" , "FACULTY E-MAIL",choice))
       {
         
-        getDataFromFile(command,time,2);
+        getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",time,2);
         UpdateEmail(date);
         updateUser(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",2);
 
@@ -6192,6 +6502,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
     }
   }
+  
   
   public:
 
