@@ -221,7 +221,7 @@ public:
     }
   }
 
-  void scrClr(float i = 0.0) //?for clearing screen afer particular time
+  void scrClr(float i = 0.0) //?for clearing screen after particular time
   {
     // by default set to zero with default arguements
     sleep(i);      //  going in sleep mode for particular time
@@ -230,7 +230,7 @@ public:
 
   void startApp() //? start Application
   {
-    if (MODULE_CHOICE == 0) //* only 1 time initiaization function need to be called after then just we need ro refresh home screen
+    if (MODULE_CHOICE == 0) //* only 1 time initiaization function need to be called after then just we need to refresh home screen
     {
       initApp(); // init screen first time by opening console in full screen
 
@@ -456,7 +456,7 @@ bool makeDesktopPath_AMS()
 
 protected:
 
-  string CUR_DATE, CUR_TIME; //*CURRENT DATE TIME FOR APPLICATION
+  string CUR_DATE, CUR_TIME; //* CURRENT DATE TIME FOR APPLICATION
   int ConvertChoiceToINT;    //* INTEGER CONVERT VARIABLE FOR INPUT FOR APPLICATION
   string AMS_Path;           //* DATABASE PATH
   string tempStorage;        //* TEMPORARY STORAGE FOR APPLICATION VARIABLE
@@ -1324,15 +1324,16 @@ public:
     return (ConvertChoiceToINT); // return confirmation for taking attendace
   }
 
-  int proceedFurther(int i) //? confirmation  step
+  int proceedFurther(int i)   //? confirmation  step
   {
     int line = 0;
-  reinputforattendanceTakeOption:
+    reinputforattendanceTakeOption:
     scrClr(0.5);
     line = 0;
     command.clear();
-    command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt"; // making path to access faculty file
-    getDataFromFile(command, FacultyEmail, 2);                             // it will be needed later when sending email
+    command = SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt"; // forming path to fetch details from faculty file
+    getDataFromFile(command, FacultyEmail, 2);  
+                               
     // BOX-UI FOR Details confirmation
     setCursorPos(1, 7);
     buildVerticalWall(65);
@@ -1343,7 +1344,7 @@ public:
         setCursorPos(1, 7);
         if (line == 1)
         {
-          getDataFromFile(command, FacultyName, 1); // getting facultyname
+          getDataFromFile(command, FacultyName, 1); 
           buildHorizontalWall(65, "FACULTY NAME         :  " + FacultyName);
         }
         else if (line == 3)
@@ -1364,7 +1365,7 @@ public:
         }
         else if (line == 11)
         {
-          getDataFromFile(command, numberOfstudents, 6); // getting number of students
+          getDataFromFile(command, numberOfstudents, 6); 
           buildHorizontalWall(65, "NUMBER OF STUDENTS   :  " + numberOfstudents);
         }
         else
@@ -1379,7 +1380,7 @@ public:
           setCursorPos(1, 7);
           if (line == 1)
           {
-            getDataFromFile(command, FacultyName, 1); // getting facultyname
+            getDataFromFile(command, FacultyName, 1); 
             buildHorizontalWall(65, "FACULTY NAME         :  " + FacultyName);
           }
           else if (line == 3)
@@ -1396,7 +1397,7 @@ public:
           }
           else if (line == 9)
           {
-              getDataFromFile(command, numberOfstudents, 6); // getting number of students
+              getDataFromFile(command, numberOfstudents, 6); 
               buildHorizontalWall(65, "NUMBER OF STUDENTS   :  " + numberOfstudents);
           }
           else
@@ -1419,8 +1420,8 @@ public:
     getline(cin, tempStorage);
     cin.clear();
     ShowConsoleCursor(false);
-    ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
-    if (ConvertChoiceToINT == -1) // validate input
+    ConvertChoiceToINT = validateString(tempStorage); // input validated using the function
+    if (ConvertChoiceToINT == -1) 
     {
       InvalidInputErr();
       goto reinputforattendanceTakeOption;
@@ -1431,7 +1432,7 @@ public:
 
 
 protected:
-  virtual void SetNoObj() = 0; //*WE MAKE THIS CLASS AS PURE VIRTUAL SO  OBJECT OF THIS CLASS CAN'T NOT BE CREATED IN MAIN()
+  virtual void SetNoObj() = 0; //* THIS CLASS IS SET PURE VIRTUAL SO, OBJECT OF THIS CLASS WON'T BE CREATED IN MAIN()
 
   //********** MODULE_GENERAL *************/
 
@@ -1460,7 +1461,6 @@ protected:
 
   //*********** USER-HOD ***************/  
 
-  string HodName;
   string HodEmail;
   string department_name;
   string joining_year;
@@ -3119,109 +3119,6 @@ private:
     }
   }
 
-  /*string lastlineOfATTRecords() //? get last line of file  for attendance proccedure
-  {
-    ifstream fin;//create file object
-    string lastLine;
-    command.clear();
-    command = SemPath + "\\DAILY-RECORD\\records.txt";//path stored in command variable
-    fin.open(command.c_str());//file opened
-    if(fin.is_open())//if file is opened
-    {
-      fin.seekg(-1, ios_base::end); // go to one position before the EOF
-      bool keepLooping = true;
-      while(keepLooping)
-      {
-        char ch;
-        fin.get(ch); // Get current byte's data
-        if((int)fin.tellg() <= 1)
-        {                      // If the data was at or before the 0th byte
-          fin.seekg(0);        // The first line is the last line
-          keepLooping = false; // So stop there
-        }
-        else if (ch == '\n')
-        {                      // If the data was a newline
-          keepLooping = false; // Stop at the current position.
-        }
-        else
-        {                               // If the data was neither a newline nor at the 0 byte
-          fin.seekg(-2, ios_base::cur); // Move to the front of that data, then to the front of the previous data
-        }
-      }
-      getline(fin, lastLine); // Read the current line
-      fin.close();//file close
-    }
-    else
-    {
-      if(!fin.is_open())
-      {
-        scrClr();
-        setCursorPos(9,28);
-        cout << "DATA BASE-ERROR : 404 ";//error
-        scrClr(2);
-        exit(1);
-      }
-    }
-    return lastLine;//return value
-  }
-  */
-
-  /*  //! EOP() seek.review(*required) there is no use of it : ALL AMS TEAM
-  void lastlineDlt() //? delete the last line of file
-  {
-    string line;
-    vector<string> lines;
-
-    command.clear();
-    command = SemPath + "\\DAILY-RECORD\\records.txt"; //variable re-use
-    ifstream inputStream(command.c_str());//read file
-
-    if(!inputStream.is_open())
-    {
-      setCursorPos(9,28);
-      cout << "DATA BASE-ERROR : 404 ";//error
-      scrClr(2);
-      exit(1);
-    }
-
-    while(getline(inputStream, line))//read line from file
-    {
-      lines.push_back(line);
-    }
-
-    inputStream.close();//file close
-    command.clear();//variable clear for re-use
-
-    command = SemPath + "\\DAILY-RECORD\\records.txt";//again path stored in comm
-    std::fstream outputStream(command.c_str(), ios::out | ios::trunc);//file open in writing mode
-
-    if(outputStream.is_open())//if file is open
-    {
-      for(int i = 0; i < lines.size() - 1; i++)//read line from file
-      {
-        outputStream << lines[i] << "\n";//put in file
-      }
-      outputStream.close();//file close
-    }
-  }*/
-
-  /*//! EOP() seek.review(*required) there is no use of it : ALL AMS TEAM
-  int ValidateAttendance(string &input) //?attendance validation to mark either P or A
-  {
-    for(int i = 0; i < input.length(); i++)
-    {
-      input[i] = toupper(input[i]);//input string covert into uppercase
-    }
-    if(input == "P" || input == "A")
-    {
-      return 1;//return true
-    }
-    else
-    {
-      return 0;//return false
-    }
-  }
-  */
   void ListOfAttendance(string &Attendance, int choice) // ? Final List for absent / present student
   {
     int i, spacing_flag = 0, space = 1;
@@ -3507,59 +3404,8 @@ private:
     command = SemPath + "\\DAILY-RECORD\\records.txt"; // making path for file handling
     string temp;
 
-    //! EOP() seek.edit(*required) @DRASHTI DHOLA
-
-    /* FOR BELOW MENTIONED CODE PART WE HAVE READYMATE FUNCTION AVAILABLE
-    checkEmptyFile()  */
-    //?can we use it
-
-    //!-----------------------------------------------------------/
-    // ifstream finin(command.c_str(), ios::binary);         // FILE OPENED
-
-    // if(!finin.is_open())
-    //{
-    //  scrClr();
-    //  setCursorPos(9,28);
-    //  cout << "DATA BASE-ERROR : 404 ";//error
-    //  scrClr(2);
-    //  exit(1);
-    //}
-
-    // finin.seekg(0,ios::end);
-    // sz = finin.tellg();//check file size
-    // finin.close();//file closed
-
-    //!-----------------------------------------------------------/
-
-    //! EOP() seek.edit(*required) :DRASHTI DHOLA
-    /* we have ready mate functions here writeDataToFile()
-    which opens file in append mode so why not to use that */
-    //? review it
-    //!-----------------------------------------------------------/
-    // fstream finout(command.c_str(), ios::app);
-
-    // if(!finout.is_open())
-    // {
-    // scrClr();
-    // setCursorPos(9,26);
-    // cout << "DATA BASE-ERROR : 203/204 ";
-    // scrClr(2);
-    // exit(1);
-    // }
-    //!-----------------------------------------------------------/
     temp = CUR_DATE + "|" + CUR_TIME + "|" + Attendance;
     writeDataToFile(command, temp);
-
-    // if(!checkEmptyFile(command)) // first time write data into database for each course-sem-semester
-    // {
-    // finout << CUR_DATE + "|" + CUR_TIME + "|" + Attendance;    // write data to file
-    // }
-    // else
-    // {
-    //  finout <<"\n" + CUR_DATE + "|" + CUR_TIME + "|" + Attendance;
-    // }
-
-    // finout.close();  // file closed
   }
 
   int MarkAP_A(int choice) //? function to mark all students present/absent at once
@@ -4411,7 +4257,7 @@ private:
     return (flag);
   }
 
-  void makeDateReport() //?make Date Wise Report
+  void makeDateReport() //? make the corresponding Date Wise Report
   {
     command.clear();
     tempStorage.clear();
@@ -4451,7 +4297,7 @@ private:
       found_pos = tempStorage.find("|");
       scrClr();
 
-      student_name = tempStorage.substr((found_pos + 1), (tempStorage.find("|", (found_pos + 1)) - (found_pos + 1))); // time re used as student name
+      student_name = tempStorage.substr((found_pos + 1), (tempStorage.find("|", (found_pos + 1)) - (found_pos + 1))); 
 
       command = SemPath + "\\REPORTS\\stud_name.txt";
       writeDataToFile(command, student_name);
@@ -4474,7 +4320,7 @@ private:
     command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
     command += "pdf.image('" + DoubleBackslashPath(AMS_Path) + "\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
     getDataFromFile(fac_data, tempStorage, 1);
-    command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='L')\npdf.ln(0.3)\n"; // Attendance take on : date & time
+    command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='L')\npdf.ln(0.3)\n"; // Attendance taken on : date & time
     tempStorage.clear();
     getDataFromFile(fac_data, tempStorage, 2);
     command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='L')\npdf.ln(0.3)\n"; // Faculty Name
@@ -4491,7 +4337,7 @@ private:
     getDataFromFile(fac_data, tempStorage, 6);
     command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='C')\n"; // Attendance Data Title
 
-    /*Making 2D array for tabuler Data*/
+    /*Making 2D array for tabular Data*/
 
     command += "data = [['ROLL NO.','NAME','ATTENDANCE']";
     getDataFromFile(stud_att, temp, 1);
@@ -4511,7 +4357,7 @@ private:
     }
     command += "]\n";
 
-    /*2D Array Done*/
+    /*2D Array ended */
 
     command += "pdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\nth = pdf.font_size\ncol_width = (epw-4)/2\npdf.ln(0.3)\n";
     command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\n";
@@ -4520,8 +4366,8 @@ private:
     command += pdf_name + "','F')\n";
 
     temp.clear();
-    temp = AMS_Path + "\\OTHER\\DWR.py"; // make python path
-    writeDataToFile(temp, command);      // write all data in python file
+    temp = AMS_Path + "\\OTHER\\DWR.py"; // form python path
+    writeDataToFile(temp, command);      // write all the data in python file
 
     command.clear();
     command = "python " + AMS_Path + "\\OTHER\\DWR.py" + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";
@@ -4544,7 +4390,7 @@ private:
     remove(stud_name.c_str()); // delete stud_name file
     remove(stud_att.c_str());  // delete stud_att file
 
-    tempStorage.clear(); // clear for re-using
+    tempStorage.clear(); // clear for reusability
     command.clear();
 
     return (flag);
@@ -4570,7 +4416,7 @@ private:
       command.clear();
       command = SemPath + "\\REPORTS";
 
-      date.clear(); // clear for re-us
+      date.clear(); // clear for reusability
       date = tempStorage.substr(0, 10);
       writeDataToFile(command + "\\stud_date.txt", date);
 
@@ -4627,7 +4473,7 @@ private:
     tempStorage = "7) SUBJECT NAME : " + subject_name;
     writeDataToFile(command, tempStorage);
 
-    if (totalDay >= count) // double ensurity
+    if (totalDay >= count) // double assurity
       per = double((count * 100) / totalDay);
     else
       per = 0.00;
@@ -4680,7 +4526,7 @@ private:
     command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='L')\npdf.ln(0.5)\n\n"; // current attendance percentage
     tempStorage.clear();
     getDataFromFile(stud_data, tempStorage, 9);
-    command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='C')\n"; //-:Attendace data :-
+    command += "pdf.cell(epw,0.0,'" + tempStorage + "', align='C')\n"; // Attendance data 
 
     /*Making 2D array of tabuler data*/
     command += "data = [['DATE','TIME','ATTENDANCE']";
@@ -4709,7 +4555,6 @@ private:
 
     command.clear();
     command = "python " + AMS_Path + "\\OTHER\\SWR.py" + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";
-    ;
 
     system(command.c_str()); // run python file
 
@@ -4717,7 +4562,7 @@ private:
     remove(command.c_str()); // delete python file
 
     command.clear();
-    command = AMS_Path + "\\OTHER\\output.txt"; // error file size get
+    command = AMS_Path + "\\OTHER\\output.txt"; // to fetch error file size
 
     int err = checkEmptyFile(command);
     if (err)
@@ -4746,106 +4591,109 @@ private:
       command = AMS_Path+"\\OTHER\\6MR.py"; // make python path
       fstream write(command.c_str(),ios::out);
 
-      if(!write.is_open()) // if file  not opened
+      if(!write.is_open()) // if file not opened
       {   
         scrClr();
         setCursorPos(9, 28);
-        cout << "DATA BASE-ERROR-201-204! ";//error 
+        cout << "DATA BASE-ERROR-201-204! "; 
         scrClr(2);
         exit(1);
       }
       else
       {
-            command.clear();
-            command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
-            command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
-            getDataFromFile(BasicDetails,tempStorage,1);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,2);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Joining Year
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,3);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Department Name
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,4);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course name
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,5);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,6);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Subject Name
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,7);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Number of student
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,8);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Report type
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,9);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Records
-            tempStorage.clear();
-            getDataFromFile(BasicDetails,tempStorage,10);
-            command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='C')\npdf.ln(0.3)\n";//Attendance
-            command += "data = [['ROLL NO.','NAME','ATTENDANCE']";
-            for(int i=1;i<=countLinesOfFile(Name);i++)
-            {
-                command += ",['" + to_string(i) + "',"; 
-                tempStorage.clear();
-                getDataFromFile(Name,tempStorage,i);
-                command += "'" + tempStorage + "',";
-                PresentCount = 0;
-                for(int k=1;k<=(countLinesOfFile(Attendance));k++)
-                {
-                    tempStorage.clear();
-                    getDataFromFile(Attendance,tempStorage,k);
-     
-                     if(tempStorage[19+i] == 'P')
-                         PresentCount++;
-                 }
-                 stringstream stream;
-                 stream << fixed << setprecision(2) << (float(100 *  PresentCount)/countLinesOfFile(Attendance));
-                 string temp = stream.str();
-                 command += "'"+temp+"%'";
-                 command+= "]";
-             }
-             command += "]\n";
-             command += "th = pdf.font_size\ncol_width = (epw-4)/2\npdf.ln(0.3)\n";
-             command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\npdf.ln(2)";
-             command += "\nLine = \"_\"\nfor i in range(int(pdf.w-pdf.l_margin)):\n\tfor j in range(10):\n\t\tLine+=\"_\" ";
-             command += "\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line, align='C')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line,align='C')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('"+DoubleBackslashPath(SemPath) +"\\\\REPORTS\\\\";
-             command +=  pdf_name + "','F')\n";
-             tempStorage.clear();
-             tempStorage = AMS_Path+"\\OTHER\\6MR.py";   // make python File
-             writeDataToFile(tempStorage,command);
-             command.clear();
-        
-        
-             remove(command.c_str());
-             command = "python " + AMS_Path+"\\OTHER\\6MR.py";  
-             system(command.c_str());//run python file
-             
-             command = AMS_Path + "\\OTHER\\output.txt"; //error file size get
-                 
-             int err = checkEmptyFile(command);
-             if(err)
-             flag=false;
-             else
-             flag=true;
-     
-             command = AMS_Path+"\\OTHER\\6MR.py"; 
-             remove(command.c_str()); //delete python file
-             remove(BasicDetails.c_str());//delete fec_data file
-             remove(Name.c_str());//delete stud_name file
-             remove(Attendance.c_str());//delete stud_att file
-             return flag;
-     
-     } 
+        command.clear();
+        command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
+        command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
+        getDataFromFile(BasicDetails,tempStorage,1);
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Name
+        tempStorage.clear();
+        getDataFromFile(BasicDetails,tempStorage,2);
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Faculty Joining Year
+        tempStorage.clear();
+        getDataFromFile(BasicDetails,tempStorage,3);
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Department Name
+        tempStorage.clear();
+        getDataFromFile(BasicDetails,tempStorage,4);
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Course name
+        tempStorage.clear();
+        getDataFromFile(BasicDetails,tempStorage,5);
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Semester
+        tempStorage.clear();
+        getDataFromFile(BasicDetails,tempStorage,6);
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Subject Name
+        tempStorage.clear();
+        getDataFromFile(BasicDetails,tempStorage,7);
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Number of student
+        tempStorage.clear();
+        getDataFromFile(BasicDetails,tempStorage,8);
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Report type
+        tempStorage.clear();
+        getDataFromFile(BasicDetails,tempStorage,9);
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Records
+        tempStorage.clear();
+        getDataFromFile(BasicDetails,tempStorage,10);
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='C')\npdf.ln(0.3)\n";//Attendance
+        command += "data = [['ROLL NO.','NAME','ATTENDANCE']";
+        for(int i=1;i<=countLinesOfFile(Name);i++)
+        {
+          command += ",['" + to_string(i) + "',"; 
+          tempStorage.clear();
+          getDataFromFile(Name,tempStorage,i);
+          command += "'" + tempStorage + "',";
+          PresentCount = 0;
+          for(int k=1;k<=(countLinesOfFile(Attendance));k++)
+          {
+              tempStorage.clear();
+              getDataFromFile(Attendance,tempStorage,k);
+
+               if(tempStorage[19+i] == 'P')
+                   PresentCount++;
+          }
+          stringstream stream;
+          stream << fixed << setprecision(2) << (float(100 *  PresentCount)/countLinesOfFile(Attendance));
+          string temp = stream.str();
+          command += "'"+temp+"%'";
+          command+= "]";
          
+          command += "]\n";
+          command += "th = pdf.font_size\ncol_width = (epw-4)/2\npdf.ln(0.3)\n";
+          command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\npdf.ln(2)";
+          command += "\nLine = \"_\"\nfor i in range(int(pdf.w-pdf.l_margin)):\n\tfor j in range(10):\n\t\tLine+=\"_\" ";
+          command += "\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line, align='C')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line,align='C')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('"+DoubleBackslashPath(SemPath) +"\\\\REPORTS\\\\";
+          command +=  pdf_name + "','F')\n";
+          tempStorage.clear();
+          tempStorage = AMS_Path+"\\OTHER\\6MR.py";   // make python File
+          writeDataToFile(tempStorage,command);
+          
+          command.clear();
+          command = "python " + AMS_Path + "\\OTHER\\6MR.py" + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";  
+          system(command.c_str());//run python file
+          
+          command.clear();
+          command = AMS_Path + "\\OTHER\\output.txt"; // to fetch error file size 
+             
+          int err = checkEmptyFile(command);
+          if(err)
+          flag=false;
+          else
+          flag=true;
+          remove(command.c_str()); 
+          
+          command.clear();
+          command = AMS_Path+"\\OTHER\\6MR.py"; 
+          remove(command.c_str());   //delete python file
+          remove(BasicDetails.c_str());  //delete basic_details file
+          remove(Name.c_str());  //delete stud_name file
+          remove(Attendance.c_str());  //delete stud_att file
+          
+     
+        } 
+         
+      }
+      return flag;
   }
 
-  void semsterReportGenerating()   //? semiannnual report generating
+  void semesterReportGenerating()   //? generation of semester-wise report   
   {
     tempStorage.clear();
     string temp;
@@ -4856,7 +4704,7 @@ private:
     do
     {
       scrClr(0.5);
-      setCursorPos(9, 14);
+      setCursorPos(9, 16);
       SetColor(2);
       cout << temp;
       SetColor(0);
@@ -4880,29 +4728,29 @@ private:
 
   void makeSemesterReport()
   {
-    HodName.clear();
-    HodEmail.clear();
-
+  
     tempStorage.clear();
 
     command.clear();
-    command = SemPath + "\\REPORTS\\fac_data.txt";
+    command = SemPath + "\\REPORTS\\basic_details.txt";
     tempStorage = "1) FACULTY NAME : " + FacultyName;
-    writeDataToFile(command, tempStorage);
+    writeDataToFile(command,tempStorage);
     
     command.clear();
-    command = SemPath + "\\LOG-INFO\\userdetails.txt";
-    getDataFromFile(command,HodName,5);
-    tempStorage = "2) FACULTY JOINING YEAR : " + HodName ; // re used as  join_year
-    command = SemPath + "\\REPORTS\\fac_data.txt";
+    command = AMS_Path + "\\USER-INFO\\userdetails.txt";
+    getDataFromFile(command,department_name,3);
+    getDataFromFile(command,HodEmail,4);
+    getDataFromFile(command,joining_year,5);
+
+    tempStorage = "2) FACULTY JOINING YEAR : " + joining_year ; // re used as  join_year
+    command.clear();
+    command = SemPath + "\\REPORTS\\basic_details.txt";
     writeDataToFile(command, tempStorage);
     
-    command.clear();
-    command = SemPath + "\\LOG-INFO\\userdetails.txt";   
-    getDataFromFile(command,HodEmail,3);
-    tempStorage = "3) DEPARTMENT NAME : " + HodEmail ; // re used as  department_name
-    command = SemPath + "\\REPORTS\\fac_data.txt";
-    writeDataToFile(command, tempStorage);  
+    tempStorage.clear();
+    tempStorage = "3) DEPARTMENT NAME : " + department_name ; // re used as department_name
+    command = SemPath + "\\REPORTS\\basic_details.txt";
+    writeDataToFile(command,tempStorage);  
 
     tempStorage.clear();
     tempStorage = "4) COURSE NAME  : " + course_name;
@@ -4924,16 +4772,18 @@ private:
     tempStorage = "8) REPORT TYPE : SEMI ANNUAL ";
     writeDataToFile(command, tempStorage);
 
-    tempStorage.clear();
-    HodName.clear(); // re used as  first  date
-    HodEmail.clear(); // re used as  last date
-    command.clear();
+    date.clear();
+    time.clear();
     command = SemPath + "\\DAILY-RECORD\\records.txt";  
-    getDataFromFile(command,HodName,1);
-    getDataFromFile(command,HodEmail,(countLinesOfFile(command))); 
+    getDataFromFile(command,date,1);
+    date = date.substr(0,date.find("|"));
+    getDataFromFile(command,time,(countLinesOfFile(command)));  // time as last date
+    time = time.substr(0,time.find("|"));
     
-    tempStorage = "9) REPORT DURATION : " + HodName + "  -  "+HodEmail;
-    command = SemPath + "\\REPORTS\\fac_data.txt";
+    tempStorage.clear();
+    command.clear();
+    tempStorage = "9) REPORT DURATION : " + date + "  -  " + time;
+    command = SemPath + "\\REPORTS\\basic_details.txt";
     writeDataToFile(command, tempStorage);
 
     tempStorage.clear();
@@ -4965,13 +4815,13 @@ private:
 
     tempStorage.clear();
     j = 1;
-    command = SemPath + "\\DAILY-RECORD\\records.txt"; // path stored in command var
+    command = SemPath + "\\DAILY-RECORD\\records.txt"; // path stored in command variable
     line = countLinesOfFile(command);
     while (j <= line)
     {
       tempStorage.clear();
       command.clear();
-      command = SemPath + "\\DAILY-RECORD\\records.txt"; // path stored in command var
+      command = SemPath + "\\DAILY-RECORD\\records.txt"; // path stored in command variable
       getDataFromFile(command, tempStorage, j);
       command.clear();
       command = SemPath + "\\REPORTS\\stud_att.txt";
@@ -5034,22 +4884,24 @@ public:
         getDataFromFile(SemPath+"\\DAILY-RECORD\\records.txt",date,1);
         getDataFromFile(SemPath+"\\DAILY-RECORD\\records.txt",time,countLinesOfFile(SemPath+"\\DAILY-RECORD\\records.txt"));
         
-        date = date.substr(0,10); //re-used as date of starting
-        time = time.substr(0,10); // re -used at date of semester ending
+        date = date.substr(0,10); //re-used as beginning date
+        time = time.substr(0,10); // re-used as semester termination date
     
-          if(confirmSemReport(date,time)) // basic confirmation of end of semester
+          if(confirmSemReport(date,time)) // basic confirmation of semester end
           {
-                 semsterReportGenerating();
+                 semesterReportGenerating();
                  makeSemesterReport(); 
-                 pdfName += "AMS_REPORT "  + date + " "+ time + " " + course_name + "_SEM_" + sem + "_" + subject_name;
+                 pdfName += "AMS_REPORT "  + date + "__"+ time + " " + course_name + "_SEM_" + sem + "_" + subject_name;
                  replaceWithHyphen(pdfName);
                  pdfName += ".pdf";
                 
                  if(createSemesterReportPDF(SemPath + "\\REPORTS\\basic_details.txt", SemPath + "\\REPORTS\\stud_name.txt", SemPath + "\\REPORTS\\stud_att.txt", pdfName))
                  {   
+                   
                      tempStorage.clear();
                      if (MailTo("WOULD YOU LIKE TO SEND THIS REPORT TO H.O.D. ALSO ? ",14))
-                     { 
+                     {  
+                        
                         command.clear();
                         command = AMS_Path + "\\USER-INFO\\userdetails.txt";
                         getDataFromFile(command,HodEmail,4);
@@ -5065,22 +4917,22 @@ public:
                      MODULE_2 MD2;
                      thread t1(&sendToEmail, MD2, "ams.software.team@gmail.com", "Amsisrich@45",tempStorage, "SEMESTER ATTENDANCE REPORT", "Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your Semester Attendance Report.\n\nThank You.\n\n", SemPath + "\\REPORTS\\" + pdfName, pdfName);
                      thread t2(&LoadingProcess, MD2);
-                     t1.join(); // join the thread
-                     t2.join(); // join the thread
-                     scrClr(); // by clearing screen it resolves flickring error of screen...
+                     t1.join(); 
+                     t2.join(); 
+                     scrClr(); 
                      if(process_flag && email_flag)
                      {
                          Beep(1950, 500);
-                         reportSentSuccessfully(pdfName);   // sent email successfully with attachment
+                         reportSentSuccessfully(pdfName);  
                      }
                      else
                      {
-                         warnMsg("REPORT COULDN'T BE SENT !", 4, 26, "ERROR CODE : 404/444/599 ", 1, 26); // error while sending email                                   // resetting
+                         warnMsg("REPORT COULDN'T BE SENT !", 4, 26, "ERROR CODE : 404/444/599 ", 1, 26);                                  
                      }
                  }
                  else
                  {
-                     warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26); // error while sending email
+                     warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26); 
                  }
                  command.clear();
                  tempStorage.clear();
@@ -5089,14 +4941,14 @@ public:
     }
     else
     {
-      warnMsg("NO RECORDS EXISTS ! KINDLY TAKE ATTENDANCE FIRST", 2, 19); // warn msg
+      warnMsg("NO RECORDS EXISTS ! KINDLY TAKE ATTENDANCE FIRST", 2, 19); 
     }
 
    tempStorage.clear();
    command.clear();
   } 
 
-  void askReportChoice() // ? report type select choice
+  void askReportChoice() // ? choice to select report type
   {
     int line;
     reask_report:
@@ -5147,14 +4999,14 @@ public:
     }
   }
 
-  void DateWiseReport() //? DateWise report create method
+  void DateWiseReport()   //? Method to create DateWise report 
   {
     if(checkEmptyFile(SemPath + "\\DAILY-RECORD\\records.txt"))
     {
         if (DateInput())
         {
     
-            makeDateReport(); // make Report of that date
+            makeDateReport(); // make Report of the corresponding date
             pdfName += "AMS_REPORT_" + course_name + "_SEM_" + sem + "_" + subject_name + "_" + date;
             replaceWithHyphen(pdfName);
             pdfName += ".pdf";
@@ -5167,30 +5019,30 @@ public:
               thread t1(&sendToEmail, MD3, "ams.software.team@gmail.com", "Amsisrich@45", FacultyEmail, "CUSTOMIZE-ATTENDANCE-REPORT", "Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your Customized Attendance Report.\n\nThank You.\n\n", SemPath + "\\REPORTS\\" + pdfName, pdfName);
               thread t2(&LoadingProcess, MD3);
       
-              t1.join(); // join the thread
-              t2.join(); // join the thread
+              t1.join();    //  used to join the threads
+              t2.join();   //  used to join the threads
       
-              scrClr(); // by clearing screen it resolves flickring error of screen...
+              scrClr();
       
               if (process_flag && email_flag)
               { 
                 Beep(1950,500);
-                reportSentSuccessfully(pdfName); // sent email successfully with attachment
+                reportSentSuccessfully(pdfName); 
               }
               else
               {
-                warnMsg("REPORT COULDN'T BE SENT !", 4, 26, "ERROR CODE : 404/444/599 ", 1, 26); // error while sending email
+                warnMsg("REPORT COULDN'T BE SENT !", 4, 26, "ERROR CODE : 404/444/599 ", 1, 26); 
               }
             }
             else
             {
-              warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26); // error while sending email
+              warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26); 
             }
         }
     }
     else
     {
-      warnMsg("NO RECORDS EXISTS ! KINDLY TAKE ATTENDANCE FIRST", 2, 19); // warn msg
+      warnMsg("NO RECORDS EXISTS ! KINDLY TAKE ATTENDANCE FIRST", 2, 19); 
     }
 
   }
@@ -5205,7 +5057,7 @@ public:
         {
           if (studConfirmation(1))
           {
-            makeStudentReport(); // make Report of that date
+            makeStudentReport(); 
 
             pdfName += "AMS_REPORT_" + course_name + "_SEM_" + sem + "_" + subject_name + "_Roll_No_" + RoLLNo;
             replaceWithHyphen(pdfName);
@@ -5224,30 +5076,31 @@ public:
                 tempStorage = FacultyEmail;
                 student_email.clear();
               }
-              //*threading used for  processing email part
+
+              //* threading used for  processing email part
 
               MODULE_3 MD3;
               thread t1(&sendToEmail, MD3, "ams.software.team@gmail.com", "Amsisrich@45", tempStorage, "CUSTOMIZE-ATTENDANCE-REPORT", "Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your Customized Attendance Report.\n\nThank You.\n\n", SemPath + "\\REPORTS\\" + pdfName, pdfName);
               thread t2(&LoadingProcess, MD3);
 
-              t1.join(); // join the thread
-              t2.join(); // join the thread
+              t1.join(); 
+              t2.join(); 
 
-              scrClr(); // by clearing screen it resolves flickring error of screen...
+              scrClr(); 
 
               if (process_flag && email_flag)
               {  
                 Beep(1950,500); 
-                reportSentSuccessfully(pdfName, student_email); // sent email successfully with attachment
+                reportSentSuccessfully(pdfName, student_email); 
               }
               else
               {
-                warnMsg("REPORT COULDN'T BE SENT !", 4, 26, "ERROR CODE : 404/444/599 ", 1, 26); // error while sending email
+                warnMsg("REPORT COULDN'T BE SENT !", 4, 26, "ERROR CODE : 404/444/599 ", 1, 26); 
               }
             }
             else
             {
-              warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26); // error while sending email
+              warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26); 
             }
           }
         }
@@ -5255,7 +5108,7 @@ public:
         {
           if (studConfirmation())
           {
-            makeStudentReport(); // make Report of that date
+            makeStudentReport(); 
 
             pdfName += "AMS_REPORT_" + course_name + "_SEM_" + sem + "_" + subject_name + "_Roll_No_" + RoLLNo;
             replaceWithHyphen(pdfName);
@@ -5281,24 +5134,24 @@ public:
               thread t1(&sendToEmail, MD3, "ams.software.team@gmail.com", "Amsisrich@45", tempStorage, "CUSTOMIZE-ATTENDANCE-REPORT", "Dear Sir/Madam, \nGreetings From Team AMS. \n\nKindly Go throgh Your Customized Attendance Report.\n\nThank You.\n\n", SemPath + "\\REPORTS\\" + pdfName, pdfName);
               thread t2(&LoadingProcess, MD3);
 
-              t1.join(); // join the thread
-              t2.join(); // join the thread
+              t1.join(); 
+              t2.join(); 
 
-              scrClr(); // by clearing screen it resolves flickring error of screen...
+              scrClr(); 
 
               if (process_flag && email_flag)
               { 
                 Beep(1950,500);
-                reportSentSuccessfully(pdfName, student_email); // sent email successfully with attachment
+                reportSentSuccessfully(pdfName, student_email); 
               }
               else
               {
-                warnMsg("REPORT COULDN'T BE SENT !", 4, 26, "ERROR CODE : 404/444/599 ", 1, 26); // error while sending email
+                warnMsg("REPORT COULDN'T BE SENT !", 4, 26, "ERROR CODE : 404/444/599 ", 1, 26); 
               }
             }
             else
             {
-              warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26); // error while sending email
+              warnMsg("PDF REPORT COULDN'T BE GENERATED !", 4, 22, "ERROR CODE : 404/417/424 ", 1, 26);
             }
           }
         }
@@ -5306,7 +5159,7 @@ public:
     }
     else
     {
-      warnMsg("NO RECORDS EXISTS ! KINDLY TAKE ATTENDANCE FIRST", 2, 19); // warn msg
+      warnMsg("NO RECORDS EXISTS ! KINDLY TAKE ATTENDANCE FIRST", 2, 19); 
     }
   }
 
@@ -5333,12 +5186,12 @@ protected:
 
 //*---------------------------STATIC DEFINATIONS-MODULE-3------------------------------/
 
-int MODULE_3::CUS_REPORT_CHOICE; // report choice student/datewise
+int MODULE_3::CUS_REPORT_CHOICE; // choice for student/datewise report generation
 
 //-----------------------------------------------------------------------------------/
 
 
-class MODULE_4 : public MODULE_GENERAL //?module 4 class
+class MODULE_4 : public MODULE_GENERAL        //? module 4 class
 {
 
   //*=============================DATA-MEMBERS================================//
@@ -5384,7 +5237,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
           SetColor(4);
           ShowConsoleCursor(false);
           cout << "INCORRECT PASSWORD ! " << endl;
-          scrClr(2); // screen stops so user can read message
+          scrClr(2); // screen pause so user can read the whole message conveniently
           SetColor(0);
           counter_pwd--;
           goto re_input_ams_password;
@@ -5401,13 +5254,13 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       SetColor(4);
       ShowConsoleCursor(false);
       cout << "YOU ARE AN UNAUTHORIZED USER TO MODIFY THIS DATA !!! " << endl;
-      scrClr(2.5); // screen stops so user can read message
+      scrClr(2.5); 
       exit(0);
       return(false);
     }
   }
 
-  string getpass(const char *prompt,unsigned int pos,bool show_asterisk=true) // ?password input as *
+  string getpass(const char *prompt,unsigned int pos,bool show_asterisk=true) // ?   password input as *
   {
         const char BACKSPACE=8;
         const char RETURN=13;
@@ -5495,33 +5348,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
     }
 
-
-  /*
-    tempStorage = AMS_Path + "\\OTHER\\fileout.txt";
-  
-    command.clear();
-    replaceWithHyphen(course_name);
-    
-    command = course_name + "|" + sem + "|" + subject_name + "|" + course_name + "-SEM-" + sem + "-";
-    replaceWithHyphen(subject_name);
-    command = command + subject_name;  
-    for(int i = 1; i <= (countLinesOfFile(path));i++)
-    {
-      getDataFromFile(path,date,i);
-    
-      if(date == command)
-      {
-          date = "";
-      }    
-      if(date != "") 
-      {
-        writeDataToFile(tempStorage,date);
-      }        
-      
-    }
-    remove(path.c_str()); 
-    rename(tempStorage.c_str(),path.c_str());
-    */
    LIST.clear();
    tempStorage.clear();
   }
@@ -5573,7 +5399,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       cin.clear();
   
       ShowConsoleCursor(false);
-      ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value
+      ConvertChoiceToINT = validateString(tempStorage); // validate input; line re used as return value
   
       if (ConvertChoiceToINT == -1) // validate input
       {
@@ -5632,7 +5458,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         getline(cin, tempStorage);
         cin.clear();
         ShowConsoleCursor(false);
-        ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
+        ConvertChoiceToINT = validateString(tempStorage); 
         if (ConvertChoiceToINT == -1)
         {
           InvalidInputErr();
@@ -5648,7 +5474,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         }
     }
 
-    int userConfirmation(int arg)  //? overload version for basic confirmation message box for user after updation
+    int userConfirmation(int arg)  //? overloaded version of basic confirmation msg box for user after updation
     {
   
       reConfirm:
@@ -5718,7 +5544,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       getline(cin, tempStorage);
       cin.clear();
       ShowConsoleCursor(false);
-      ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
+      ConvertChoiceToINT = validateString(tempStorage); 
       if (ConvertChoiceToINT == -1)
       {
         InvalidInputErr();
@@ -5735,7 +5561,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
     }
 
-    int facConfirmation()  //?basic confirmation message for user after updation
+    int facConfirmation()  //?  basic confirmation msg for user after updation
     {
         int line = 0;
       reInputFacConfirm:
@@ -5789,7 +5615,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
           getline(cin, tempStorage);
           cin.clear();
           ShowConsoleCursor(false);
-          ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
+          ConvertChoiceToINT = validateString(tempStorage); 
           if (ConvertChoiceToINT == -1)
           {
             InvalidInputErr();
@@ -5805,7 +5631,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
           }
     }
 
-    int facConfirmation(short int arg) //? overload version for basic confirmation message for user after updation
+    int facConfirmation(short int arg) //? overloaded version of basic confirmation msg for user after updation
     {
   
     reConfirm:
@@ -5816,7 +5642,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       setCursorPos(4, 15);
       cout << "FACULTY NAME " << right << setw(9) << ": " << FacultyName;
       setCursorPos(1, 15);
-      // cout << "FACULTY E-MAIL " << right << setw(7) << ": " << (*i);
+       
       if (FacultyEmail.length() <= 35)
       {
         cout << "FACULTY E-MAIL " << right << setw(7) << ": " << FacultyEmail;
@@ -5856,7 +5682,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         getline(cin, tempStorage);
         cin.clear();
         ShowConsoleCursor(false);
-        ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
+        ConvertChoiceToINT = validateString(tempStorage); 
         if (ConvertChoiceToINT == -1)
         {
           InvalidInputErr();
@@ -5872,11 +5698,11 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         }
     }
 
-    int stdConfirmation() //?basic confirmation message after updation
+    int stdConfirmation() //? basic confirmation message after updation
     {
-      // string & lineRef = LIST.at((stoi(RoLLNo)-1));
+     
         int line = 0;
-      reInputStdConfirm:
+        reInputStdConfirm:
 
         scrClr();
         line = 0;
@@ -5915,7 +5741,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         getline(cin, tempStorage);
         cin.clear();
         ShowConsoleCursor(false);
-        ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
+        ConvertChoiceToINT = validateString(tempStorage); 
         if (ConvertChoiceToINT == -1)
         {
           InvalidInputErr();
@@ -5937,7 +5763,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
     reConfirm:
       scrClr();
-      // BOX-UI FOR STUDENT INFO CONFIRM
+      // BOX-UI FOR STUDENT INFO CONFIRMAT
       setCursorPos(5, 15);
       cout << "STUDENT ROLL NUMBER " << right << setw(4) << ": " << RoLLNo;
       setCursorPos(1, 15);
@@ -5972,13 +5798,13 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       getline(cin, tempStorage);
       cin.clear();
       ShowConsoleCursor(false);
-      ConvertChoiceToINT = validateString(tempStorage); // validate input // line re used as return value storage
-      if (ConvertChoiceToINT == -1) // validate input
+      ConvertChoiceToINT = validateString(tempStorage); 
+      if (ConvertChoiceToINT == -1) 
       {
-        InvalidInputErr(); // error message
+        InvalidInputErr(); 
         goto reConfirm;
       }
-      return (ConvertChoiceToINT); // returns confirmation value yes=1 / no=0
+      return (ConvertChoiceToINT);
     }
 
   int confirmation() //? after sem and course selecting first confirmation box 
@@ -6012,15 +5838,15 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
     // message BOX-UI
 
-    ConvertChoiceToINT = YesNoInput("CONFIRM THESE DETAILS (Yes/No) ", tempStorage); // taking input yes/no
+    ConvertChoiceToINT = YesNoInput("CONFIRM THESE DETAILS (Yes/No) ", tempStorage); 
 
-    if (ConvertChoiceToINT == -1) // validate input
+    if (ConvertChoiceToINT == -1) 
     {
-      InvalidInputErr(); // error message
+      InvalidInputErr(); 
       goto reConfirm;
     }
 
-    return (ConvertChoiceToINT); // returns basic confirmation value yes=1 / no=0
+    return (ConvertChoiceToINT); 
   }
 
   void semDetailModChoice() //? Ask Data Input Choice for semester modification
@@ -6086,7 +5912,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     }
     
   }
-  void userDetailModChoice() //? Ask Data Input Choice for user detail modification
+  void userDetailModChoice() //? Ask Data Input Choice for user details modification
   {
     int line;
     reask_userMod:
@@ -6137,7 +5963,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     
   }
   
-  void update(char mode)  //?generelize function to update user , faculty and student data
+  void update(char mode)  //? generalize function to update user,faculty & student data
   {
 
        bool flag;
@@ -6153,7 +5979,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
                     {
                       scrClr();
                       setCursorPos(9, 26);
-                      cout << "DATABASE-ERROR : 201/204 "; // error
+                      cout << "DATABASE-ERROR : 201/204 "; 
                       scrClr(2);
                       exit(1);
                     }
@@ -6182,7 +6008,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
                   {
                     scrClr();
                     setCursorPos(9, 26);
-                    cout << "DATABASE-ERROR : 201/204 "; // error
+                    cout << "DATABASE-ERROR : 201/204 "; 
                     scrClr(2);
                     exit(1);
                   }
@@ -6211,7 +6037,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
                  if(passwordAuthetication())
                  {
                    command.clear();
-                   date.clear(); // re - used as temp
+                   date.clear(); 
                    time.clear();
                    time = RoLLNo + "|" + student_name + "|" + student_email;
                    command =  SemPath + "\\FAC-STUD-DETAILS\\student-sem-" + sem + ".txt";
@@ -6220,7 +6046,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
                    { 
                      tempStorage.clear();
                      getDataFromFile(command,tempStorage,line);
-                     date = tempStorage; //backup in date
+                     date = tempStorage;   // date backup
                      tempStorage =  tempStorage.substr(0,tempStorage.find("|")); 
                      if(tempStorage==RoLLNo)
                      {
@@ -6236,13 +6062,13 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
                    {
                      scrClr();
                      setCursorPos(9, 26);
-                     cout << "DATABASE-ERROR : 201/204 "; // error
+                     cout << "DATABASE-ERROR : 201/204 ";
                      scrClr(2);
                      exit(1);
                    }
                    else
                    {
-                     for(auto i= buffer.begin(); i != buffer.end();i++) //updated data
+                     for(auto i= buffer.begin(); i != buffer.end();i++) 
                      {
                        write<<(*i)<<endl;
                      }
@@ -6252,159 +6078,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
                  }
               }
        }
-
-
-
-    /*
-    for(int LN = 1; LN <= (countLinesOfFile(path));LN++)
-    {      
-          tempStorage.clear();
-          getDataFromFile(path,tempStorage,LN);
-          if(tempStorage == time)
-          {
-            if(s == 1)
-            {
-              if(e == 1)
-                tempStorage = RoLLNo + "|" + student_name + "|" + date;
-              else
-                tempStorage = RoLLNo + "|" + date + "|" + student_email;
-            }
-            else
-              tempStorage = date;
-          }
-          LIST.push_back(tempStorage);
-    }
-
-      string &lineRef = LIST.at(1);
-      bool noflag;
-      if(s == 0 )
-      {
-        int flag = ( lineRef.length() > 30 || date.length() > 30 ) ? userConfirmation(1) : userConfirmation();
-        
-            if(flag)
-            {
-              if(passwordAuthetication())
-              {
-                ofstream write(path,ios::trunc);
-                if(!write.is_open())
-                {
-                  scrClr();
-                  setCursorPos(9, 26);
-                  cout << "DATABASE-ERROR : 201/204 "; // error
-                  scrClr(2);
-                  exit(1);
-                }
-                else
-                {
-                  for(auto i= LIST.begin(); i != LIST.end();i++) //updated data
-                  {
-                    write<<(*i)<<endl;
-                  }
-                  write.close();
-                  warnMsg("USER DETAILS HAVE BEEN SUCCESSFULLY UPDATED",2,18);
-
-                }
-              }
-            }
-            else
-            {
-              noflag = true;
-            }
-        
-      }
-      else if(s == 2)
-      {
-        int flag = ( date.length()<=30 ) ? facConfirmation() : facConfirmation(1);
-        
-          if(flag)
-          {   
-                if(passwordAuthetication())
-                {
-                  ofstream write(path,ios::trunc);
-                  if(!write.is_open())
-                  {
-                    scrClr();
-                    setCursorPos(9, 26);
-                    cout << "DATABASE-ERROR : 201/204 "; // error
-                    scrClr(2);
-                    exit(1);
-                  }
-                  else
-                  {
-                    for(auto i= LIST.begin(); i != LIST.end();i++) //updated data
-                    {
-                      write<<(*i)<<endl;
-                    }
-                    write.close();
-                    warnMsg("FACULTY DETAILS HAVE BEEN SUCCESSFULLY UPDATED",2,15); 
-                  }
-                } 
-            }
-            else
-            {
-               noflag = true;
-            }
-      }  
-      else if(s == 1 ) 
-      {
-        int flag = ( date.length()<=30 ) ? stdConfirmation() : stdConfirmation(1);
-
-             if(flag)
-             {
-                if(passwordAuthetication())
-                {
-                  ofstream write(path,ios::trunc);
-                  if(!write.is_open())
-                  {
-                    scrClr();
-                    setCursorPos(9, 26);
-                    cout << "DATABASE-ERROR : 201/204 "; // error
-                    scrClr(2);
-                    exit(1);
-                  }
-                  else
-                  {
-                    for(auto i= LIST.begin(); i != LIST.end();i++) //updated data
-                    {
-                      write<<(*i)<<endl;
-                    }
-                    write.close();
-                    warnMsg("STUDENT DETAILS HAVE BEEN SUCCESSFULLY UPDATED",2,15);
-                  }
-                }
-             }
-             else
-             {
-                 noflag = true;
-             }
-      }
-      
-    
-      if(noflag)
-      {
-        ofstream write(path,ios::trunc);
-        for(auto i= LIST.begin(); i != LIST.end();i++)
-        {
-          if(s == 1)
-          {
-            if(e == 1 && (*i) == RoLLNo + "|" + student_name + "|" + date)
-                (*i) = time;
-            else if((*i) == RoLLNo + "|" + date + "|" + student_email)
-              (*i) = time;
-          }
-          else
-          {
-            if((*i) == date)
-            {
-              (*i) = time;
-            }
-          }
-          
-          write<< (*i) <<endl;
-        }
-        
-      }
-    // } */
         
   }
   
@@ -6439,7 +6112,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       {
         if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","FACULTY NAME   :  ",ch))
         {
-          //getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",FacultyName,ch);
           UpdateName(tempStorage,"ENTER FACULTY NAME"); 
           if(!alreadyUpdatedDetail(tempStorage,FacultyName))
           update('A');
@@ -6451,7 +6123,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         
         if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","FACULTY E-MAIL",ch))
         {
-          //getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",FacultyEmail,ch);
           UpdateEmail(tempStorage,"ENTER FACULTY E-MAIL");
           if(!alreadyUpdatedDetail(tempStorage,FacultyEmail))
           update('A');
@@ -6462,7 +6133,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       {
         if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","H.O.D. E-MAIL",(ch+1)))
         {
-          //getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",HodEmail,(ch+1));
+          
           UpdateEmail(tempStorage,"ENTER H.O.D. E-MAIL");
           if(!alreadyUpdatedDetail(tempStorage,HodEmail))
           update('A');
@@ -6473,7 +6144,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       {
         if(singleConfirmation(AMS_Path + "\\USER-INFO\\userdetails.txt","DEPARTMENT NAME   :  ",(ch-1)))
         {
-         // getDataFromFile(AMS_Path + "\\USER-INFO\\userdetails.txt",time,(ch-1));
+         
           UpdateName(tempStorage,"ENTER DEPARTMENT NAME"); 
           if(!alreadyUpdatedDetail(tempStorage,department_name))
           update('A');
@@ -6578,7 +6249,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     return(ConvertChoiceToINT);
   }
 
-  void facDetailModChoice()  //? ask faculty detail updation choice
+  void facDetailModChoice()  //? ask choice to update faculty details 
   {
     int line = 0;
     reask_semMod:
@@ -6626,25 +6297,20 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     {
       case 1:
       {
-        //if(singleConfirmation(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt" , "FACULTY NAME  :  ",choice))
-        //{
-          //getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",time,1);
+        
           UpdateName(tempStorage,"ENTER FACULTY NAME");
           if(!alreadyUpdatedDetail(tempStorage,FacultyName))
           update('B');
-        //}   
+           
         break;
       }
       case 2:
       {
-        //if(singleConfirmation(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt" , "FACULTY E-MAIL",choice))
-        //{
-          
-          //getDataFromFile(SemPath + "\\FAC-STUD-DETAILS\\faculty-sem-" + sem + ".txt",FacultyEmail,2);
+        
           UpdateEmail(tempStorage,"ENTER FACULTY E-MAIL");
           if(!alreadyUpdatedDetail(tempStorage,FacultyEmail))
           update('B');  
-        //}
+     
         break;
       }
       default:
@@ -6703,7 +6369,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
        {
          case 1:
          {
-           //getDataFromFile(command,time,stoi(RoLLNo));    
            UpdateName(tempStorage,"ENTER STUDENT NAME");
            if(!alreadyUpdatedDetail(tempStorage,student_name));
            update('C');
@@ -6711,7 +6376,6 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
          }
          case 2:
          {
-           //getDataFromFile(command,time,stoi(RoLLNo));
            UpdateEmail(tempStorage,"ENTER STUDENT E-MAIL");
            if(!alreadyUpdatedDetail(tempStorage,student_email));
            update('C');
@@ -6846,7 +6510,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
   {
    if(passwordAuthetication())
    {
-       if (confirmDelete()) // confirmation for right choice
+       if (confirmDelete()) 
        {
            removeSetUp();
        }
@@ -6883,13 +6547,11 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
   
   if(flag)
   {
-      //successful code
       tempStorage = course_name + " SEM " + sem + " " + subject_name + ".CSV ";
       warnMsg(tempStorage,2,22, " GENERATED SUCCESSFULLY IN DESKTOP->AMS FOLDER",0, 17); 
   }
   else
   {
-    //already exist code
     tempStorage = course_name + " SEM " + sem + " " + subject_name + ".CSV ";
     warnMsg(tempStorage,2,22, " IS ALREADY EXISTS IN DESKTOP->AMS FOLDER",0, 18); 
   }
@@ -6921,16 +6583,16 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
   
   void SetNoObj()
   {
-    //*empty defination of pure virtual functions , parent class object can't be created
+    //* empty defination of pure virtual functions, parent class object can't be created
   }
    //*=============================MEMBERS-FUNCTION-END================================//
 };
 
 //*---------------------------STATIC DEFINATIONS-MODULE-4------------------------------/
 
-int MODULE_4::MOD_CHOICE; // MODIFICATION OPTION-CHOICE 
+int MODULE_4::MOD_CHOICE; //*  MODIFICATION OPTION-CHOICE 
 
-//-----------------------------------------------------------------------------------/
+//*-----------------------------------------------------------------------------------/
 
 
 
@@ -6947,9 +6609,9 @@ int main(int argc, char *argv[])
   //* jay swaminrayan *//
   //* jay ganeshay namh *//
   //* jay kashtbhanjan dev *//
-  system("cls");
-  if( (!strcmp(argv[1],"JonSnow")) && (argc == 2 ) )
-  {
+  //system("cls");
+  //if( (!strcmp(argv[1],"JonSnow")) && (argc == 2 ) )
+  //{
     APP A;
     bool loop = true; // set true to run app by 1 time
     signal(SIGINT, signal_callback_handler);
@@ -7005,15 +6667,15 @@ int main(int argc, char *argv[])
               case 3:
               {
                 MODULE_3 MD3;
-                if (MD3.checkDB()) // check database
+                if (MD3.checkDB()) 
                 {
-                  MD3.askCourseChoice();  // ask course
-                  MD3.askSemsterChoice(); // ask semester
-                  if(MD3.askSubjectChoice()) // ask subject
+                  MD3.askCourseChoice();  
+                  MD3.askSemsterChoice(); 
+                  if(MD3.askSubjectChoice()) 
                   {
-                    if(MD3.proceedFurther(0)) // confirm taking attendance or Return to Home Screen
+                    if(MD3.proceedFurther(0))     // confirm taking attendance or Return to Home Screen
                     {
-                      MD3.askReportChoice(); // select datewise or studentwise report
+                      MD3.askReportChoice();      // select datewise/studentwise report generation
                       switch(MODULE_3::CUS_REPORT_CHOICE)
                       {
                           case 1:
@@ -7044,7 +6706,7 @@ int main(int argc, char *argv[])
               case 4:
               {
                 MODULE_4 MD4;
-                if(MD4.checkDB()) // check database
+                if(MD4.checkDB()) 
                 {
                       MD4.modDataChoice();
                       switch (MODULE_4::MOD_CHOICE)
@@ -7056,17 +6718,17 @@ int main(int argc, char *argv[])
                              }
                              case 2:
                              {
-                                  MD4.askCourseChoice(); // ask course
-                                  MD4.askSemsterChoice(); // ask semester
-                                  MD4.askSubjectChoice(); // ask subject
+                                  MD4.askCourseChoice(); 
+                                  MD4.askSemsterChoice(); 
+                                  MD4.askSubjectChoice(); 
                                   MD4.deleteSetUp();
                                break;
                              }
                              case 3:
                              { 
-                                  MD4.askCourseChoice(); // ask course
-                                  MD4.askSemsterChoice(); // ask semester
-                                  MD4.askSubjectChoice(); // ask subject
+                                  MD4.askCourseChoice(); 
+                                  MD4.askSemsterChoice(); 
+                                  MD4.askSubjectChoice(); 
                                   MD4.generateCSV();
                                break;
                              }
@@ -7095,6 +6757,6 @@ int main(int argc, char *argv[])
        A.scrClr(); 
   }
 
-  }
+  //}
   return(EXIT_SUCCESS);
 }
