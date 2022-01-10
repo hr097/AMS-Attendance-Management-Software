@@ -6947,9 +6947,9 @@ int main(int argc, char *argv[])
   //* jay swaminrayan *//
   //* jay ganeshay namh *//
   //* jay kashtbhanjan dev *//
-  //system("cls");
-  //if( (!strcmp(argv[1],"JonSnow")) && (argc == 2 ) )
-  //{
+  system("cls");
+  if( (!strcmp(argv[1],"JonSnow")) && (argc == 2 ) )
+  {
     APP A;
     bool loop = true; // set true to run app by 1 time
     signal(SIGINT, signal_callback_handler);
@@ -7095,6 +7095,6 @@ int main(int argc, char *argv[])
        A.scrClr(); 
   }
 
-  //}
+  }
   return(EXIT_SUCCESS);
 }
