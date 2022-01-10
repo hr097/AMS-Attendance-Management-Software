@@ -5583,7 +5583,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       return (ConvertChoiceToINT); // return confirmation
   }
 
-  int userConfirmation()
+  int userConfirmation()    //? basic confirmation message box for user after updation
   {
       int line;
       reAsk:
@@ -5622,8 +5622,8 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         setCursorPos(1, 7);
         buildVerticalWall(65);
         SetColor(1);
-        setCursorPos(3, 23);
-        cout << "DO YOU CONFIRM THESE DETAILS ?";
+        setCursorPos(3, 20);
+        cout << "DO YOU WANT TO UPDATE THESE DETAILS ?";
         SetColor(0);
         setCursorPos(2, 32);
         fflush(stdin);
@@ -5648,7 +5648,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         }
     }
 
-    int userConfirmation(int arg)
+    int userConfirmation(int arg)  //? overload version for basic confirmation message box for user after updation
     {
   
       reConfirm:
@@ -5686,12 +5686,12 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
      
       if (HodEmail.length() <= 35)
       {
-        cout << "H.O.D. EMAIL " << right << setw(10) << ": " << HodEmail;
+        cout << "H.O.D. EMAIL " << right << setw(9) << ": " << HodEmail;
       }
       else
       {
         int l = 0;
-        cout << "H.O.D. EMAIL " << right << setw(10) << ": ";
+        cout << "H.O.D. EMAIL " << right << setw(9) << ": ";
         while (l < HodEmail.length())
         {
           if (l == 35)
@@ -5707,8 +5707,9 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
   
       // message BOX-UI
   
-      setCursorPos(3, 23);
-      cout << "DO YOU CONFIRM THESE DETAILS ?";
+      setCursorPos(3, 20);
+      cout << "DO YOU WANT TO UPDATE THESE DETAILS ?";
+              
       SetColor(0);
       setCursorPos(2, 32);
       fflush(stdin);
@@ -5734,7 +5735,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
     }
 
-    int facConfirmation()
+    int facConfirmation()  //?basic confirmation message for user after updation
     {
         int line = 0;
       reInputFacConfirm:
@@ -5778,8 +5779,8 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
           setCursorPos(1, 7);
           buildVerticalWall(65);
           SetColor(1);
-          setCursorPos(2, 23);
-          cout << "DO YOU CONFIRM THESE DETAILS ?";
+          setCursorPos(2, 20);
+          cout << "DO YOU WANT TO UPDATE THESE DETAILS ?";
           SetColor(0);
           setCursorPos(2, 32);
           fflush(stdin);
@@ -5804,7 +5805,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
           }
     }
 
-    int facConfirmation(short int arg) //?basic confirmation message for user
+    int facConfirmation(short int arg) //? overload version for basic confirmation message for user after updation
     {
   
     reConfirm:
@@ -5845,8 +5846,8 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
   
       // message BOX-UI
   
-        setCursorPos(3, 23);
-        cout << "DO YOU CONFIRM THESE DETAILS ?";
+        setCursorPos(3, 20);
+        cout << "DO YOU WANT TO UPDATE THESE DETAILS ?";
         SetColor(0);
         setCursorPos(2, 32);
         fflush(stdin);
@@ -5904,8 +5905,8 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         setCursorPos(1, 7);
         buildVerticalWall(65);
         SetColor(1);
-        setCursorPos(3, 23);
-        cout << "DO YOU CONFIRM THESE DETAILS ?";
+        setCursorPos(3, 20);
+        cout << "DO YOU WANT TO UPDATE THESE DETAILS ?";
         SetColor(0);
         setCursorPos(2, 32);
         fflush(stdin);
@@ -5954,15 +5955,15 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         {
           if (l == 35)
           {
-            setCursorPos(1, 37);
+            setCursorPos(1, 39);
           }
           cout << student_email[l];
           l++;
         }
       }
       tempStorage.clear();
-      setCursorPos(3, 23);
-      cout << "DO YOU CONFIRM THESE DETAILS ?";
+      setCursorPos(3, 20);
+      cout << "DO YOU WANT TO UPDATE THESE DETAILS ?";
       SetColor(0);
       setCursorPos(2, 32);
       fflush(stdin);
@@ -5980,7 +5981,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
       return (ConvertChoiceToINT); // returns confirmation value yes=1 / no=0
     }
 
-  int confirmation() 
+  int confirmation() //? after sem and course selecting first confirmation box 
   {
     int line;
 
@@ -6022,7 +6023,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     return (ConvertChoiceToINT); // returns basic confirmation value yes=1 / no=0
   }
 
-  void semDetailModChoice() // Ask Data Input Choice
+  void semDetailModChoice() //? Ask Data Input Choice for semester modification
   {
     scrClr(0.5);
     setCursorPos(2);
@@ -6085,7 +6086,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     }
     
   }
-  void userDetailModChoice() // Ask Data Input Choice
+  void userDetailModChoice() //? Ask Data Input Choice for user detail modification
   {
     int line;
     reask_userMod:
@@ -6136,7 +6137,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     
   }
   
-  void update(char mode)
+  void update(char mode)  //?generelize function to update user , faculty and student data
   {
 
        bool flag;
@@ -6407,7 +6408,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
         
   }
   
-  bool alreadyUpdatedDetail(string &one,string &two)
+  bool alreadyUpdatedDetail(string &one,string &two)   //? to check updated details that is already there in file
   {
     if(one==two)
     {
@@ -6422,7 +6423,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     }
   }
   
-  void updateUserDetail(int ch)
+  void updateUserDetail(int ch)  //? user detail updation choice
   {
     tempStorage.clear();
 
@@ -6577,15 +6578,15 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     return(ConvertChoiceToINT);
   }
 
-  void facDetailModChoice() 
+  void facDetailModChoice()  //? ask faculty detail updation choice
   {
     int line = 0;
     reask_semMod:
     
     // BOX-UI FOR INPUT CHOICE
     scrClr(0.5);
-    setCursorPos(3,25);
-    cout << " WHAT DO YOU WANT TO MODIFY ? " << endl;
+    setCursorPos(3,22);
+    cout << " WHICH DETAIL DO YOU WANT TO MODIFY ? " << endl;
     setCursorPos(2,24);
     buildVerticalWall(30);
     line = 0;
@@ -6652,7 +6653,7 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
 
   }
 
-  void studDetailModChoice() 
+  void studDetailModChoice() //? ask student detail updation choice 
   {
     int line = 0;
     reask_semMod:
@@ -6660,8 +6661,8 @@ class MODULE_4 : public MODULE_GENERAL //?module 4 class
     
     // BOX-UI FOR INPUT CHOICE
     scrClr(0.5);
-    setCursorPos(3,25);
-    cout << " WHAT DO YOU WANT TO MODIFY ? " << endl;
+    setCursorPos(3,22);
+    cout << " WHICH DETAIL DO YOU WANT TO MODIFY ? " << endl;
     setCursorPos(2,24);
     buildVerticalWall(30);
     line = 0;
