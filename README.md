@@ -23,6 +23,6 @@ finish date : ...
 
 9)Technical coding Assist & Helper : Fenil Munzani :: OKAY
 
-10)Tecnical & Analysis Department : Archit Ghevariya :: OKAY
+10)Technical & Analysis Department : Archit Ghevariya :: OKAY
 
 
