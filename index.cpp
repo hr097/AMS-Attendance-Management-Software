@@ -4856,7 +4856,7 @@ public:
     time.clear();
   }
   
-  void semesterReport() //! edit HR
+  void semesterReport()
   {
     
     tempStorage.clear();
