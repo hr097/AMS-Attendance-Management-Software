@@ -70,13 +70,14 @@ using namespace std; // standard namespace for  resolving naming coflicts
 
 //***************************** APP-CLASS ***********************************/
 
-void Debug(string t) //! EOP() seek.edit(*required) :ALL AMS TEAM
+void Debug(string t) 
 { 
   system("cls");
   cout << endl << t << getch();
 }
-void Debug(int t) //! EOP() seek.edit(*required) :ALL AMS TEAM
-{ system("cls");
+void Debug(int t)
+{ 
+  system("cls");
   cout << endl << t << getch();
 }
 
@@ -196,6 +197,7 @@ public:
       exit(1);
     }
     /**************** AMS DATABASE PATH GETTING *********************/
+
     /***************** DESKTOP FOLDER AMS CREATE ********************/
      makeDesktopPath_AMS();
      makeSampleCsv();
@@ -258,7 +260,7 @@ public:
 
 private:
 
-bool makeDesktopPath_AMS()
+  bool makeDesktopPath_AMS()
   {
       TCHAR appData[MAX_PATH];
       if (SUCCEEDED(SHGetFolderPath(NULL,CSIDL_DESKTOPDIRECTORY | CSIDL_FLAG_CREATE,NULL,SHGFP_TYPE_CURRENT,appData)));
@@ -1055,44 +1057,44 @@ protected:
 
   int validateRollNo(string input, int Bnd, int start) //? string input validate as integer
   {
-    int flag = 0, tem = 1;
-
-    if (start == 0) // roll no is 0
-      start++;
-    for (tem = start; tem <= Bnd; tem++) // roll no start with 1 and go up to boundry
-    {
-      if (to_string(tem) == input) // convert tem int to string to check input valid condition
-      {
-        flag = 1; // if condition true than flag =1
-        break;
-      }
-    }
-
-    if (EmptyInput(input) || checkAlphaSpInput(input)) // empty input check
-    {
-      InvalidInputErr(); // input error
-      return 0;
-    }
-    else if (flag == 0) // IF flag=0 means input is invalid
-    {
-      MSG(" ROLL NUMBER DOESN'T EXIST !", " ", 4, 0, 23);
-      return 0;
-    }
-    else
-    {
-      return tem; // returns converted string.to_int(INT)
-    }
+        int flag = 0, tem = 1;
+    
+        if (start == 0) // roll no is 0
+          start++;
+        for (tem = start; tem <= Bnd; tem++) // roll no start with 1 and go up to boundry
+        {
+          if (to_string(tem) == input) // convert tem int to string to check input valid condition
+          {
+            flag = 1; // if condition true than flag =1
+            break;
+          }
+        }
+    
+        if (EmptyInput(input) || checkAlphaSpInput(input)) // empty input check
+        {
+          InvalidInputErr(); // input error
+          return 0;
+        }
+        else if (flag == 0) // IF flag=0 means input is invalid
+        {
+          MSG(" ROLL NUMBER DOESN'T EXIST !", " ", 4, 0, 23);
+          return 0;
+        }
+        else
+        {
+          return tem; // returns converted string.to_int(INT)
+        }
   }
 
   string DoubleBackslashPath(string path) //?insering backslash in path for paython file
   {
-    int found = path.find("\\", 0); // find backslash
-    while (found < path.length())   // check whether the backslash index no. out of range or not
-    {
-      path.insert(found, "\\");           // insert one backslash
-      found = path.find("\\", found + 2); // found backslash again from (found+2)
-    }
-    return path; // return path
+      int found = path.find("\\", 0); // find backslash
+      while (found < path.length())   // check whether the backslash index no. out of range or not
+      {
+        path.insert(found, "\\");           // insert one backslash
+        found = path.find("\\", found + 2); // found backslash again from (found+2)
+      }
+      return path; // return path
   }
 
   bool pipilineValidation(string &str)
@@ -1480,45 +1482,41 @@ protected:
 
   void reportSentSuccessfully(string pdf_name, string stud_email = "")   //? function to give message for successfully email sending
   {
-    scrClr(0.5);
-
-    setCursorPos(7, 18);
-    SetColor(2);
-    cout << pdf_name;
-    
-    setCursorPos(2, 21);
-    SetColor(0);
-    cout << "REPORT HAS BEEN SENT SUCCESSFULLY TO :";
-    setCursorPos(2, 24);
-    SetColor(1);
-    cout << FacultyEmail;
-    if (!stud_email.empty())
-    {
-      cout << " & ";
-      setCursorPos(2, 24);
-      SetColor(1);
-      cout << stud_email;
-    }
-    scrClr(3);
-    SetColor(0);
-    process_flag = false;
-    email_flag = false;
+       scrClr(0.5);
+       setCursorPos(7, 18);
+       SetColor(2);
+       cout << pdf_name;
+       setCursorPos(2, 21);
+       SetColor(0);
+       cout << "REPORT HAS BEEN SENT SUCCESSFULLY TO :";
+       setCursorPos(2, 24);
+       SetColor(1);
+       cout << FacultyEmail;
+       if (!stud_email.empty())
+       {
+         cout << " & ";
+         setCursorPos(2, 24);
+         SetColor(1);
+         cout << stud_email;
+       }
+       scrClr(3);
+       SetColor(0);
+       process_flag = false;
+       email_flag = false;
   }
 
   int checkDuplicateRecord(vector<string> vec, string search) //?for cheking if duplicate records found in vector_storage
   {
-    vector<string>::iterator it; // iterator
-
-    it = find(vec.begin(), vec.end(), search); // finding elemnt in vector
-
-    if (it != vec.end())
-    {
-      return 0; // if found then return 0
-    }
-    else
-    {
-      return 1; // if not found then return 1
-    }
+      vector<string>::iterator it; // iterator
+      it = find(vec.begin(), vec.end(), search); // finding elemnt in vector
+      if (it != vec.end())
+      {
+        return 0; // if found then return 0
+      }
+      else
+      {
+        return 1; // if not found then return 1
+      }
   }
 
   void DisplayList_Input(string &put, int select = 0) //? display the list and take appropriate input of corse/sem/subject
@@ -1534,7 +1532,7 @@ protected:
     while (i != LIST.end()) // dynamic list loop for sem course subject input choice
     {
 
-    displayAgain:
+      displayAgain:
       chFlag = 0;
       setCursorPos(1, 20);
       if (select == 0)
@@ -1749,7 +1747,7 @@ protected:
   {
     tempStorage.clear();
     int line;
-  reAsk:
+    reAsk:
     scrClr(0.5);
     line = 0;
     setCursorPos(2, 7);
@@ -1805,7 +1803,7 @@ protected:
   int studConfirmation(int argc) //? overloaded version basic confirmation message for user
   {
     int line;
-  reConfirm:
+    reConfirm:
     scrClr(0.5);
     // BOX-UI FOR STUDENT INFO CONFIRM
     setCursorPos(5, 15);
@@ -1842,7 +1840,7 @@ protected:
 
   bool RollNoInput() //? take roll number input
   {
-  rollNoReInput:
+    rollNoReInput:
     scrClr(0.5);
     RoLLNo.clear();
     setCursorPos(9, 22);
@@ -1860,6 +1858,7 @@ protected:
     getStudentData(); // get data of that student
     return (true);
   }
+
   void getStudentData() //? get student data of that particular roll number
   {
     command.clear();
@@ -1879,7 +1878,7 @@ protected:
   void UpdateName(string &input,string display) //?Faculty & student name update input
   {
 
-  reinput:
+    reinput:
     scrClr(0.5);
     setCursorPos(9, 15);
     cout << display + "  :  ";
@@ -1905,7 +1904,7 @@ protected:
 
   void UpdateEmail(string &input,string display) //?Faculty & student email address update & input
   {
-  reinputOfEmail:
+    reinputOfEmail:
     scrClr(0.5);
     setCursorPos(9, 14);
     cout << display + " : ";
@@ -1940,7 +1939,6 @@ class MODULE_1 : public MODULE_GENERAL //?module 1 class
 {
 
   //*=============================DATA-MEMBERS================================//
-
 private:
 public:
 protected:
@@ -1949,6 +1947,7 @@ protected:
   //*=============================MEMBERS-FUNCTIONS===================================//
 
 private:
+
   bool createSemester() //? return 1=semester created successfully & return 0=not created
   {
 
@@ -2017,7 +2016,7 @@ private:
   {
 
     int line;
-  reInputOfmodchoice:
+    reInputOfmodchoice:
 
     line = 0;
     setCursorPos(1);
@@ -2076,7 +2075,7 @@ private:
   {
 
     int line;
-  reInputOfmod:
+    reInputOfmod:
 
     line = 0;
     setCursorPos(3);
@@ -2155,9 +2154,7 @@ private:
 
   void EnterSem() //?input of semester
   {
-
-  reinputOfsem:
-
+    reinputOfsem:
     scrClr(0.5);
     fflush(stdin);
     setCursorPos(9, 26);
@@ -2176,7 +2173,7 @@ private:
   
   void EnterSubject() //?input subject
   {
-     reinputOfsubjectName:
+      reinputOfsubjectName:
       scrClr(0.5);
       setCursorPos(9, 26);
       cout << "ENTER SUBJECT : ";
@@ -2216,8 +2213,7 @@ private:
 
   void askNumberOfStudents() //?asking number of students
   {
-  reAskNumStud:
-
+    reAskNumStud:
     scrClr(0.5);
     setCursorPos(7, 23);
     cout << " HOW MANY STUDENTS DO YOU HAVE ? ";
@@ -3531,11 +3527,8 @@ private:
 
     while (true)
     {
-
-    reInput:
-
+      reInput:
       scrClr(0.5);
-
       setCursorPos(1, 26);
       SetColor(2);
       cout << "PRESS '*' TO PROCEED FURTHER";
@@ -3974,7 +3967,7 @@ public:
     command.clear();
     tempStorage.clear();
 
-  reAskAtdM:
+    reAskAtdM:
 
     // build UI-Box screen
     scrClr(0.5);
@@ -4136,7 +4129,7 @@ private:
     {
       flag = false;
     }
-    else if (stoi(y) < 2021 || stoi(y) > 9999) //! EOP() seek.edit(*required) this need to be change at EOP() to 2022 year : ALL TEAM AMS
+    else if (stoi(y) < 2022 || stoi(y) > 9999) 
     {
       flag = false;
     }
@@ -6587,9 +6580,9 @@ int main(int argc, char *argv[])
   //* jay swaminrayan *//
   //* jay ganeshay namh *//
   //* jay kashtbhanjan dev *//
-  system("cls");
-  if( (!strcmp(argv[1],"JonSnow")) && (argc == 2 ) )
-  {
+  //system("cls");
+  //if( (!strcmp(argv[1],"JonSnow")) && (argc == 2 ) )
+  //{
     APP A;
     bool loop = true; // set true to run app by 1 time
     signal(SIGINT, signal_callback_handler);
@@ -6735,6 +6728,6 @@ int main(int argc, char *argv[])
        A.scrClr(); 
   }
 
-  }
+  //}
   return(EXIT_SUCCESS);
 }
