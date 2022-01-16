@@ -5300,7 +5300,7 @@ class MODULE_4 : public MODULE_GENERAL        //? module 4 class
   { 
     string password,ams_password;
     int counter_pwd = 3;
-    getDataFromFile(AMS_Path+"\\LOG-INFO\\logincredentials.txt",ams_password,2);
+    getDataFromFile(AMS_Path+"\\LOG-INFO\\logincredentials.txt",ams_password,3);//updated 2->3
     
     re_input_ams_password : 
     scrClr();
@@ -6083,7 +6083,7 @@ class MODULE_4 : public MODULE_GENERAL        //? module 4 class
     
   }
   
-  void update(char mode)  //? generalize function to update user,faculty & student data
+  void update(char mode)  //? generalize-function-to-update-user-faculty-student-data
   {
 
     bool flag;
@@ -6105,13 +6105,53 @@ class MODULE_4 : public MODULE_GENERAL        //? module 4 class
           }
           else
           {
+            
+
+            tempStorage.clear();
+            tempStorage = FacultyEmail;
+            
             write << FacultyName << endl;
             write << FacultyEmail<< endl;
             write << department_name << endl;
             write << HodEmail << endl;
             write << joining_year << endl;
             write.close();
+            
+            /************ user email update code ****************/
+
+            command.clear();
+            string temp; // as faculty user email
+            date.clear(); // as username
+            time.clear(); // as password
+
+            command = AMS_Path + "\\LOG-INFO\\logincredentials.txt";
+            getDataFromFile(command,temp,1); // get user email
+            getDataFromFile(command,date,2); //get username
+            getDataFromFile(command,time,3); //get password
+
+            ofstream write(command.c_str(),ios::trunc);
+            if(!write.is_open())
+            {
+              scrClr();
+              setCursorPos(9, 26);
+              cout << "DATABASE-ERROR : 201/204 "; 
+              scrClr(2);
+              exit(1);
+            }
+            else
+            {
+              temp = tempStorage; 
+              write << temp << endl;
+              write << date << endl;
+              write << time << endl;
+            }
+
+            /************ user email update code end ****************/
+            
             warnMsg("USER DETAILS HAVE BEEN SUCCESSFULLY UPDATED.",2,18);
+            tempStorage.clear();
+            date.clear(); // as username
+            time.clear(); // as password
           }
         }
       }
