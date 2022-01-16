@@ -2171,6 +2171,16 @@ private:
       {
         goto reinputOfcourseName; 
       }
+      if(!checkAlphaSpInput(course_name))
+      {
+        scrClr(0.5);
+        setCursorPos(9, 16); // set cursor
+        SetColor(4);
+        cout << "COURSE NAME SHOULD CONTAIN ATLEAST ONE ALPHABET !" << endl; // warn message
+        scrClr(2);
+        SetColor(0);
+        goto reinputOfcourseName; 
+      }
 
       scrClr(0.5); //! EOP() seek.review(*required) we can remove it :ALL AMS TEAM
    }
@@ -4841,7 +4851,7 @@ private:
     writeDataToFile(command, tempStorage);
 
     tempStorage.clear();
-    tempStorage = "8) REPORT TYPE : SEMI ANNUAL ";
+    tempStorage = "8) REPORT TYPE : SEMESTER REPORT ";
     writeDataToFile(command, tempStorage);
 
     date.clear();
