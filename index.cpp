@@ -19,6 +19,7 @@
 #include <vector>    // * STL DYNAMIC ARRAY used
 #include <windows.h> // * windows console related functions handle
 #include <signal.h>  // * signal crtl + c handler
+#define ctrl 24      // * For Ctrl + x validation in subject name
 
 //--------FOR-DOCUMENT PATH GETTING------/
 
@@ -726,7 +727,7 @@ protected:
      {
        for (j = 0; j < input.length(); j++)
        {
-         if (input[j] == list[i])
+         if (input[j] == list[i]|| input[j]==24)
          { 
            scrClr(0.5);
            setCursorPos(9, 24); // set cursor
@@ -1240,7 +1241,7 @@ public:
   {
     ReAskChoice:
     tempStorage.clear();
-    scrClr(0.5);
+    scrClr();
     SetColor(1);
     setCursorPos(6, pos);
     cout << prompt;
@@ -1795,7 +1796,8 @@ protected:
     buildVerticalWall(65);
     SetColor(1);
     setCursorPos(3, 23);
-    cout << "DO YOU CONFIRM THESE DETAILS ?";
+    //cout << "DO YOU CONFIRM THESE DETAILS ?";
+    cout << "DO YOU WANT TO PROCEED FURTHER ?";
     SetColor(0);
     setCursorPos(2, 32);
     fflush(stdin);
@@ -4669,19 +4671,7 @@ private:
     tempStorage.clear(); 
     command.clear();
     bool flag;
-    command = AMS_Path+"\\OTHER\\6MR.py"; // make python path
-    fstream write(command.c_str(),ios::out);
 
-    if(!write.is_open()) // if file not opened
-    {   
-      scrClr();
-      setCursorPos(9, 28);
-      cout << "DATA BASE-ERROR-201-204! "; 
-      scrClr(2);
-      exit(1);
-    }
-    else
-    {
         command.clear();
         command = "from fpdf import FPDF\npdf=FPDF(format='A4', unit='in')\npdf.add_page()\nepw = pdf.w - 2*pdf.l_margin\npdf.set_font('Arial','B',50.0)\npdf.set_text_color(0,0,0)\n";
         command += "pdf.image('"+DoubleBackslashPath(AMS_Path)+"\\\\OTHER\\\\Telegram.png',x =pdf.l_margin,y=None,w=pdf.w - 2*pdf.l_margin, h=1.5)\npdf.cell(epw, -1.3, 'A M S', align='C')\npdf.ln(0.5)\npdf.line(0.4,1.90,7.8,1.90)\npdf.line(0.4,1.97,7.8,1.97)\npdf.set_font('Arial','B',15.0)\npdf.set_text_color(43, 153, 213)\npdf.cell(epw, 0.0, 'e-ATTENDANCE REPORT', align='C')\npdf.ln(0.5)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(0,0,0)\n";
@@ -4710,7 +4700,7 @@ private:
         command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Report type
         tempStorage.clear();
         getDataFromFile(BasicDetails,tempStorage,9);
-        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.3)\n";//Records
+        command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='L')\npdf.ln(0.5)\n";//Records
         tempStorage.clear();
         getDataFromFile(BasicDetails,tempStorage,10);
         command += "pdf.cell(epw,0.0,'"+tempStorage+"', align='C')\npdf.ln(0.3)\n";//Attendance
@@ -4741,15 +4731,15 @@ private:
         command += "]\n";
         command += "th = pdf.font_size\ncol_width = (epw-4)/2\npdf.ln(0.3)\n";
         command += "for row in range(len(data)):\n\tfor datum in range(len(data[row])):\n\t\tif row==0:\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\t\telse:\n\t\t\tpdf.set_text_color(0,0,0)\n\t\t\tpdf.set_font('Arial','',12.0)\n\t\t\tif datum == 1:\n\t\t\t\tpdf.cell(4, 2*th,data[row][datum], border=1,align='C')\n\t\t\telse:\n\t\t\t\tpdf.cell(col_width, 2*th,data[row][datum], border=1,align='C')\n\tpdf.ln(2*th)\npdf.ln(2)";
-        command += "\nLine = \"\"\nfor i in range(int(pdf.w-pdf.l_margin)):\n\tfor j in range(10):\n\t\tLine+=\"\" ";
+        command += "\nLine = \"_\"\nfor i in range(int(pdf.w-pdf.l_margin)):\n\tfor j in range(10):\n\t\tLine+=\"_\" ";
         command += "\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(3, 153, 213)\npdf.cell(epw,0.0,'Have any questions for us or need more information?',align='C')\npdf.ln(0.3)\npdf.set_font('Arial','B',12.0)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line, align='C')\npdf.ln(0.22)\npdf.set_text_color(0,0,0)\npdf.cell(epw,0.0,'Email Address For Support   \"ams.software.team@gmail.com\"',align='C')\npdf.ln(0.1)\npdf.set_text_color(255,0,0)\npdf.cell(epw, 0.0,Line,align='C')\npdf.ln(0.5)\npdf.set_text_color(255,0,0)\npdf.set_font('Arial','B',15.0)\npdf.cell(epw,0.0,'Regards, Team AMS.',align='C')\npdf.output('"+DoubleBackslashPath(SemPath) +"\\\\REPORTS\\\\";
         command +=  pdf_name + "','F')\n";
         tempStorage.clear();
-        tempStorage = AMS_Path+"\\OTHER\\6MR.py";   // make python File
+        tempStorage = AMS_Path+"\\OTHER\\SR.py";   // make python File
         writeDataToFile(tempStorage,command);
           
         command.clear();
-        command = "python " + AMS_Path + "\\OTHER\\6MR.py" + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";  
+        command = "python " + AMS_Path + "\\OTHER\\SR.py" + " 1> " + AMS_Path + "\\OTHER\\output.txt 2>&1";  
         system(command.c_str());//run python file
         
         command.clear();
@@ -4764,13 +4754,12 @@ private:
         remove(command.c_str()); 
         
         command.clear();
-        command = AMS_Path+"\\OTHER\\6MR.py"; 
+        command = AMS_Path + "\\OTHER\\SR.py"; 
         remove(command.c_str());   //delete python file
         remove(BasicDetails.c_str());  //delete basic_details file
         remove(Name.c_str());  //delete stud_name file
         remove(Attendance.c_str());  //delete stud_att file
      
-    } 
     return flag;
   }
 
@@ -4779,7 +4768,7 @@ private:
     tempStorage.clear();
     string temp;
     temp = "SEMESTER ATTENDANCE REPORT";
-    tempStorage = " IS BEING GENERATED ";
+    tempStorage = " IS BEING GENERATED";
 
     int i = 1;
     do
@@ -4919,7 +4908,7 @@ private:
     
     tempStorage.clear();
     scrClr();
-    setCursorPos(7,15);
+    setCursorPos(6,15);
     SetColor(0);
     ShowConsoleCursor(false);
     cout << "SEMESTER REPORT DURATION : " ; 
@@ -4981,7 +4970,7 @@ public:
                  {   
                    
                      tempStorage.clear();
-                     if (MailTo("WOULD YOU LIKE TO SEND THIS REPORT TO H.O.D. ALSO ? ",14))
+                     if (MailTo("WOULD YOU LIKE TO SEND THIS REPORT TO H.O.D. ? ",18))
                      {  
                         
                         command.clear();
@@ -5205,7 +5194,7 @@ public:
             {
               tempStorage.clear();
 
-              if (MailTo("WOULD YOU LIKE TO SEND THIS REPORT TO STUDENT ALSO ? ",14))
+              if (MailTo("WOULD YOU LIKE TO SEND THIS REPORT TO STUDENT ? ",18))
               {
                 tempStorage = FacultyEmail + ",";
                 tempStorage += student_email;
@@ -6921,6 +6910,6 @@ int main(int argc, char *argv[])
        A.scrClr(); 
   }
 
-  //} 
+  //}  
   return(EXIT_SUCCESS);
 }
