@@ -12,7 +12,7 @@ finish date : 22/01/2022
 
 4)Product Module development Head( R&D ): Drashti dhola :: OKAY
 
-5)Team Schedule &  Meeting Management : Sanjal desai :: OKAY [ Replaced with Archit Ghevariya ON 29/12/2021]
+5)Technical & Analysis Department & Business Marketing : Archit Ghevariya :: OKAY
 
 6)Documentation & Business Analysis support  : Isha dadawala::OKAY
 
@@ -22,5 +22,5 @@ finish date : 22/01/2022
 
 9)Technical coding Assist & Helper : Fenil Munzani :: OKAY
 
-10)Technical & Analysis Department : Archit Ghevariya :: OKAY
+
 
