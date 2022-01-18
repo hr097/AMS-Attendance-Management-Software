@@ -1,9 +1,0 @@
-Module 4 testing:
-
-
-file   :index.exe
-Bugs   :
-
-->  in UI screen of md_2 and md_4 in setup list, the upper line(*-------*)'s cursor position is left side and not perfect rectangle shown.(in case of greater than 5 setup)     NOTE:  sometimes its happen and sometime not
-
-->  in student detail modification once you changed students detail, entire record in data base in student_sem.txt in removed.
