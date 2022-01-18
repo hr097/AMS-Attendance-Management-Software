@@ -1,4 +1,4 @@
-# AMS-Attedance-Management-System-Using-C++
+# AMS-Attendance-Management-System-Using-C++
 
 Project - AMS~Attendance Management System 
 
