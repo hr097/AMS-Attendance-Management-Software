@@ -2,7 +2,7 @@
 Attendance Management System is very useful and fast using C++ it will Give you Attendance Data of students  and will manage your work related to attendance.
 
 start date : 22/10/2021
-finish date : ...
+finish date : 22/01/2022
 
 1)Leader & Problem solving &Project Management &BUG fixing & Coding Analyst : HARSHIL RAMANI :: OKAY
 
