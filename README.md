@@ -14,13 +14,11 @@ finish date : 22/01/2022
 
 5)Technical & Analysis Department & Business Marketing : Archit Ghevariya :: OKAY
 
-6)Documentation & Business Analysis support  : Isha dadawala::OKAY
+6)GUI development & Design Section (UI) : Nupur kukadiya:: OKAY
 
-7)GUI development & Design Section (UI) : Nupur kukadiya:: OKAY
+7)Technical module development and Testing section : Shikhaa Tikiwala :: OKAY
 
-8)Technical module development and Testing section : Shikhaa Tikiwala :: OKAY
-
-9)Technical coding Assist & Helper : Fenil Munzani :: OKAY
+8)Technical coding Assist & Helper : Fenil Munzani :: OKAY
 
 
 
