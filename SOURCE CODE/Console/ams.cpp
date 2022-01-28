@@ -174,7 +174,7 @@ public:
     if (result == S_OK) // check if documents path is successfully stored in pathdocuments
     {
       AMS_Path = pathDocument;                             // take original documents path into string
-      AMS_Path = AMS_Path +"\___________database___name___________"; // making AMS folder path
+      AMS_Path = AMS_Path +"/___________database___name___________"; // making AMS folder path
     }
     else
     {
@@ -2278,29 +2278,29 @@ private:
       else if (line == 2)
       {
         cout << "|";
-        cout<<"    1) .CSV FILE SHOULD BE IN DESKTOP->AMS FOLDER";
+        cout<<"    1) .CSV FILE MUST BE IN DESKTOP->AMS FOLDER";
         SetColor(2);
         cout<<" (SWITCH TABS : \"ALT+TAB\")";
         SetColor(0);
-        cout << setw(4) << "|";
+        cout << setw(6) << "|";
       }
       else if (line == 4)
       { 
         cout << "|";
-        cout<<"    2) .CSV FILE SHOULD HAVE ONLY TWO COLUMNS NAME & EMAIL OF STUDENT ";
-        cout << setw(9) << "|";
+        cout<<"    2) .CSV FILE MUST HAVE ONLY TWO COLUMNS NAME & EMAIL OF STUDENT ";
+        cout << setw(11) << "|";
       }
       else if (line == 6)
       { 
         cout << "|";
-        cout<<"    3) NAME & EMAIL COLUMNS SHOULD NOT CONTAIN ANY EMPTY CELL ";
-        cout << setw(17) << "|";
+        cout<<"    3) NAME & EMAIL COLUMNS MUST NOT CONTAIN ANY EMPTY CELL ";
+        cout << setw(19) << "|";
       }
       else if (line == 8)
       {  
         cout << "|";
-        cout<<"    4) .CSV FILE NAME SHOULD BE IN LOWER-CASE ONLY ";
-        cout << setw(28) << "|";
+        cout<<"    4) .CSV FILE NAME MUST BE IN LOWER-CASE ONLY ";
+        cout << setw(30) << "|";
       }
       else if (line == 10)
       {  
@@ -2351,6 +2351,7 @@ private:
       return (false);
     }
   }
+
 
   bool pipilineValidation2(string &str)  //? to check pipeline presence in any input string
   {
