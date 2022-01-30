@@ -2,9 +2,9 @@
            all the github users and software developers who might be interested in AMS software design and development we heartly welcome you on this opensource
 project and software.</b>
 
-           <i>both the "GUI and CONSOLE" folder has containing source codes accordingly but kindly keep in mind that files might be not working as expected because we have removed some part of code  in file as it is containing "confidential information" about AMS software and It may break down "Security" of AMS software and Affect the "overall perfomence" of AMS software</i>
+           both the "GUI and CONSOLE" folder has containing source codes accordingly but kindly keep in mind that files might be not working as expected because we have removed some part of code  in file as it is containing "confidential information" about AMS software and It may break down "Security" of AMS software and Affect the "overall perfomence" of AMS software
 
-</i>e.g. passwords, database path , mastercode keys, and some extremely highly confidential content of code</i>
+<i>e.g. passwords, database path , mastercode keys, and some extremely highly confidential content of code</i>
  
 Don't worry you can still modify the code for your personal use and make it fully working
 but for that you need to change some information in  source code accordingly
