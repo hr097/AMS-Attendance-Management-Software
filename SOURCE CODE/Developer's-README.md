@@ -20,6 +20,6 @@ you can change those details accordingly and make it work
 you can add fetures and solve bugs in application
 and make pull request to this repository we will review it
 
-Rest of the source code is open source
+Rest of the source code is open source.
 
-Thank you for taking interst in AMS software
+Thank you for taking interst in AMS software.
