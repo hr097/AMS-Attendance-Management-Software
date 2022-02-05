@@ -270,21 +270,20 @@ private:
   }
 
   void makeSampleCsv()
-  {
+  { 
     tempStorage.clear();
-    tempStorage = DesktopPath + "\\Sample.csv";
-    if(!dirExists(tempStorage.c_str()))
+    tempStorage = DesktopPath + "\\sample.csv";
+    if(!fileExists(tempStorage))
     {
-      writeDataToFile(DesktopPath + "\\Sample.csv" , "Roll Number,Name,Email");
-      writeDataToFile(DesktopPath + "\\Sample.csv" , "1,Harshil Ramani,harshilramani9777@gmail.com");
-      writeDataToFile(DesktopPath + "\\Sample.csv" , "2,Shubham Khunt,shubhamkhunt1872003@gmail.com");
-      writeDataToFile(DesktopPath + "\\Sample.csv" , "3,Drashti Dhola,drashtishola1511@gmail.com");
-      writeDataToFile(DesktopPath + "\\Sample.csv" , "4,Fenil Munjani,fenilmunjani82@gmail.com");
-      writeDataToFile(DesktopPath + "\\Sample.csv" , "5,Shikhaa Tikiwala,shikhatikiwala@gmail.com");
-      writeDataToFile(DesktopPath + "\\Sample.csv" , "6,Viraj Talaviya,virajtalaviya02@gmail.com");
-      writeDataToFile(DesktopPath + "\\Sample.csv" , "7,Archit Gevariya,ghevariyaarchit3@gmail.com");
-      writeDataToFile(DesktopPath + "\\Sample.csv" , "8,Isha Dadawala,isha.dadawala@gmail.com");
-      writeDataToFile(DesktopPath + "\\Sample.csv" , "9,Sanjal Desai,sanjaldesai1234@gmail.com");
+      writeDataToFile(DesktopPath + "\\sample.csv" , "Name,Email");
+      writeDataToFile(DesktopPath + "\\sample.csv" , "Harshil Ramani,harshilramani9777@gmail.com");
+      writeDataToFile(DesktopPath + "\\sample.csv" , "Archit Ghevariya,ghevariyaarchit3@gmail.com");
+      writeDataToFile(DesktopPath + "\\sample.csv" , "Viraj Talaviya,virajtalaviya02@gmail.com");
+      writeDataToFile(DesktopPath + "\\sample.csv" , "Drashti Dhola,drashtishola1511@gmail.com");
+      writeDataToFile(DesktopPath + "\\sample.csv" , "Fenil Munjani,fenilmunjani82@gmail.com");
+      writeDataToFile(DesktopPath + "\\sample.csv" , "Shubham Khunt,shubhamkhunt1872003@gmail.com");
+      writeDataToFile(DesktopPath + "\\sample.csv" , "Shikhaa Tikiwala,shikhatikiwala@gmail.com");
+      writeDataToFile(DesktopPath + "\\sample.csv" , "Nupur Kukadiya,nupurkukadiya@gmail.com");
     }
     tempStorage.clear();
   }

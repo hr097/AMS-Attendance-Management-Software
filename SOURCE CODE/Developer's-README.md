@@ -6,6 +6,7 @@ project and software.</b>
 
 <i>e.g. passwords, database path , mastercode keys, and some extremely highly confidential content of code</i>
  
+<mark> IF YOU RUN CONSOLE FILE DIRECTLY THEN YOU WILL GET DATABASE ERROR BECAUSE DATABASE IS BEING CREATED BY GUI SOURCE CODE</mark>
 Don't worry you can still modify the code for your personal use and make it fully working
 but for that you need to change some information in  source code accordingly
 
