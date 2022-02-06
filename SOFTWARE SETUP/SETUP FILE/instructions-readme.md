@@ -9,4 +9,10 @@ system architecture
 
 4) Don't try to modify Application's Internal Data Explicitly , If you do then whatever application's behaviour &  damage to your system as well application  performance will be only user's responsibility.
 
+5) You can install EXE as well MSI FILE
+
+Tip : if MSI is not running on your device then try MSI FILE
+
+
+
  
