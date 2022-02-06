@@ -11,7 +11,7 @@ system architecture
 
 5) You can install EXE as well MSI FILE
 
-Tip : if MSI is not running on your device then try MSI FILE
+Tip : if EXE is not running on your device then try MSI FILE
 
 
 
