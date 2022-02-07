@@ -1,1 +1,0 @@
-<b>Error codes are only for developer conveniency for solving bugs are error </b>
