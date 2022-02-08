@@ -8,7 +8,7 @@ finish date : 06/02/2022
 
 2)Co-leader & Technical section & GUI: Shubham Khunt::OKAY
 
-3)Testing & memory management : Viraj Tlaviya  :: OKAY
+3)Testing & memory management : Viraj Talaviya  :: OKAY
 
 4)Co-leader & Product Module development Head( R&D ): Drashti dhola :: OKAY
 
